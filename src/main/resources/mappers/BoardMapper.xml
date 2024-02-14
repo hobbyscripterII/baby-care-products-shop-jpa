@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baby.babycareproductsshop.board.BoardMapper">
+    <insert id="insBoard" useGeneratedKeys="true" keyProperty="iboard">
+        INSERT INTO t_board(iuser, board_code, title, contents) VALUES(#{iuser}, 0, '', '')
+    </insert>
+
+    <update id="updBoard">
+        UPDATE t_board SET
+        title = #{title},
+        contents = #{contents},
+        board_code = #{boardCode}
+        WHERE iboard = #{iboard} AND iuser = #{iuser}
+    </update>
+
+    <delete id="delBoard">
+        DELETE FROM t_board
+        WHERE iboard = #{iboard} AND iuser = #{iuser}
+    </delete>
+
+    <select id="getBoard">
+        SELECT a.iboard, a.title, b.nm, a.board_code boardCode, a.created_at createdAt
+        FROM t_board a
+        INNER JOIN t_user b
+        ON a.iuser = b.iuser
+        WHERE a.board_code = #{boardCode}
+        <if test="keyword != null">
+            AND a.title LIKE '%${keyword}%'
+        </if>
+        ORDER BY a.iboard DESC
+        LIMIT #{pageStart}, #{amount}
+    </select>
+
+    <select id="selBoard">
+        SELECT a.iboard, b.iuser, a.title, b.nm, a.contents, DATE_FORMAT(a.created_at, '%Y.%m.%d') createdAt
+        FROM t_board a
+        INNER JOIN t_user b
+        ON a.iuser = b.iuser
+        WHERE a.iboard = #{iboard}
+    </select>
+
+    <select id="selBoardPics">
+        SELECT board_pic pic FROM t_board_pics WHERE iboard = #{iboard}
+    </select>
+
+    <insert id="insBoardPic">
+        INSERT INTO t_board_pics(iboard, board_pic) VALUES (#{iboard}, #{picName})
+    </insert>
+
+    <insert id="insBoardPics">
+        INSERT INTO t_board_pics(iboard, board_pic) VALUES
+        <foreach collection="picNames" item="picName" separator=",">
+            (#{iboard}, #{picName})
+        </foreach>
+    </insert>
+
+    <delete id="delBoardPics">
+        DELETE FROM t_board_pics WHERE iboard = #{iboard}
+    </delete>
+
+    <select id="getComment">
+        SELECT a.icomment, b.nm, a.comment contents, DATE_FORMAT((a.created_at), '%Y.%m.%d') createdAt
+        FROM t_board_comment a
+        INNER JOIN t_user b
+        ON a.iuser = b.iuser
+        WHERE a.iboard = #{iboard}
+    </select>
+
+    <select id="getPostCnt">
+        SELECT COUNT(*) FROM t_board WHERE board_code = #{boardCode}
+        <if test="keyword != null">
+            AND title LIKE '%${keyword}%'
+        </if>
+        ORDER BY iboard DESC
+        # LIMIT #{pageStart}, #{amount}
+    </select>
+</mapper>

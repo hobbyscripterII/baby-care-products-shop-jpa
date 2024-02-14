@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baby.babycareproductsshop.review.ReviewMapper">
+
+    <!-- 리뷰 작성 -->
+    <insert id="insReview" >
+        INSERT INTO t_review
+        ( ireview, iorder, iproduct, iuser, req_review_pic, contents, product_score )
+        VALUES
+        ( #{idetails}, #{iorder}, #{iproduct}, #{iuser}, #{repReviewPic}, #{contents}, #{productScore} )
+    </insert>
+    <!-- -->
+    <insert id="insReviewPics">
+        INSERT INTO t_review_pics
+        ( ireview, review_pic )
+        VALUES
+        <foreach collection="pics" item="review_pic" separator=",">
+               ( #{ireview}, #{review_pic} )
+        </foreach>
+    </insert>
+    <!-- 리뷰 목록 -->
+    <select id="getReview">
+        SELECT B.iproduct, B.ireview, A.nm, B.product_score, B.contents, DATE_FORMAT(B.created_at, '%Y-%m-%d') AS created_at , B.req_review_pic
+        ,P.product_nm
+        FROM t_user AS A
+        JOIN t_review AS B
+        ON A.iuser = B.iuser
+        JOIN t_review AS C
+        ON B.ireview = C.ireview
+        JOIN t_product P
+        ON P.iproduct = B.iproduct
+        WHERE A.iuser = #{iuser}
+        ORDER BY B.created_at DESC
+        LIMIT #{startIdx}, #{rowCount}
+    </select>
+    <select id="getReviewPics">
+        SELECT ireview, review_pic
+        FROM t_review_pics
+        WHERE ireview in (
+        <foreach collection="ireview" item="ireview" separator=",">
+            #{ireview}
+        </foreach>
+        )
+    </select>
+
+    <!-- 리뷰 삭제 -->
+    <select id="selReviewByReview">
+        SELECT count(*)
+        FROM t_review
+        WHERE ireview = #{ireview}
+        AND iuser = #{iuser}
+    </select>
+    <delete id="delReviewByPics">
+        DELETE C
+        FROM t_order_details AS A
+        LEFT JOIN t_review AS B
+        ON A.idetails = B.ireview
+        LEFT JOIN t_review_pics AS C
+        ON B.ireview = C.ireview
+        WHERE B.ireview = #{ireview}
+    </delete>
+    <delete id="delReview">
+        DELETE FROM t_review
+        WHERE ireview = #{ireview}
+    </delete>
+</mapper>

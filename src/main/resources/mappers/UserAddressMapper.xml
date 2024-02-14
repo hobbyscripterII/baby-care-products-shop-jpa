@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baby.babycareproductsshop.user.UserAddressMapper">
+    <insert id="insUserAddress">
+        INSERT INTO t_address
+        SET iuser = #{iuser},
+            zip_code = #{zipCode},
+            address = #{address},
+            address_detail = #{addressDetail}
+    </insert>
+
+    <select id="selUserAddress">
+        SELECT iaddress, zip_code, address, address_detail
+        FROM t_address
+        WHERE iuser = #{iuser}
+    </select>
+
+    <update id="updUserAddress">
+        UPDATE t_Address
+        SET zip_code = #{zipCode},
+            address = #{address},
+            address_detail = #{addressDetail}
+        WHERE iaddress = #{iaddress} AND iuser = #{iuser}
+    </update>
+
+    <delete id="delUserAddress">
+        DELETE FROM t_address
+        WHERE (iaddress, iuser) = (#{iaddress}, #{iuser})
+    </delete>
+</mapper>
