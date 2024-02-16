@@ -11,22 +11,22 @@ import java.time.LocalDateTime;
 @Table(name = "t_basket")
 public class BasketEntity {
     @EmbeddedId
-    private BasketId id;
+    private BasketIds id;
 
     @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "iuser")
-    private UserEntity user;
+    @MapsId("iuser")
+    @JoinColumn(name = "iuser",columnDefinition = "BIGINT UNSIGNED")
+    private UserEntity userEntity;
 
     @ManyToOne
-    @MapsId("productId")
-    @JoinColumn(name = "iproduct")
-    private ProductEntity product;
+    @MapsId("iproduct")
+    @JoinColumn(name = "iproduct",columnDefinition = "BIGINT UNSIGNED")
+    private ProductEntity productEntity;
 
-    @Column(name = "product_cnt", nullable = false)
+    @Column(name = "product_cnt", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     private int productCount;
 
-    @Column(name = "price", nullable = false)
+    @Column(name = "price", nullable = false, columnDefinition = "BIGINT UNSIGNED")
     private int price;
 
     @Column(name = "created_at", nullable = false)

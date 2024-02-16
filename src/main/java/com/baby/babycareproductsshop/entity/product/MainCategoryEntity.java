@@ -11,11 +11,11 @@ import java.time.LocalDate;
 public class MainCategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "imain")
-    private Long id;
+    @Column(columnDefinition = "BIGINT UNSIGNED")
+    private Long imain;
 
-    @Column(name = "main_category", nullable = false)
-    private String mainCategoryName;
+    @Column(length = 20,name = "main_category", nullable = false)
+    private String mainCategory;
 
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;

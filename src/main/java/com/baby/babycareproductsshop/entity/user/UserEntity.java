@@ -1,43 +1,60 @@
 package com.baby.babycareproductsshop.entity.user;
 
+import com.baby.babycareproductsshop.common.ProviderTypeEnum;
+import com.baby.babycareproductsshop.common.RoleEnum;
+import com.baby.babycareproductsshop.entity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
-import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
-@Table(name = "t_user")
-public class UserEntity {
+@Table(name = "t_user", uniqueConstraints = {
+        @UniqueConstraint(
+                columnNames = {"uid", "provider_type"}
+        )
+})
+public class UserEntity extends BaseEntity {
     @Id
+    @Column(columnDefinition = "BIGINT UNSIGNED")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iuser")
-    private Long id;
+    private Long iuser;
 
-    @Column(name = "uid", unique = true, length = 20)
-    private String userId;
+    @NotNull
+    @Column(length = 100)
+    private String uid;
 
-    @Column(name = "upw", length = 2100)
-    private String password;
+    @NotNull
+    @Column(length = 2100)
+    private String upw;
 
-    @Column(name = "nm", length = 20)
-    private String name;
+    @NotNull
+    @Column(length = 20)
+    private String nm;
 
-    @Column(name = "phone_number", length = 13)
+    @NotNull
+    @Column(name = "phone_number", columnDefinition = "CHAR(13)")
     private String phoneNumber;
 
-    @Column(name = "email", length = 50)
+    @NotNull
+    @Column(length = 50)
     private String email;
 
-    @Column(name = "unregister_fl")
-    private int unregisterFlag;
+    @NotNull
+    @Column(name = "unregister_fl",length = 50)
+    @ColumnDefault("0")
+    private Integer unregisterFl;
 
-    @Column(name = "role")
-    private int role;
+    @NotNull
+    @Enumerated(value = EnumType.STRING)
+    @Column
+    @ColumnDefault("'USER'")
+    private RoleEnum role;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @NotNull
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "provider_type")
+    @ColumnDefault("'LOCAL'")
+    private ProviderTypeEnum providerType;
 }
