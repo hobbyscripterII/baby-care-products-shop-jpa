@@ -9,16 +9,22 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "t_product")
 public class ProductEntity {
+
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iproduct")
-    private Long id;
+    @Column(name = "iproduct",columnDefinition = "BIGINT UNSIGNED")
+    private Long iproduct;
 
-    @Column(name = "imain", nullable = false)
-    private Long mainCategoryId;
+    @ManyToOne
+    @JoinColumn(columnDefinition = "BIGINT UNSIGNED",nullable = false,name = "imain")
+    private MainCategoryEntity mainCategoryEntity;
 
-    @Column(name = "imiddle", nullable = false)
-    private Long middleCategoryId;
+    @ManyToOne
+    @JoinColumn(name="imiddle", referencedColumnName="imiddle",columnDefinition = "BIGINT UNSIGNED")
+    private MiddleCategoryEntity middleCategoryEntity;
+
 
     @Column(name = "product_nm", length = 150, nullable = false)
     private String productName;
@@ -27,25 +33,25 @@ public class ProductEntity {
     private String productDetails;
 
     @Column(name = "recommand_age", nullable = false)
-    private Integer recommendedAge;
+    private int recommendedAge;
 
-    @Column(name = "price", nullable = false)
-    private Integer price;
+    @Column(columnDefinition = "BIGINT UNSIGNED",nullable = false)
+    private int price;
 
     @Column(name = "rep_pic", length = 1000)
-    private String representativePicture;
+    private String repPic;
 
-    @Column(name = "remained_cnt", nullable = false)
-    private Integer remainedCount;
+    @Column(name = "remained_cnt",columnDefinition = "BIGINT UNSIGNED",nullable = false)
+    private int remainedCount;
 
-    @Column(name = "new_fl", nullable = false)
-    private Integer newFlag;
+    @Column(name = "new_fl",columnDefinition = "BIGINT UNSIGNED" ,nullable = false)
+    private int newFlag;
 
-    @Column(name = "rc_fl", nullable = false)
-    private Integer recommendationFlag;
+    @Column(name = "rc_fl",columnDefinition = "BIGINT UNSIGNED" ,nullable = false)
+    private int rcFl;
 
-    @Column(name = "pop_fl", nullable = false)
-    private Integer popularityFlag;
+    @Column(name = "pop_fl", columnDefinition = "BIGINT UNSIGNED",nullable = false)
+    private int popFl;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

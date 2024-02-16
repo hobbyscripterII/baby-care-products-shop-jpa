@@ -8,10 +8,11 @@ import java.io.Serializable;
 
 @Embeddable
 @EqualsAndHashCode
-public class BasketId implements Serializable {
-    @Column(name = "iuser")
-    private Long userId;
+public class BasketIds implements Serializable {
 
-    @Column(name = "iproduct")
-    private Long productId;
+    @Column
+    private Long iuser;
+
+    @Column
+    private Long iproduct;
 }
