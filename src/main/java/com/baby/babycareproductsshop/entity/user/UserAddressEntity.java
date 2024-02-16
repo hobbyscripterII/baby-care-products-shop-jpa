@@ -22,7 +22,7 @@ public class UserAddressEntity extends BaseEntity {
     private UserEntity userEntity;
 
     @NotNull
-    @Column(length = 200)
+    @Column(name = "zip_code" ,length = 200)
     private String zipCode;
 
     @NotNull
@@ -30,6 +30,6 @@ public class UserAddressEntity extends BaseEntity {
     private String address;
 
     @NotNull
-    @Column(length = 50)
+    @Column(name = "address_detail",length = 50)
     private String addressDetail;
 }
