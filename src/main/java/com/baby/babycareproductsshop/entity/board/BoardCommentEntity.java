@@ -1,5 +1,6 @@
 package com.baby.babycareproductsshop.entity.board;
 
+import com.baby.babycareproductsshop.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
