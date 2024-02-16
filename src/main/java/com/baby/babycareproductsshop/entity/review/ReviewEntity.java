@@ -2,7 +2,6 @@ package com.baby.babycareproductsshop.entity.review;
 
 import com.baby.babycareproductsshop.entity.order.OrderEntity;
 import com.baby.babycareproductsshop.entity.product.ProductEntity;
-import com.baby.babycareproductsshop.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
