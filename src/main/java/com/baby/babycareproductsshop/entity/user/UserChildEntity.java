@@ -20,7 +20,7 @@ public class UserChildEntity extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity userEntity;
 
-    @Column(columnDefinition = "CHAR(1) CHECK IN ('Y', 'M')")
+    @Column(columnDefinition = "CHAR(1) CHECK IN ('W', 'M')")
     private String gender;
 
     @ManyToOne
