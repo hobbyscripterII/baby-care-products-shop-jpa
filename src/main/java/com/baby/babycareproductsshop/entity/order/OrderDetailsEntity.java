@@ -1,9 +1,8 @@
-package com.baby.babycareproductsshop.Entity.Order;
+package com.baby.babycareproductsshop.entity.order;
 
-import com.baby.babycareproductsshop.Entity.Product.ProductEntity;
+import com.baby.babycareproductsshop.entity.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.core.Ordered;
 
 import java.time.LocalDateTime;
 
