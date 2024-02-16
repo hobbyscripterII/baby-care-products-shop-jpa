@@ -1,4 +1,4 @@
-package com.baby.babycareproductsshop.Entity.Product;
+package com.baby.babycareproductsshop.entity.product;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

@@ -1,6 +1,6 @@
-package com.baby.babycareproductsshop.Entity.Product;
+package com.baby.babycareproductsshop.entity.product;
 
-import com.baby.babycareproductsshop.Entity.User.UserEntity;
+import com.baby.babycareproductsshop.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -8,26 +8,20 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-@Table(name = "t_basket")
-public class BasketEntity {
+@Table(name = "t_wish_list")
+public class WishListEntity {
     @EmbeddedId
-    private BasketId id;
+    private WishListId id;
 
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "iuser")
-    private UserEntity user;
+    private UserEntity userEntity;
 
     @ManyToOne
     @MapsId("productId")
     @JoinColumn(name = "iproduct")
     private ProductEntity product;
-
-    @Column(name = "product_cnt", nullable = false)
-    private int productCount;
-
-    @Column(name = "price", nullable = false)
-    private int price;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

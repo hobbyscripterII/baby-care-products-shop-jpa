@@ -1,4 +1,4 @@
-package com.baby.babycareproductsshop.Entity.Board;
+package com.baby.babycareproductsshop.entity.board;
 
 import jakarta.persistence.*;
 import lombok.Data;
