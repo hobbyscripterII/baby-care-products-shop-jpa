@@ -1,4 +1,4 @@
-package com.baby.babycareproductsshop.entity.order_jy;
+package com.baby.babycareproductsshop.entity.order;
 
 import com.baby.babycareproductsshop.entity.CreatedAtEntity;
 import jakarta.persistence.*;

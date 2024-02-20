@@ -1,7 +1,7 @@
-package com.baby.babycareproductsshop.entity.refund_jy;
+package com.baby.babycareproductsshop.entity.refund;
 
 import com.baby.babycareproductsshop.entity.BaseEntity;
-import com.baby.babycareproductsshop.entity.order_jy.OrderDetailsEntity;
+import com.baby.babycareproductsshop.entity.order.OrderDetailsEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;

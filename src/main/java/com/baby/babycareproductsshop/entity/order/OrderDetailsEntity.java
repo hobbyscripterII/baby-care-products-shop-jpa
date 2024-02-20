@@ -1,7 +1,7 @@
-package com.baby.babycareproductsshop.entity.order_jy;
+package com.baby.babycareproductsshop.entity.order;
 
 import com.baby.babycareproductsshop.entity.BaseEntity;
-import com.baby.babycareproductsshop.entity.product_jy.ProductEntity;
+import com.baby.babycareproductsshop.entity.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
