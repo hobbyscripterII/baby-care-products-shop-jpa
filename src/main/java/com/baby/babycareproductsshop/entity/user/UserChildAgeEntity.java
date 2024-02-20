@@ -10,7 +10,7 @@ import lombok.Data;
 @Table(name = "t_child_age")
 public class UserChildAgeEntity extends CreatedAtEntity {
     @Id
-    @Column(name = "ichild_age",columnDefinition = "BIGINT UNSIGNED")
+    @Column(columnDefinition = "BIGINT UNSIGNED")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ichildAge;
 

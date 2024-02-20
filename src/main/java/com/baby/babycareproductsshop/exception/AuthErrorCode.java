@@ -34,6 +34,7 @@ public enum AuthErrorCode implements ErrorCode {
     LOGIN_FAIL(HttpStatus.NOT_FOUND, "아이디와 비밀번호를 확인해주세요."),
     NOT_FOUND_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "refresh-token 이 없습니다."),
     UNREGISTER_USER(HttpStatus.BAD_REQUEST, "탈퇴한 회원입니다."),
+    UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "관리자 권한이 없습니다."),
 
     //상품
     NOT_FOUND_ORDER_LIST(HttpStatus.NOT_FOUND, "해당하는 상품 내역이 없습니다."),
