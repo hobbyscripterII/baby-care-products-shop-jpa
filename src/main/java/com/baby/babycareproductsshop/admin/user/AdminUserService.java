@@ -45,7 +45,6 @@ public class AdminUserService {
         if (!passwordEncoder.matches(dto.getUpw(), entity.getUpw())) {
             throw new RestApiException(AuthErrorCode.LOGIN_FAIL);
         }
-        log.info("role : {}", entity.getRole());
         MyPrincipal myPrincipal = MyPrincipal.builder()
                 .iuser(entity.getIuser().intValue())
                 .build();
