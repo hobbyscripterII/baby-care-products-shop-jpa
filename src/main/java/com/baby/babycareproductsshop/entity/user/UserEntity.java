@@ -34,16 +34,15 @@ public class UserEntity extends BaseEntity {
     private String nm;
 
     @NotNull
-    @Column(name = "phone_number", columnDefinition = "CHAR(13)")
+    @Column(columnDefinition = "CHAR(13)")
     private String phoneNumber;
 
     @NotNull
     @Column(length = 50)
     private String email;
 
-    @NotNull
-    @Column(name = "unregister_fl",length = 50)
-    @ColumnDefault("0")
+    @Column(length = 50)
+    @ColumnDefault("'0'")
     private Integer unregisterFl;
 
     @NotNull
@@ -54,7 +53,10 @@ public class UserEntity extends BaseEntity {
 
     @NotNull
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "provider_type")
+    @Column
     @ColumnDefault("'LOCAL'")
     private ProviderTypeEnum providerType;
+
+    @Column(length = 100)
+    private String adminMemo;
 }
