@@ -1,10 +1,12 @@
 package com.baby.babycareproductsshop.mail;
 
 import com.baby.babycareproductsshop.mail.model.EmailMessageDto;
+import com.baby.babycareproductsshop.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,8 +23,9 @@ public class MailController {
 
     @Operation(summary = "메일 발송 기능 테스트(console-log)")
     @PostMapping("/console-test")
-    public void consoleTest(@RequestBody EmailMessageDto dto) {
+    public ApiResponse<?> consoleTest(@RequestBody EmailMessageDto dto) {
         consoleMailService.send(dto);
+        return new ApiResponse<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), dto);
     }
 
     @Operation(summary = "회원 메일 발송 기능")
