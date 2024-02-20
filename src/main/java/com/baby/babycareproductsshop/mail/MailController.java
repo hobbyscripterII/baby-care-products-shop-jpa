@@ -21,14 +21,18 @@ public class MailController {
     private final ConsoleMailService consoleMailService;
     private final HtmlMailService htmlMailService;
 
-    @Operation(summary = "메일 발송 기능 테스트(console-log)")
+    @Operation(summary = "메일 발송 기능 테스트(console-log)", description = """
+            응답값으로 메일 기능 테스트  
+            """)
     @PostMapping("/console-test")
     public ApiResponse<?> consoleTest(@RequestBody EmailMessageDto dto) {
         consoleMailService.send(dto);
         return new ApiResponse<>(String.valueOf(HttpStatus.OK.value()), HttpStatus.OK.getReasonPhrase(), dto);
     }
 
-    @Operation(summary = "회원 메일 발송 기능")
+    @Operation(summary = "회원 메일 발송 기능", description = """
+            실제 메일 발송 기능
+            """)
     @PostMapping
     public void sendTest(@RequestBody EmailMessageDto dto) {
         htmlMailService.send(dto);
