@@ -1,43 +1,46 @@
 package com.baby.babycareproductsshop.entity.review;
 
+import com.baby.babycareproductsshop.entity.CreatedAtEntity;
 import com.baby.babycareproductsshop.entity.order.OrderEntity;
 import com.baby.babycareproductsshop.entity.product.ProductEntity;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
-@Table(name = "t_review")
-public class ReviewEntity {
+@Table(name = "t_review",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {
+                "iorder",
+                "iproduct",
+                "iuser"})})
+public class ReviewEntity extends CreatedAtEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ireview")
-    private Long id;
+    @Column(columnDefinition = "BIGINT UNSIGNED")
+    private Long ireview; // 옵시디언 메모 참고 - t_order_details 테이블 참조하고 있음
+
+    // fk 안걸림(로그 출력 x)
+    @ManyToOne
+    @JoinColumn(name = "iorder", columnDefinition = "BIGINT UNSIGNED", nullable = false)
+    private OrderEntity orderEntity;
 
     @ManyToOne
-    @JoinColumn(name = "iorder", nullable = false)
-    private OrderEntity order;
+    @JoinColumn(name = "iproduct", columnDefinition = "BIGINT UNSIGNED", nullable = false)
+    private ProductEntity productEntity;
 
     @ManyToOne
-    @JoinColumn(name = "iproduct", nullable = false)
-    private ProductEntity product;
+    @JoinColumn(name = "iuser", columnDefinition = "BIGINT UNSIGNED", nullable = false)
+    private UserEntity userEntity;
 
-    @ManyToOne
-    @JoinColumn(name = "iuser")
-    private UserEntity user;
+    @Column(length = 1000)
+    private String reqReviewPic;
 
-    @Column(name = "req_review_pic", length = 1000)
-    private String reviewPictureUrl;
-
-    @Column(name = "contents", length = 300)
+    @Column(length = 300)
     private String contents;
 
-    @Column(name = "product_score", nullable = false)
+    @Column(length = 5, columnDefinition = "TINYINT UNSIGNED", nullable = false)
+    @ColumnDefault("'1'")
     private int productScore;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
 }

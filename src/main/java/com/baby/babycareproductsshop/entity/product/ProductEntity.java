@@ -1,62 +1,56 @@
 package com.baby.babycareproductsshop.entity.product;
 
+import com.baby.babycareproductsshop.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
-
-import java.time.LocalDateTime;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
+//@IdClass(ProductIds.class) // 실무에선 idClass를 더 권장함
 @Table(name = "t_product")
-public class ProductEntity {
-
-
-
+public class ProductEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iproduct",columnDefinition = "BIGINT UNSIGNED")
+    @Column(length = 10, columnDefinition = "BIGINT UNSIGNED", nullable = false, insertable = false, updatable = false)
     private Long iproduct;
 
     @ManyToOne
-    @JoinColumn(columnDefinition = "BIGINT UNSIGNED",nullable = false,name = "imain")
-    private MainCategoryEntity mainCategoryEntity;
+    @JoinColumn(name = "imain", columnDefinition = "BIGINT UNSIGNED")
+    private ProductMainCategoryEntity productMainCategoryEntity;
 
     @ManyToOne
-    @JoinColumn(name="imiddle", referencedColumnName="imiddle",columnDefinition = "BIGINT UNSIGNED")
-    private MiddleCategoryEntity middleCategoryEntity;
+    @JoinColumn(name = "imiddle", columnDefinition = "BIGINT UNSIGNED")
+    private ProductMiddleCategoryEntity middleCategoryEntity;
 
+    @Column(length = 150, nullable = false)
+    private String productNm;
 
-    @Column(name = "product_nm", length = 150, nullable = false)
-    private String productName;
-
-    @Column(name = "product_details", length = 1000)
+    @Column(length = 1000)
     private String productDetails;
 
-    @Column(name = "recommand_age", nullable = false)
-    private int recommendedAge;
+    @Column(length = 4, columnDefinition = "TINYINT UNSIGNED")
+    @ColumnDefault("'0'")
+    private int recommandAge;
 
-    @Column(columnDefinition = "BIGINT UNSIGNED",nullable = false)
+    @Column(length = 10, columnDefinition = "INT UNSIGNED", nullable = false)
     private int price;
 
-    @Column(name = "rep_pic", length = 1000)
+    @Column(length = 1000, nullable = false)
     private String repPic;
 
-    @Column(name = "remained_cnt",columnDefinition = "BIGINT UNSIGNED",nullable = false)
-    private int remainedCount;
+    @Column(columnDefinition = "INT UNSIGNED", length = 10)
+    private int remainedCnt;
 
-    @Column(name = "new_fl",columnDefinition = "BIGINT UNSIGNED" ,nullable = false)
-    private int newFlag;
+    @Column(length = 10, columnDefinition = "INT UNSIGNED")
+    @ColumnDefault("'0'")
+    private int newFl;
 
-    @Column(name = "rc_fl",columnDefinition = "BIGINT UNSIGNED" ,nullable = false)
+    @Column(length = 10, columnDefinition = "INT UNSIGNED")
+    @ColumnDefault("'0'")
     private int rcFl;
 
-    @Column(name = "pop_fl", columnDefinition = "BIGINT UNSIGNED",nullable = false)
+    @Column(length = 10, columnDefinition = "INT UNSIGNED")
+    @ColumnDefault("'0'")
     private int popFl;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
 }
