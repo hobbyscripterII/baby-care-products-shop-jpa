@@ -29,8 +29,8 @@ public class OrderEntity extends BaseEntity {
     @ColumnDefault("'1'")
     private OrderPaymentOptionEntity orderPaymentOptionEntity;
 
-    @Column(length = 20)
-    private String address_nm;
+    @Column(length = 20, name = "address_nm")
+    private String addressNm;
 
     @Column(length = 13)
     private String phoneNumber;
