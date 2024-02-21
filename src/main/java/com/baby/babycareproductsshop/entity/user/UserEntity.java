@@ -43,7 +43,7 @@ public class UserEntity extends BaseEntity {
 
     @Column(length = 50)
     @ColumnDefault("'0'")
-    private Integer unregisterFl;
+    private Long unregisterFl;
 
     @NotNull
     @Enumerated(value = EnumType.STRING)

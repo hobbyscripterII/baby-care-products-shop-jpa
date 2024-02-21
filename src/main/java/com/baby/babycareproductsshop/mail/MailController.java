@@ -22,7 +22,7 @@ public class MailController {
     private final HtmlMailService htmlMailService;
 
     @Operation(summary = "메일 발송 기능 테스트(console-log)", description = """
-            응답값으로 메일 기능 테스트  
+            응답값으로 메일 기능 테스트
             """)
     @PostMapping("/console-test")
     public ApiResponse<?> consoleTest(@RequestBody EmailMessageDto dto) {

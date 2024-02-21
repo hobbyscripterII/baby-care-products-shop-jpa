@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -25,4 +22,15 @@ public class AdminUserController {
     public ApiResponse<?> postSigninAdmin(HttpServletResponse res, @RequestBody UserSignInDto dto) {
         return service.postSigninAdmin(res, dto);
     }
+
+    @Operation(summary = "회원 정보 전체 조회", description = """
+            unregisterFl = 0 : 탈퇴하지 않은 회원 정보 조회<br>
+            unregisterFl = 1 : 탈퇴한 회원 정보 조회
+            """)
+    @GetMapping("/user")
+    public ApiResponse<?> getUserList(@RequestParam(defaultValue = "0") Long unregisterFl) {
+
+        return service.getUserList(unregisterFl);
+    }
+
 }

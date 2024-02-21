@@ -3,6 +3,7 @@ package com.baby.babycareproductsshop.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 @Data
 @AllArgsConstructor
@@ -15,5 +16,11 @@ public class ApiResponse<T> {
 
     public ApiResponse(String code, String message) {
         this(code, message, null);
+    }
+
+    public ApiResponse(T data) {
+        this.code = "200";
+        this.message = "OK";
+        this.data = data;
     }
 }
