@@ -17,7 +17,7 @@ public class UserAddressEntity extends BaseEntity {
     private Long iaddress;
 
     @ManyToOne
-    @JoinColumn(name = "iuser", referencedColumnName = "iuser", columnDefinition = "BIGINT UNSIGNED")
+    @JoinColumn(name = "iuser", columnDefinition = "BIGINT UNSIGNED")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity userEntity;
 

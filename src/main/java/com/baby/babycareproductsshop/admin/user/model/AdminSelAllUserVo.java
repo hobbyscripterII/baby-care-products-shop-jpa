@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class AdminSelUserListVo {
+public class AdminSelAllUserVo {
     @Schema(title = "유저pk")
     private Long iuser;
     @Schema(title = "유저 이름")
