@@ -1,6 +1,6 @@
 package com.baby.babycareproductsshop.entity.user;
 
-import com.baby.babycareproductsshop.entity.BaseEntity;
+import com.baby.babycareproductsshop.entity.CreatedAtEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -10,7 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Data
 @Entity
 @Table(name = "t_user_child")
-public class UserChildEntity extends BaseEntity {
+public class UserChildEntity extends CreatedAtEntity {
     @Id
     @Column(columnDefinition = "BIGINT UNSIGNED")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,12 +2,13 @@ package com.baby.babycareproductsshop.admin.user;
 
 import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserVo;
 import com.baby.babycareproductsshop.admin.user.model.AdminSelUserVo;
-import com.baby.babycareproductsshop.exception.CommonErrorCode;
-import com.baby.babycareproductsshop.response.ApiResponse;
+import com.baby.babycareproductsshop.admin.user.model.AdminUpdUserDto;
 import com.baby.babycareproductsshop.common.*;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
 import com.baby.babycareproductsshop.exception.AuthErrorCode;
+import com.baby.babycareproductsshop.exception.CommonErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
+import com.baby.babycareproductsshop.response.ApiResponse;
 import com.baby.babycareproductsshop.security.AuthenticationFacade;
 import com.baby.babycareproductsshop.security.JwtTokenProvider;
 import com.baby.babycareproductsshop.security.MyPrincipal;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -120,5 +122,16 @@ public class AdminUserService {
                         .build()).toList())
                 .build();
         return new ApiResponse<>(result);
+    }
+
+    @Transactional
+    public ApiResponse<?> patchUserInfo(long iuser, AdminUpdUserDto dto) {
+        UserEntity entity = userRepository.getReferenceById(iuser);
+        if (StringUtils.hasText(dto.getUpw())) {
+            String hashedUpw = passwordEncoder.encode(dto.getUpw());
+            entity.setUpw(hashedUpw);
+        }
+        entity.setAdminMemo(dto.getAdminMemo());
+        return new ApiResponse<>(null);
     }
 }

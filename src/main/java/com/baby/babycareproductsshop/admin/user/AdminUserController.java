@@ -1,10 +1,12 @@
 package com.baby.babycareproductsshop.admin.user;
 
+import com.baby.babycareproductsshop.admin.user.model.AdminUpdUserDto;
 import com.baby.babycareproductsshop.response.ApiResponse;
 import com.baby.babycareproductsshop.user.model.UserSignInDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -36,5 +38,11 @@ public class AdminUserController {
     @GetMapping("/user/{iuser}")
     public ApiResponse<?> getUserInfo(@PathVariable long iuser) {
         return service.getUserInfo(iuser);
+    }
+
+    @Operation(summary = "관리자에 의한 회원 정보 수정")
+    @PatchMapping("/user/{iuser}")
+    public ApiResponse<?> patchUserInfo(@PathVariable long iuser, @RequestBody @Valid AdminUpdUserDto dto) {
+        return service.patchUserInfo(iuser, dto);
     }
 }
