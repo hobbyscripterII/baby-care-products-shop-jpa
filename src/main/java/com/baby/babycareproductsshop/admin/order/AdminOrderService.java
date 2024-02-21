@@ -1,4 +1,4 @@
-package com.baby.babycareproductsshop.admin;
+package com.baby.babycareproductsshop.admin.order;
 
 import com.baby.babycareproductsshop.security.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;

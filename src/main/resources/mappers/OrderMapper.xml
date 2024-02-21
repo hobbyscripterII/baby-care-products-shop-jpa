@@ -32,7 +32,7 @@
     <update id="updOrder">
         UPDATE t_order
         SET iaddress = #{iaddress},
-        addressee_nm = #{addresseeNm},
+        address_nm = #{addresseeNm},
         email = #{email},
         phone_number = #{phoneNumber},
         ipayment_option = #{ipaymentOption},
@@ -42,7 +42,7 @@
     </update>
 
     <select id="selConfirmOrder">
-        SELECT A.iorder, A.addressee_nm, A.phone_number, A.email, A.full_address,
+        SELECT A.iorder, A.address_nm, A.phone_number, A.email, A.full_address,
         C.payment_option, DATE(A.created_at) as createdAt
         FROM t_order A
         JOIN t_address B

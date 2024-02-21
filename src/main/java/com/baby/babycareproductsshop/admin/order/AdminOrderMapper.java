@@ -1,4 +1,4 @@
-package com.baby.babycareproductsshop.admin;
+package com.baby.babycareproductsshop.admin.order;
 
 import org.apache.ibatis.annotations.Mapper;
 
