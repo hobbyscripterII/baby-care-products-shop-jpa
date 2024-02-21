@@ -1,6 +1,7 @@
 package com.baby.babycareproductsshop.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -9,8 +10,11 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public class ApiResponse<T> {
 //    private final String path;
+    @Schema(title = "응답 코드")
     private final String code;
+    @Schema(title = "코드 메세지")
     private final String message;
+    @Schema(title = "응답 데이터")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private final T data;
 
