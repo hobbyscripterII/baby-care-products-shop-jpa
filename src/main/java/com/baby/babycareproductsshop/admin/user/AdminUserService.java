@@ -111,6 +111,7 @@ public class AdminUserService {
                 .registeredAt(entity.getCreatedAt())
                 .email(entity.getEmail())
                 .phoneNumber(entity.getPhoneNumber())
+                .adminMemo(entity.getAdminMemo())
                 .addresses(entity.getAddressEntityList().stream().map(item -> UserInsAddressDto.builder()
                         .zipCode(item.getZipCode())
                         .address(item.getAddress())
