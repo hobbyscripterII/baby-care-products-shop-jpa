@@ -29,8 +29,12 @@ public class AdminUserController {
             """)
     @GetMapping("/user")
     public ApiResponse<?> getUserList(@RequestParam(defaultValue = "0") Long unregisterFl) {
-
         return service.getUserList(unregisterFl);
     }
 
+    @Operation(summary = "회원 정보 수정 시 기존 데이터 호출")
+    @GetMapping("/user/{iuser}")
+    public ApiResponse<?> getUserInfo(@PathVariable long iuser) {
+        return service.getUserInfo(iuser);
+    }
 }

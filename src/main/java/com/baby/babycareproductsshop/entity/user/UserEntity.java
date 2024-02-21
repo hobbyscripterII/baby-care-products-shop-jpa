@@ -6,7 +6,11 @@ import com.baby.babycareproductsshop.entity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -59,4 +63,12 @@ public class UserEntity extends BaseEntity {
 
     @Column(length = 100)
     private String adminMemo;
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.PERSIST)
+    private List<UserAddressEntity> addressEntityList = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.PERSIST)
+    private List<UserChildEntity> childEntityList = new ArrayList<>();
 }
