@@ -1,5 +1,6 @@
 package com.baby.babycareproductsshop.admin.user;
 
+import com.baby.babycareproductsshop.admin.user.model.AdminSelUserListVo;
 import com.baby.babycareproductsshop.response.ApiResponse;
 import com.baby.babycareproductsshop.common.*;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +37,8 @@ public class AdminUserService {
     private final AuthenticationFacade authenticationFacade;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
+
+    private final HttpStatus httpStatus = HttpStatus.OK;
 
     public ApiResponse<?> postSigninAdmin(HttpServletResponse res, UserSignInDto dto) {
         Optional<UserEntity> optEntity = userRepository.findByProviderTypeAndUid(ProviderTypeEnum.LOCAL, dto.getUid());
@@ -63,12 +67,26 @@ public class AdminUserService {
 
         String redisRt = redisTemplate.opsForValue().get(iuser);
         log.info("redisRt : {}", redisRt);
-        HttpStatus httpStatus = HttpStatus.OK;
         UserSignInVo result = UserSignInVo.builder()
-                .result(1)
+                .result(Const.SUCCESS)
                 .nm(entity.getNm())
                 .accessToken(at)
                 .build();
-        return new ApiResponse<>(String.valueOf(httpStatus.value()), httpStatus.getReasonPhrase(), result);
+        return new ApiResponse<>(result);
+    }
+
+    public ApiResponse<?> getUserList(Long unregisterFl) {
+        List<UserEntity> entityList = userRepository.findAllByUnregisterFl(unregisterFl);
+        List<AdminSelUserListVo> result = entityList.stream().filter(item -> item.getIuser() != 1)
+                .map(item -> AdminSelUserListVo.builder()
+                        .nm(item.getNm())
+                        .iuser(item.getIuser())
+                        .email(item.getEmail())
+                        .phoneNumber(item.getPhoneNumber())
+                        .registeredAt(unregisterFl == 0 ? item.getCreatedAt() : null)
+                        .unregisteredAt(unregisterFl == 1 ? item.getUpdatedAt() : null)
+                        .build()
+                ).toList();
+        return new ApiResponse<>(result);
     }
 }
