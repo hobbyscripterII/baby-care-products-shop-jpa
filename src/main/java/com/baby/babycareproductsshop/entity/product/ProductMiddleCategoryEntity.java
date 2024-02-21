@@ -4,15 +4,24 @@ import com.baby.babycareproductsshop.entity.CreatedAtEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Data
 @Entity
-@Table(name = "t_middle_category")
+@Table(name = "t_middle_category", uniqueConstraints={
+        @UniqueConstraint(columnNames = {"imain", "imiddle"})
+})
+@Data
 public class ProductMiddleCategoryEntity extends CreatedAtEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(length = 10, columnDefinition = "BIGINT UNSIGNED")
-    private Long imiddle;
+    @Column(name = "candidate_key",columnDefinition = "BIGINT UNSIGNED")
+    private Long candidateKey;
 
-    @Column(length = 20)
+    @ManyToOne
+    @JoinColumn(name = "imain",columnDefinition = "BIGINT UNSIGNED")
+    private ProductMainCategoryEntity productMainCategory;
+
+    @Column(name = "imiddle", columnDefinition = "BIGINT UNSIGNED")
+    private int imiddle;
+
+    @Column(columnDefinition = "BIGINT UNSIGNED",name = "middle_category",length = 20, nullable = false)
     private String middleCategory;
 }

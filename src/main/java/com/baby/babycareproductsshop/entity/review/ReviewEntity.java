@@ -41,6 +41,9 @@ public class ReviewEntity extends CreatedAtEntity {
     private String contents;
 
     @Column(length = 5, columnDefinition = "TINYINT UNSIGNED", nullable = false)
-    @ColumnDefault("'1'")
+    @ColumnDefault("'0'")
     private int productScore;
+
+    @Column(name = "admin_memo",length = 2500)
+    private String adminMemo;
 }
