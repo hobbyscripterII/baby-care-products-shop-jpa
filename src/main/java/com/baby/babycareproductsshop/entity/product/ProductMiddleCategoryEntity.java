@@ -12,16 +12,16 @@ import lombok.Data;
 public class ProductMiddleCategoryEntity extends CreatedAtEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "candidate_key",columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "candidate_key", columnDefinition = "BIGINT UNSIGNED")
     private Long candidateKey;
 
     @ManyToOne
-    @JoinColumn(name = "imain",columnDefinition = "BIGINT UNSIGNED")
+    @JoinColumn(name = "imain", columnDefinition = "BIGINT UNSIGNED")
     private ProductMainCategoryEntity productMainCategory;
 
     @Column(name = "imiddle", columnDefinition = "BIGINT UNSIGNED")
     private int imiddle;
 
-    @Column(columnDefinition = "BIGINT UNSIGNED",name = "middle_category",length = 20, nullable = false)
+    @Column(name = "middle_category", nullable = false)
     private String middleCategory;
 }
