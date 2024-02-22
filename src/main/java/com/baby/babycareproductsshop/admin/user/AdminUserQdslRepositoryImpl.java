@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -51,10 +52,9 @@ public class AdminUserQdslRepositoryImpl implements AdminUserQdslRepository {
 //                    : betweenCreatedAt(LocalDateTime.parse(dto.getBefore(), formatter), LocalDateTime.parse(dto.getAfter(), formatter)));
 //        }
         if (dto.getBefore() != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-            query.where(dto.getBefore() == null ? betweenCreatedAt(LocalDateTime.from(dto.getBefore()))
+            query.where(dto.getAfter() == null ? betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN))
 //            query.where(!StringUtils.hasLength(dto.getAfter()) ? betweenCreatedAt(LocalDateTime.now().minusMonths(1))
-                    : betweenCreatedAt(LocalDateTime.from(dto.getBefore()), LocalDateTime.from(dto.getAfter())));
+                    : betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN), LocalDateTime.of(dto.getAfter(), LocalTime.MAX).withNano(0)));
         }
         if (StringUtils.hasText(dto.getPhoneNumber())) {
             query.where(likePhoneNumber(dto.getPhoneNumber()));

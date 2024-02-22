@@ -20,9 +20,9 @@ public class AdminSelAllUserDto {
             2 : 이름 검색
             """)
     private long keywordType;
-    @Schema(title = "기간 검색 시작 기간")
+    @Schema(title = "기간 검색 시작 기간", defaultValue = "null")
     private LocalDate before;
-    @Schema(title = "기간 검색 종료 기간")
+    @Schema(title = "기간 검색 종료 기간", defaultValue = "null")
     private LocalDate after;
     @Schema(title = "전화번호 검색")
     private String phoneNumber;
