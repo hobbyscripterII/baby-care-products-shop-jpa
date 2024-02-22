@@ -1,9 +1,14 @@
 package com.baby.babycareproductsshop.admin.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class OrderProductVo {
     @Schema(title = "이미지", description = "")
     private String repPic;
@@ -13,4 +18,6 @@ public class OrderProductVo {
     private int cnt;
     @Schema(title = "처리 상태", description = "")
     private int processState;
+    @JsonIgnore
+    private int amount;
 }

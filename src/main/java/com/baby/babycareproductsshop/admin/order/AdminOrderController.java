@@ -2,11 +2,19 @@ package com.baby.babycareproductsshop.admin.order;
 
 import com.baby.babycareproductsshop.admin.model.*;
 import com.baby.babycareproductsshop.common.ResVo;
+import com.baby.babycareproductsshop.common.Utils;
+import com.baby.babycareproductsshop.exception.AuthErrorCode;
+import com.baby.babycareproductsshop.exception.RestApiException;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import static com.baby.babycareproductsshop.entity.order.QOrderEntity.orderEntity;
 
 @Slf4j
 @RestController
@@ -16,17 +24,18 @@ import org.springframework.web.bind.annotation.*;
 public class AdminOrderController {
     private final AdminOrderService service;
 
+
     @PutMapping
     @Operation(summary = "주문 일괄 처리",
             description = "<ul><strong>iorders - 주문 번호(PK)</strong></ul>" +
                     "<ul><strong>processState</strong><br>\n" +
                     "<li>전체 - 0</li>\n" +
-                    "<li>어제 - 1</li>\n" +
-                    "<li>일주일 - 2</li>\n" +
-                    "<li>지난 달 - 3</li>\n" +
-                    "<li>1개월 - 4</li>\n" +
-                    "<li>3개월 - 5</li>\n" +
-                    "<li>전체 - 6</li></ul>\n")
+                    "<li>입금 대기 - 1</li>\n" +
+                    "<li>배송 준비중 - 2</li>\n" +
+                    "<li>배송중 - 3</li>\n" +
+                    "<li>배송완료 - 4</li>\n" +
+                    "<li>취소 - 5</li>\n" +
+                    "<li>반품 - 6</li></ul>\n")
     public ResVo orderBatchProcess(@RequestBody OrderBatchProcessDto dto) {
         return service.orderBatchProcess(dto);
     }
@@ -58,19 +67,17 @@ public class AdminOrderController {
                     "<li>신용카드 - 2</li></ul>\n" +
                     "<ul><strong>processState</strong><br>\n" +
                     "<li>전체 - 0</li>\n" +
-                    "<li>어제 - 1</li>\n" +
-                    "<li>일주일 - 2</li>\n" +
-                    "<li>지난 달 - 3</li>\n" +
-                    "<li>1개월 - 4</li>\n" +
-                    "<li>3개월 - 5</li>\n" +
-                    "<li>전체 - 6</li></ul>\n" +
+                    "<li>입금 대기 - 1</li>\n" +
+                    "<li>배송 준비중 - 2</li>\n" +
+                    "<li>배송중 - 3</li>\n" +
+                    "<li>배송완료 - 4</li></ul>\n" +
                     "<ul><strong>sort</strong><br>\n" +
                     "<li>주문일 역순 - 0</li>\n" +
                     "<li>주문일 순 - 1</li>\n" +
                     "<li>처리일 역순 - 2</li>\n" +
                     "<li>처리일 순 - 3</li></ul>\n" +
                     "\n")
-    public OrderListVo orderList(OrderFilterDto dto) {
+    public List<OrderListVo> orderList(OrderFilterDto dto) {
         return service.orderList(dto);
     }
 
@@ -105,9 +112,14 @@ public class AdminOrderController {
                     "<li>처리일 역순 - 2</li>\n" +
                     "<li>처리일 순 - 3</li></ul>\n" +
                     "\n")
-    public OrderDetailsListVo orderDetailsList(@RequestBody OrderSmallFilterDto dto) {
+    public List<OrderDetailsListVo> orderDetailsList(@RequestBody OrderSmallFilterDto dto) {
         log.info("dto = {}", dto);
-        return service.orderDetailsList(dto);
+
+        // 검색어 타입 체크
+        if (searchDataTypeCheck(dto.getSearchCategory(), dto.getKeyword())) {
+            return service.orderDetailsList(dto);
+        }
+        return null; // 추후 수정
     }
 
     @GetMapping("/delete")
@@ -141,7 +153,7 @@ public class AdminOrderController {
                     "<li>처리일 역순 - 2</li>\n" +
                     "<li>처리일 순 - 3</li></ul>\n" +
                     "\n")
-    public OrderDeleteVo orderDeleteList(@RequestBody OrderSmallFilterDto dto) {
+    public List<OrderDeleteVo> orderDeleteList(@RequestBody OrderSmallFilterDto dto) {
         log.info("dto = {}", dto);
         return service.orderDeleteList(dto);
     }
@@ -177,7 +189,7 @@ public class AdminOrderController {
                     "<li>처리일 역순 - 2</li>\n" +
                     "<li>처리일 순 - 3</li></ul>\n" +
                     "\n")
-    public OrderRefundListVo orderRefundList(@RequestBody OrderSmallFilterDto dto) {
+    public List<OrderRefundListVo> orderRefundList(@RequestBody OrderSmallFilterDto dto) {
         log.info("dto = {}", dto);
         return service.orderRefundList(dto);
     }
@@ -217,8 +229,27 @@ public class AdminOrderController {
                     "<li>처리일 역순 - 2</li>\n" +
                     "<li>처리일 순 - 3</li></ul>\n" +
                     "\n")
-    public OrderMemoListVo adminMemo(@RequestBody OrderMemoListDto dto) {
+    public List<OrderMemoListVo> adminMemo(@RequestBody OrderMemoListDto dto) {
         log.info("dto = {}", dto);
-        return service.adminMemo(dto);
+        return service.adminMemoList(dto);
+    }
+
+    private boolean searchDataTypeCheck(int searchCategory, String keyword) {
+        boolean result = false;
+
+        switch (searchCategory) {
+            case 0, 1:
+                Integer temp = Integer.valueOf(keyword);
+                if (temp instanceof Integer) {
+                    result = true;
+                } else {
+                    result = false;
+                }
+            case 2, 3, 4, 5, 6:
+                result = keyword != null;
+                break;
+        }
+        log.info("result = {}", result);
+        return result;
     }
 }

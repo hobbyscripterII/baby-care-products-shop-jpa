@@ -41,7 +41,10 @@ public enum AuthErrorCode implements ErrorCode {
     NOT_FOUND_PRODUCT_PICS(HttpStatus.BAD_REQUEST, "상품 사진을 선택해주세요."),
 
     // 관리자 페이지 - 주문
+    SEARCH_FAILED_ERROR(HttpStatus.NOT_FOUND, "검색어 타입이 올바르지 않습니다."),
+    PROCESS_STATE_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 주문 처리 코드를 찾을 수 없습니다."),
     ORDER_BATCH_PROCESS_FAIL(HttpStatus.NOT_FOUND, "주문 일괄 처리에 실패했습니다.");
+
     private final HttpStatus httpStatus;
     private final String message;
 }

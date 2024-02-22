@@ -1,10 +1,13 @@
 package com.baby.babycareproductsshop.admin.order;
 
 import com.baby.babycareproductsshop.admin.model.*;
+import com.baby.babycareproductsshop.admin.product.AdminProductRepository;
 import com.baby.babycareproductsshop.common.Const;
 import com.baby.babycareproductsshop.common.ProcessState;
 import com.baby.babycareproductsshop.common.ResVo;
+import com.baby.babycareproductsshop.entity.order.OrderDetailsEntity;
 import com.baby.babycareproductsshop.entity.order.OrderEntity;
+import com.baby.babycareproductsshop.entity.product.ProductEntity;
 import com.baby.babycareproductsshop.exception.AuthErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
 import com.baby.babycareproductsshop.security.AuthenticationFacade;
@@ -22,39 +25,21 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class AdminOrderService {
-    private final AdminOrderQdlsRepository repository;
+    private final AdminOrderRepository adminOrderRepository;
+    private final AdminOrderDetailsRepository adminOrderDetailsRepository;
 
-    public OrderListVo orderList(OrderFilterDto dto) {
-        return null;
-    }
-
-    public OrderDetailsListVo orderDetailsList(OrderSmallFilterDto dto) {
-        return null;
-    }
-
-    public OrderDeleteVo orderDeleteList(OrderSmallFilterDto dto) {
-        return null;
-    }
-
-    public OrderRefundListVo orderRefundList(OrderSmallFilterDto dto) {
-        return null;
-    }
-
-    public OrderMemoListVo adminMemo(OrderMemoListDto dto) {
-        return null;
-    }
-
-    @Transactional
+    @Transactional // 주문 일괄 처리
     public ResVo orderBatchProcess(OrderBatchProcessDto dto) {
-        try {
+        // >>>>> 정상적인 주문 처리 상태 코드가 맞는지 확인
+        if (processStateCheck(dto.getProcessState())) {
             List<Integer> list = dto.getIorders()
                     .stream()
                     .map(iorder -> {
-                        OrderEntity entity = repository.getReferenceById(iorder.longValue());
+                        OrderEntity entity = adminOrderRepository.getReferenceById(iorder.longValue());
                         int processState = changeProcessState(dto.getProcessState());
                         entity.setIorder(iorder.longValue());
                         entity.setProcessState(processState); // 1. 값 변환
-                        repository.save(entity); // 2. 주문 처리 상태 수정
+                        adminOrderRepository.save(entity); // 2. 주문 처리 상태 수정
                         return iorder.intValue();
                     })
                     .toList();
@@ -65,10 +50,65 @@ public class AdminOrderService {
             } else {
                 throw new RestApiException(AuthErrorCode.ORDER_BATCH_PROCESS_FAIL);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RestApiException(AuthErrorCode.ORDER_BATCH_PROCESS_FAIL);
+        } else {
+            throw new RestApiException(AuthErrorCode.PROCESS_STATE_CODE_NOT_FOUND);
         }
+    }
+
+    public List<OrderListVo> orderList(OrderFilterDto dto) {
+        return null;
+    }
+
+    // select문은 @Transactional 필요 x(<- 어노테이션은 rollback이 있을 수 있는 곳만)
+    /**
+     * iorder : 1
+     * iorder에 종속된 idetails : N
+     * idetails가 갖고있는 iproduct : 1
+     */
+    public List<OrderDetailsListVo> orderDetailsList(OrderSmallFilterDto dto) {
+        return adminOrderRepository.orderDetailsList(dto)
+                .stream()
+                .map(orderItem -> {
+                    List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
+                            .map(productItem -> OrderProductVo.builder()
+                                    .repPic(productItem.getProductEntity().getRepPic())
+                                    .productNm(productItem.getProductEntity().getProductNm())
+                                    .cnt(productItem.getProductCnt())
+                                    .processState(productItem.getOrderEntity().getProcessState())
+                                    .amount(productItem.getProductEntity().getPrice())
+                                    .build())
+                            .toList();
+
+                    OrderDetailsListVo vo = new OrderDetailsListVo();
+                    vo.setIorder(orderItem.getIorder().intValue());
+                    vo.setOrderedAt(orderItem.getCreatedAt().toString());
+                    vo.setProducts(orderProductVoList);
+                    vo.setOrdered(orderItem.getCreatedAt().toString());
+                    vo.setRecipient(orderItem.getUserEntity().getNm());
+                    vo.setTotalAmount(orderProductVoList.stream()
+                                        .mapToInt(OrderProductVo::getAmount)
+                                        .sum());
+                    vo.setPayCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue());
+                    vo.setBuyComfirmFl(0); // 구매 확정 여부(자동화 추가)
+                    return vo;
+                })
+                .toList();
+    }
+
+    public List<OrderDeleteVo> orderDeleteList(OrderSmallFilterDto dto) {
+        return null;
+    }
+
+    public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto) {
+        return null;
+    }
+
+    public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto) {
+        return null;
+    }
+
+    private boolean processStateCheck(int processState) {
+        return processState > 0 && processState < 4;
     }
 
     private int changeProcessState(int processState) {
