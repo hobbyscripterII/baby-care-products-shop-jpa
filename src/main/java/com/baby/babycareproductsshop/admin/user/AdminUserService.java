@@ -1,5 +1,6 @@
 package com.baby.babycareproductsshop.admin.user;
 
+import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserDto;
 import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserVo;
 import com.baby.babycareproductsshop.admin.user.model.AdminSelUserVo;
 import com.baby.babycareproductsshop.admin.user.model.AdminUpdUserDto;
@@ -20,6 +21,7 @@ import com.baby.babycareproductsshop.user.model.UserSignInVo;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,6 +46,7 @@ public class AdminUserService {
     private final AuthenticationFacade authenticationFacade;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
+    private final AdminUserRepository adminUserRepository;
 
     private final HttpStatus httpStatus = HttpStatus.OK;
 
@@ -83,16 +86,18 @@ public class AdminUserService {
         return new ApiResponse<>(result);
     }
 
-    public ApiResponse<?> getUserList(Long unregisterFl) {
-        List<UserEntity> entityList = userRepository.findAllByUnregisterFl(unregisterFl);
+    public ApiResponse<?> getUserList(AdminSelAllUserDto dto, Pageable pageable) {
+//        List<UserEntity> entityList = userRepository.findAllByUnregisterFl(unregisterFl);
+        List<UserEntity> entityList = adminUserRepository.selUserAll(dto);
+        log.info("userEntity : {}", entityList);
         List<AdminSelAllUserVo> result = entityList.stream().filter(item -> item.getIuser() != 1)
                 .map(item -> AdminSelAllUserVo.builder()
                         .nm(item.getNm())
                         .iuser(item.getIuser())
                         .email(item.getEmail())
                         .phoneNumber(item.getPhoneNumber())
-                        .registeredAt(unregisterFl == 0 ? item.getCreatedAt() : null)
-                        .unregisteredAt(unregisterFl == 1 ? item.getUpdatedAt() : null)
+                        .registeredAt(dto.getUnregisteredFl() == 0 ? item.getCreatedAt() : null)
+                        .unregisteredAt(dto.getUnregisteredFl() == 1 ? item.getUpdatedAt() : null)
                         .build()
                 ).toList();
         return new ApiResponse<>(result);

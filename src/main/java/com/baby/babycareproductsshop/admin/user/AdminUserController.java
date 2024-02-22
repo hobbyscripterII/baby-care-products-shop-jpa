@@ -1,5 +1,6 @@
 package com.baby.babycareproductsshop.admin.user;
 
+import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserDto;
 import com.baby.babycareproductsshop.admin.user.model.AdminUpdUserDto;
 import com.baby.babycareproductsshop.response.ApiResponse;
 import com.baby.babycareproductsshop.user.model.UserSignInDto;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -30,8 +32,8 @@ public class AdminUserController {
             unregisterFl = 1 : 탈퇴한 회원 정보 조회
             """)
     @GetMapping("/user")
-    public ApiResponse<?> getUserList(@RequestParam(defaultValue = "0") Long unregisterFl) {
-        return service.getUserList(unregisterFl);
+    public ApiResponse<?> getUserList(AdminSelAllUserDto dto) {
+        return service.getUserList(dto, null);
     }
 
     @Operation(summary = "회원 정보 수정 시 기존 데이터 호출")
