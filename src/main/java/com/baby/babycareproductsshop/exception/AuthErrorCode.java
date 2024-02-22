@@ -11,7 +11,7 @@ public enum AuthErrorCode implements ErrorCode {
     // 리뷰
     NOT_ALLOWED_PICS_SIZE(HttpStatus.NOT_FOUND, "사진은 최대 5장까지만 넣을 수 있습니다."),
     DEL_REVIEW_NOT_FAIL(HttpStatus.NOT_FOUND, "리뷰가 삭제되지 않았습니다."),
-    REVIEW_NOT_PRODUCT_SCORE_OR_CONTENTS_PIC_OVER_REVIEW(HttpStatus.BAD_REQUEST, "사용하신 제품의 별점과 사용 후기를 알려주세요!!"),
+    REVIEW_NOT_PRODUCT_SCORE_OR_CONTENTS_PIC_OVER_REVIEW(HttpStatus.BAD_REQUEST, "사용하신 제품의 별점과 사용 후기를 알려주세요."),
     UPLOAD_REVIEW_REGISTRATION_REVIEW(HttpStatus.OK, "리뷰가 정상적으로 등록되었습니다."),
 
     // 게시판 / 댓글
@@ -36,10 +36,12 @@ public enum AuthErrorCode implements ErrorCode {
     UNREGISTER_USER(HttpStatus.BAD_REQUEST, "탈퇴한 회원입니다."),
     UNAUTHORIZED_USER(HttpStatus.UNAUTHORIZED, "관리자 권한이 없습니다."),
 
-    //상품
+    // 상품
     NOT_FOUND_ORDER_LIST(HttpStatus.NOT_FOUND, "해당하는 상품 내역이 없습니다."),
-    NOT_FOUND_PRODUCT_PICS(HttpStatus.BAD_REQUEST, "상품 사진을 선택해주세요.");
+    NOT_FOUND_PRODUCT_PICS(HttpStatus.BAD_REQUEST, "상품 사진을 선택해주세요."),
 
+    // 관리자 페이지 - 주문
+    ORDER_BATCH_PROCESS_FAIL(HttpStatus.NOT_FOUND, "주문 일괄 처리에 실패했습니다.");
     private final HttpStatus httpStatus;
     private final String message;
 }
