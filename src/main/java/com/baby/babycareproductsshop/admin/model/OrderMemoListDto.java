@@ -10,4 +10,5 @@ public class OrderMemoListDto {
     private String endDate; // 종료 날짜
     private int dateFl; // 기간 선택
     private int processState; // 주문 상태
+    private int sort; // 정렬
 }

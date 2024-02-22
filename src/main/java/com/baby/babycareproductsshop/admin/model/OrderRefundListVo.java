@@ -15,9 +15,9 @@ public class OrderRefundListVo {
     private String productNm;
     @Schema(title = "수량", description = "")
     private int cnt;
-    @Schema(title = "상품금액", description = "")
+    @Schema(title = "상품 금액", description = "")
     private int productPrice;
-    @Schema(title = "처리상태", description = "")
+    @Schema(title = "처리 상태", description = "")
     private int processState;
     @Schema(title = "반품일시", description = "")
     private String refundedAt;
