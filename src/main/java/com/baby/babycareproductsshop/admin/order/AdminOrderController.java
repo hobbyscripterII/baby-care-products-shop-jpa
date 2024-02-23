@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static com.baby.babycareproductsshop.entity.order.QOrderEntity.orderEntity;
 
@@ -117,9 +118,14 @@ public class AdminOrderController {
 
         // 검색어 타입 체크
         if (searchDataTypeCheck(dto.getSearchCategory(), dto.getKeyword())) {
+            // 휴대폰 번호로 검색 시 휴대폰 번호 유효성 체크
+            if (dto.getSearchCategory() == 6) {
+                String formatPhoneNumber = phoneNumberFormatConverter(dto.getKeyword());
+                dto.setKeyword(formatPhoneNumber);
+            }
             return service.orderDetailsList(dto);
         }
-        return null; // 추후 수정
+        throw new RestApiException(AuthErrorCode.SEARCH_FAILED_ERROR);
     }
 
     @GetMapping("/delete")
@@ -232,6 +238,31 @@ public class AdminOrderController {
     public List<OrderMemoListVo> adminMemo(@RequestBody OrderMemoListDto dto) {
         log.info("dto = {}", dto);
         return service.adminMemoList(dto);
+    }
+
+    private String phoneNumberFormatConverter(String phoneNumber) {
+        String formatPhoneNumber = null;
+        // 휴대폰 번호 확인
+        if (phoneNumber.length() == 11 || phoneNumber.length() == 13 && phoneNumber.startsWith("010") || phoneNumber.startsWith("011")) {
+            if (phoneNumber.length() == 11) {
+                formatPhoneNumber =
+                        phoneNumber.substring(0, 3) + "-" +
+                        phoneNumber.substring(3, 7) + "-" +
+                        phoneNumber.substring(7);
+            } else {
+                String pattern = "^\\d{3}-\\d{3,4}-\\d{4}$";
+                boolean result = Pattern.matches(pattern, phoneNumber);
+                log.info("phoneNumber = {} result = {}", phoneNumber, result);
+                if(result) {
+                    return phoneNumber;
+                } else {
+                    throw new RestApiException(AuthErrorCode.SEARCH_FAILED_ERROR);
+                }
+            }
+        } else {
+            throw new RestApiException(AuthErrorCode.SEARCH_FAILED_ERROR);
+        }
+        return formatPhoneNumber;
     }
 
     private boolean searchDataTypeCheck(int searchCategory, String keyword) {
