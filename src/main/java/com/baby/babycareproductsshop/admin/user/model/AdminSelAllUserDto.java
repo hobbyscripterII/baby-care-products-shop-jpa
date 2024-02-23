@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
+@Schema(title = "[Get]api/admin/user request",description = "관리자페이지에서 회원 정보 조회 요청 데이터")
 public class AdminSelAllUserDto {
     @Schema(title = "회원 검색 기준 구분값", description = """
             unregisterFl = 0 : 탈퇴하지 않은 회원 정보 조회<br>
