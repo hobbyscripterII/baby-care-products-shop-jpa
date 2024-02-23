@@ -4,6 +4,7 @@ import com.baby.babycareproductsshop.admin.CommonSearchCondition;
 import com.baby.babycareproductsshop.admin.model.OrderFilterDto;
 import com.baby.babycareproductsshop.admin.model.OrderMemoListDto;
 import com.baby.babycareproductsshop.admin.model.OrderSmallFilterDto;
+import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderSalesDto;
 import com.baby.babycareproductsshop.entity.order.OrderEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -21,5 +22,9 @@ import static com.baby.babycareproductsshop.entity.product.QProductEntity.produc
 public class AdminOrderQdlsRepositoryImpl_ extends CommonSearchCondition implements AdminOrderQdlsRepository_ {
     private final JPAQueryFactory jpaQueryFactory;
 
+    @Override
+    public List<OrderEntity> selOrderSales(AdminSelOrderSalesDto dto) {
 
+        return null;
+    }
 }
