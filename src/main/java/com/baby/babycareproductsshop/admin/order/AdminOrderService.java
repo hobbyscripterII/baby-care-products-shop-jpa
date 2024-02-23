@@ -83,7 +83,7 @@ public class AdminOrderService {
                     vo.setIorder(orderItem.getIorder().intValue());
                     vo.setOrderedAt(orderItem.getCreatedAt().toString());
                     vo.setProducts(orderProductVoList);
-                    vo.setOrdered(orderItem.getCreatedAt().toString());
+                    vo.setOrdered(orderItem.getUserEntity().getNm());
                     vo.setRecipient(orderItem.getUserEntity().getNm());
                     vo.setTotalAmount(orderProductVoList.stream()
                                         .mapToInt(OrderProductVo::getAmount)
