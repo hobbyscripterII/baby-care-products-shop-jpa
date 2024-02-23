@@ -11,7 +11,7 @@ import org.springframework.data.web.config.PageableHandlerMethodArgumentResolver
 @EnableJpaAuditing
 @SpringBootApplication
 @ConfigurationPropertiesScan
-@EnableJpaRepositories(basePackages = {"com.baby.babycareproductsshop"})
+//@EnableJpaRepositories(basePackages = {"com.baby.babycareproductsshop"})
 public class BabyCareProductsShopApplication {
 
     public static void main(String[] args) {
