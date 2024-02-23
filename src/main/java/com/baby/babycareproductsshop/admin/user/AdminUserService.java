@@ -1,9 +1,6 @@
 package com.baby.babycareproductsshop.admin.user;
 
-import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserDto;
-import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserVo;
-import com.baby.babycareproductsshop.admin.user.model.AdminSelUserVo;
-import com.baby.babycareproductsshop.admin.user.model.AdminUpdUserDto;
+import com.baby.babycareproductsshop.admin.user.model.*;
 import com.baby.babycareproductsshop.common.*;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
 import com.baby.babycareproductsshop.exception.AuthErrorCode;
@@ -32,6 +29,8 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static com.baby.babycareproductsshop.common.Const.rtName;
 
@@ -139,5 +138,25 @@ public class AdminUserService {
         }
         entity.setAdminMemo(dto.getAdminMemo());
         return new ApiResponse<>(null);
+    }
+
+    public ApiResponse<?> getUserSignupStatistics(AdminSelUserSignupDto dto) {
+        List<UserEntity> entityList = adminUserRepository.selUserSignupStatistics(dto);
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        for (UserEntity entity : entityList) {
+            atomicInteger.set(atomicInteger.get() + entity.getIuser().intValue());
+        }
+        List<AdminSelUserSignupVo> result = entityList.stream().map(item ->
+                        AdminSelUserSignupVo.builder()
+                                .date(dto.getMonth() == 0 ?
+                                        dto.getYear() + "-" + item.getCreatedAt().getMonthValue()
+                                        : dto.getYear() + "-" + dto.getMonth() + "-" + item.getCreatedAt().getDayOfMonth())
+                                .registerCnt(item.getIuser().intValue())
+                                .totalRegisterCnt(atomicInteger.get())
+                                .registerRate(String.format("%.2f", (double) item.getIuser().intValue() / atomicInteger.get()))
+                                .build()
+                )
+                .collect(Collectors.toList());
+        return new ApiResponse<>(result);
     }
 }
