@@ -3,6 +3,7 @@ package com.baby.babycareproductsshop.entity.user;
 import com.baby.babycareproductsshop.common.ProviderTypeEnum;
 import com.baby.babycareproductsshop.common.RoleEnum;
 import com.baby.babycareproductsshop.entity.BaseEntity;
+import com.baby.babycareproductsshop.entity.review.ReviewEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

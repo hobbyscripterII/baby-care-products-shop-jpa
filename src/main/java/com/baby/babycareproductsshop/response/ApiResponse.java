@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 @Data
 @AllArgsConstructor
 public class ApiResponse<T> {
-//    private final String path;
     @Schema(title = "응답 코드")
     private final String code;
     @Schema(title = "코드 메세지")

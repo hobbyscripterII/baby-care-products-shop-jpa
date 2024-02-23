@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@Schema(title = "[Get]api/admin/user response",description = "관리자페이지에서 회원 정보 조회 응답 데이터")
 public class AdminSelAllUserVo {
     @Schema(title = "유저pk")
     private Long iuser;

@@ -36,7 +36,7 @@ public class ProductEntity extends BaseEntity {
     @Column(length = 10, columnDefinition = "INT UNSIGNED", nullable = false)
     private int price;
 
-    @Column(length = 1000, nullable = false)
+    @Column(length = 2500, nullable = false)
     private String repPic;
 
     @Column(columnDefinition = "INT UNSIGNED", length = 10)

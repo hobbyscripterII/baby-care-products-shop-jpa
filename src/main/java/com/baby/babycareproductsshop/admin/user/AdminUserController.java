@@ -1,6 +1,7 @@
 package com.baby.babycareproductsshop.admin.user;
 
 import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserDto;
+import com.baby.babycareproductsshop.admin.user.model.AdminSelUserSignupDto;
 import com.baby.babycareproductsshop.admin.user.model.AdminUpdUserDto;
 import com.baby.babycareproductsshop.response.ApiResponse;
 import com.baby.babycareproductsshop.user.model.UserSignInDto;
@@ -46,5 +47,11 @@ public class AdminUserController {
     @PatchMapping("/user/{iuser}")
     public ApiResponse<?> patchUserInfo(@PathVariable long iuser, @RequestBody @Valid AdminUpdUserDto dto) {
         return service.patchUserInfo(iuser, dto);
+    }
+
+    @Operation(summary = "가입통계분석 조회")
+    @GetMapping("/user/signup")
+    public ApiResponse<?> getUserSignupStatistics(AdminSelUserSignupDto dto) {
+        return service.getUserSignupStatistics(dto);
     }
 }
