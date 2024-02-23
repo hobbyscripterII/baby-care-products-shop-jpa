@@ -1,5 +1,6 @@
 package com.baby.babycareproductsshop.admin.user;
 
+import com.baby.babycareproductsshop.admin.CommonSearchCondition;
 import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserDto;
 import com.baby.babycareproductsshop.admin.user.model.AdminSelUserSignupDto;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
@@ -22,7 +23,7 @@ import static com.baby.babycareproductsshop.entity.user.QUserEntity.userEntity;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AdminUserQdslRepositoryImpl implements AdminUserQdslRepository {
+public class AdminUserQdslRepositoryImpl extends CommonSearchCondition implements AdminUserQdslRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
@@ -67,45 +68,5 @@ public class AdminUserQdslRepositoryImpl implements AdminUserQdslRepository {
         query.groupBy(userEntity.createdAt.year(), userEntity.createdAt.month());
         query.having(whereYear(dto.getYear()));
         return query.fetch();
-    }
-
-    private BooleanExpression whereUnregisteredFl(long unregisteredFl) {
-        return userEntity.unregisterFl.eq(unregisteredFl);
-    }
-
-    private BooleanExpression likeNm(String nm) {
-        return StringUtils.hasText(nm) ? userEntity.nm.contains(nm) : null;
-    }
-
-    private BooleanExpression likeUid(String uid) {
-        return StringUtils.hasText(uid) ? userEntity.uid.contains(uid) : null;
-    }
-
-    private BooleanExpression goeCreatedAt(LocalDateTime condition) {
-        return condition == null ? null : userEntity.createdAt.goe(condition);
-    }
-
-    private BooleanExpression likePhoneNumber(String phoneNumber) {
-        return phoneNumber == null ? null : userEntity.phoneNumber.contains(phoneNumber);
-    }
-
-    private BooleanExpression betweenCreatedAt(LocalDateTime before, LocalDateTime after) {
-        return before == null || after == null ? null : userEntity.createdAt.between(before, after);
-    }
-
-    private BooleanExpression betweenCreatedAt(LocalDateTime before) {
-        return betweenCreatedAt(before, LocalDateTime.now());
-    }
-
-    private BooleanExpression whereYear(int year) {
-        return year == 0 ? null : userEntity.createdAt.year().eq(year);
-    }
-
-    private BooleanExpression whereMonth(int month) {
-        return month == 0 ? null : userEntity.createdAt.month().eq(month);
-    }
-
-    private StringTemplate transformDate(Object object) {
-        return Expressions.stringTemplate("DATE_FORMAT({0},'{1s}')", object, ConstantImpl.create("%Y-%m-%d"));
     }
 }
