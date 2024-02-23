@@ -3,6 +3,7 @@ package com.baby.babycareproductsshop.entity.product;
 import com.baby.babycareproductsshop.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
@@ -19,6 +20,10 @@ public class BannerEntity extends BaseEntity {
 
     @Column(length = 2500,name = "banner_url" )
     private String bannerUrl;
+
+    @Column
+    @ColumnDefault("'0'")
+    private int status;
 
     @Column(length = 1000, nullable = false)
     private String target;

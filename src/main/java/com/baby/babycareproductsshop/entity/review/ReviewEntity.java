@@ -5,8 +5,10 @@ import com.baby.babycareproductsshop.entity.order.OrderEntity;
 import com.baby.babycareproductsshop.entity.product.ProductEntity;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.context.annotation.Bean;
 
 @Data
 @Entity
@@ -30,7 +32,7 @@ public class ReviewEntity extends CreatedAtEntity {
     @JoinColumn(name = "iproduct", columnDefinition = "BIGINT UNSIGNED", nullable = false)
     private ProductEntity productEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "iuser", columnDefinition = "BIGINT UNSIGNED", nullable = false)
     private UserEntity userEntity;
 
@@ -46,4 +48,5 @@ public class ReviewEntity extends CreatedAtEntity {
 
     @Column(name = "admin_memo",length = 2500)
     private String adminMemo;
+
 }

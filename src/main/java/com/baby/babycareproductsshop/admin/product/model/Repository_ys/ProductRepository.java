@@ -9,11 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductEntity,Long> {
-//    @Transactional
-//    @Modifying
-//    @Query("update ProductEntity p set p.price = :price where p.iproduct = :id")
-//    int updatePriceForAllByIdIn(@Param("price") Long newPrice, @Param("iproduct") Long iproduct);
+public interface ProductRepository extends JpaRepository<ProductEntity,Long>, ProductQdslRepository  {
 
     List<Product2141234Vo> findAllByRcFl(Long rcFl);
 
@@ -21,9 +17,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity,Long> {
 
     List<Product2141234Vo> findAllByPopFl(Long popFl);
 
-//    public interface CustomCustomerRepository {
-//        List<Customer> ();
-//    }
-
+    /*int updateByIproduct (Long iproduct);*/
 
 }
