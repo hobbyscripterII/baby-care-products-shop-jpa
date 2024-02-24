@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "t_order")
@@ -51,4 +53,7 @@ public class OrderEntity extends BaseEntity {
     @Column(length = 11, columnDefinition = "INT UNSIGNED")
     @ColumnDefault("0")
     private int deleteFl;
+
+    private LocalDateTime depositedAt; // 입금 완료 일자
+    private LocalDateTime deliveryCompletedAt; // 배송 완료 일자
 }
