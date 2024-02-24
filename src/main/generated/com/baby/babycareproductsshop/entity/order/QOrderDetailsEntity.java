@@ -39,6 +39,8 @@ public class QOrderDetailsEntity extends EntityPathBase<OrderDetailsEntity> {
 
     public final NumberPath<Integer> productTotalPrice = createNumber("productTotalPrice", Integer.class);
 
+    public final DateTimePath<java.time.LocalDateTime> refundedAt = createDateTime("refundedAt", java.time.LocalDateTime.class);
+
     public final NumberPath<Integer> refundFl = createNumber("refundFl", Integer.class);
 
     //inherited

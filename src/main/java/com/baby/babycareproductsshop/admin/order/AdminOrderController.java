@@ -89,16 +89,21 @@ public class AdminOrderController {
                     "<li>수령자명 - 5</li>\n" +
                     "<li>수령자 핸드폰 번호 - 6</li></ul>\n" +
                     "<ul><strong>keyword - 검색 키워드</strong></ul>\n" +
+                    "<ul><strong>dateSearchFl - 기간 검색</strong><br>\n" +
+                    "<li>전체 - 0</li>\n" +
+                    "<li>입금 완료일 - 1</li>\n" +
+                    "<li>배송 완료일 - 2</li>\n" +
+                    "<li>주문 취소일 - 3</li>\n" +
+                    "<li>상품 반품일 - 4</li></ul>\n" +
                     "<ul><strong>startDate - (예) 2024-02-22</strong><br></ul>\n" +
                     "<ul><strong>lastDate - (예) 2024-02-22</strong><br></ul>\n" +
-                    "<ul><strong>dateFl</strong><br>\n" +
-                    "<li>오늘 - 0</li>\n" +
-                    "<li>어제 - 1</li>\n" +
-                    "<li>일주일 - 2</li>\n" +
-                    "<li>지난 달 - 3</li>\n" +
-                    "<li>1개월 - 4</li>\n" +
-                    "<li>3개월 - 5</li>\n" +
-                    "<li>전체 - 6</li></ul>\n" +
+                    "<ul><strong>dateFl - 기간 선택</strong><br>\n" +
+                    "<li>전체 - 0</li>\n" +
+                    "<li>오늘 - 1</li>\n" +
+                    "<li>어제 - 2</li>\n" +
+                    "<li>일주일 - 3</li>\n" +
+                    "<li>지난 달, 1개월 - 4, 5</li>\n" +
+                    "<li>3개월 - 6</li></ul>\n" +
                     "<ul><strong>payCategory</strong><br>\n" +
                     "<li>전체 - 0</li>\n" +
                     "<li>무통장 입금 - 1</li>\n" +
@@ -110,9 +115,7 @@ public class AdminOrderController {
                     "<li>처리일 순 - 3</li></ul>\n" +
                     "\n")
     public List<OrderDetailsListVo> orderDetailsList(@RequestParam(name = "process_state") int processState, @RequestBody OrderSmallFilterDto dto) {
-        log.info("processState = {}", processState);
         dto.setProcessState(processState);
-        log.info("dto = {}", dto);
 
         // 검색어 타입 체크
         if (searchDataTypeCheck(dto.getSearchCategory(), dto.getKeyword())) {
@@ -158,7 +161,6 @@ public class AdminOrderController {
                     "<li>처리일 순 - 3</li></ul>\n" +
                     "\n")
     public List<OrderDeleteVo> orderDeleteList(@RequestBody OrderSmallFilterDto dto) {
-        log.info("dto = {}", dto);
         return service.orderDeleteList(dto);
     }
 
@@ -194,7 +196,6 @@ public class AdminOrderController {
                     "<li>처리일 순 - 3</li></ul>\n" +
                     "\n")
     public List<OrderRefundListVo> orderRefundList(@RequestBody OrderSmallFilterDto dto) {
-        log.info("dto = {}", dto);
         return service.orderRefundList(dto);
     }
 
@@ -234,7 +235,6 @@ public class AdminOrderController {
                     "<li>처리일 순 - 3</li></ul>\n" +
                     "\n")
     public List<OrderMemoListVo> adminMemo(@RequestBody OrderMemoListDto dto) {
-        log.info("dto = {}", dto);
         return service.adminMemoList(dto);
     }
 
@@ -245,13 +245,10 @@ public class AdminOrderController {
             if (phoneNumber.length() == 11) {
                 formatPhoneNumber =
                         phoneNumber.substring(0, 3) + "-" +
-                                phoneNumber.substring(3, 7) + "-" +
-                                phoneNumber.substring(7);
+                        phoneNumber.substring(3, 7) + "-" +
+                        phoneNumber.substring(7);
             } else {
-                String pattern = "^\\d{3}-\\d{3,4}-\\d{4}$";
-                boolean result = Pattern.matches(pattern, phoneNumber);
-                log.info("phoneNumber = {} result = {}", phoneNumber, result);
-                if (result) {
+                if (Pattern.matches("^\\d{3}-\\d{3,4}-\\d{4}$", phoneNumber)) {
                     return phoneNumber;
                 } else {
                     throw new RestApiException(AuthErrorCode.SEARCH_FAILED_ERROR);
@@ -266,21 +263,20 @@ public class AdminOrderController {
     private boolean searchDataTypeCheck(int searchCategory, String keyword) {
         boolean result = false;
 
-        switch (searchCategory) {
-            case 0:
-                return true;
-            case 1:
-                Integer temp = Integer.valueOf(keyword);
-                if (temp instanceof Integer) {
-                    result = true;
-                } else {
-                    result = false;
+        try {
+            switch (searchCategory) {
+                case 0, 1, 2 -> {
+                    Integer.valueOf(keyword);
+                    return true;
                 }
-            case 2, 3, 4, 5, 6:
-                result = keyword != null;
-                break;
+                case 3, 4, 5, 6 -> {
+                    return !keyword.isBlank();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RestApiException(AuthErrorCode.SEARCH_FAILED_ERROR);
         }
-        log.info("result = {}", result);
         return result;
     }
 }
