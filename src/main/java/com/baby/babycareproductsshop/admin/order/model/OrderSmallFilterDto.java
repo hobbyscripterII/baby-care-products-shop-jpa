@@ -1,4 +1,4 @@
-package com.baby.babycareproductsshop.admin.model;
+package com.baby.babycareproductsshop.admin.order.model;
 
 import lombok.Data;
 
@@ -9,6 +9,6 @@ public class OrderSmallFilterDto {
     private String startDate; // 시작 날짜
     private String lastDate; // 종료 날짜
     private int dateFl; // 기간 선택
-    private int payCategory; // 결제 방법
+    private long payCategory; // 결제 방법
     private int sort; // 정렬
 }
