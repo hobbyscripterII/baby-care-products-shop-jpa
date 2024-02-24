@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -23,17 +24,25 @@ public class AdminOrderService {
 
     @Transactional // 주문 일괄 처리
     public ResVo orderBatchProcess(OrderBatchProcessDto dto) {
+        int beforeProcessState = dto.getProcessState();
+        int afterProcessState = changeProcessState(dto.getProcessState());
+        LocalDateTime now = LocalDateTime.now();
+
         // >>>>> 정상적인 주문 처리 상태 코드가 맞는지 확인
-        if (processStateCheck(dto.getProcessState())) {
+        if (processStateCheck(beforeProcessState)) {
             List<Integer> list = dto.getIorders()
                     .stream()
-                    .map(iorder -> {
+                    .peek(iorder -> {
                         OrderEntity entity = adminOrderRepository.getReferenceById(iorder.longValue());
-                        int processState = changeProcessState(dto.getProcessState());
                         entity.setIorder(iorder.longValue());
-                        entity.setProcessState(processState); // 1. 값 변환
-                        adminOrderRepository.save(entity); // 2. 주문 처리 상태 수정
-                        return iorder.intValue();
+                        entity.setProcessState(afterProcessState); // 1. 값 변환
+
+                        switch (afterProcessState) {
+                            case 3 -> entity.setDepositedAt(now);
+                            case 4 -> entity.setDeliveryCompletedAt(now);
+                        }
+
+                        adminOrderRepository.save(entity); // 2. 주문 처리 상태 및 완료일자 수정
                     })
                     .toList();
 
@@ -53,6 +62,7 @@ public class AdminOrderService {
     }
 
     // select문은 @Transactional 필요 x(<- 어노테이션은 rollback이 있을 수 있는 곳만)
+
     /**
      * iorder : 1
      * iorder에 종속된 idetails : N
@@ -79,8 +89,8 @@ public class AdminOrderService {
                     vo.setOrdered(orderItem.getUserEntity().getNm());
                     vo.setRecipient(orderItem.getUserEntity().getNm());
                     vo.setTotalAmount(orderProductVoList.stream()
-                                        .mapToInt(OrderProductVo::getAmount)
-                                        .sum());
+                            .mapToInt(OrderProductVo::getAmount)
+                            .sum());
                     vo.setPayCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue());
                     vo.setBuyComfirmFl(0); // 구매 확정 여부(자동화 추가)
                     return vo;
@@ -106,15 +116,9 @@ public class AdminOrderService {
 
     private int changeProcessState(int processState) {
         switch (processState) {
-            case 1:
-                processState = ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
-                break;
-            case 2:
-                processState = ProcessState.ON_DELIVERY.getProcessStateNum();
-                break;
-            case 3:
-                processState = ProcessState.DELIVER_SUCCESS.getProcessStateNum();
-                break;
+            case 1 -> processState = ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
+            case 2 -> processState = ProcessState.ON_DELIVERY.getProcessStateNum();
+            case 3 -> processState = ProcessState.DELIVER_SUCCESS.getProcessStateNum();
         }
         return processState;
     }

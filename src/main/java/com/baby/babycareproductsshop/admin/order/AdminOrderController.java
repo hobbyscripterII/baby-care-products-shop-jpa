@@ -109,7 +109,9 @@ public class AdminOrderController {
                     "<li>처리일 역순 - 2</li>\n" +
                     "<li>처리일 순 - 3</li></ul>\n" +
                     "\n")
-    public List<OrderDetailsListVo> orderDetailsList(@RequestBody OrderSmallFilterDto dto) {
+    public List<OrderDetailsListVo> orderDetailsList(@RequestParam(name = "process_state") int processState, @RequestBody OrderSmallFilterDto dto) {
+        log.info("processState = {}", processState);
+        dto.setProcessState(processState);
         log.info("dto = {}", dto);
 
         // 검색어 타입 체크
