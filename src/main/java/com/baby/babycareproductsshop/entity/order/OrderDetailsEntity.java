@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "t_order_details",
@@ -38,4 +40,6 @@ public class OrderDetailsEntity extends BaseEntity {
     @Column(columnDefinition = "TINYINT", nullable = false)
     @ColumnDefault("'0'")
     private int refundFl;
+
+    private LocalDateTime refundedAt;
 }

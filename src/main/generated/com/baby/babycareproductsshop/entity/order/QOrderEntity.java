@@ -29,6 +29,8 @@ public class QOrderEntity extends EntityPathBase<OrderEntity> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
+    public final DateTimePath<java.time.LocalDateTime> deletedAt = createDateTime("deletedAt", java.time.LocalDateTime.class);
+
     public final NumberPath<Integer> deleteFl = createNumber("deleteFl", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> deliveryCompletedAt = createDateTime("deliveryCompletedAt", java.time.LocalDateTime.class);
