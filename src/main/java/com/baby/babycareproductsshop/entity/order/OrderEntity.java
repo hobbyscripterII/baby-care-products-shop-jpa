@@ -20,11 +20,11 @@ public class OrderEntity extends BaseEntity {
     @JoinColumn(name = "iuser", nullable = false)
     private UserEntity userEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "iaddress", nullable = false)
     private UserAddressEntity userAddressEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ipayment_option", nullable = false)
     @ColumnDefault("'1'")
     private OrderPaymentOptionEntity orderPaymentOptionEntity;

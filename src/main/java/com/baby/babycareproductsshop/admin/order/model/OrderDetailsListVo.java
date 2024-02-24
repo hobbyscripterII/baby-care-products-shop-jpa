@@ -1,4 +1,4 @@
-package com.baby.babycareproductsshop.admin.model;
+package com.baby.babycareproductsshop.admin.order.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class OrderListVo {
+public class OrderDetailsListVo {
     @Schema(title = "주문번호", description = "")
     private int iorder;
     @Schema(title = "주문일시", description = "")
@@ -21,4 +21,6 @@ public class OrderListVo {
     private int totalAmount;
     @Schema(title = "결제수단", description = "")
     private int payCategory;
+    @Schema(title = "구매 확정 여부", description = "")
+    private int buyComfirmFl;
 }

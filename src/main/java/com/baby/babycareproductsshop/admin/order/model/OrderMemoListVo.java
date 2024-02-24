@@ -1,4 +1,4 @@
-package com.baby.babycareproductsshop.admin.model;
+package com.baby.babycareproductsshop.admin.order.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

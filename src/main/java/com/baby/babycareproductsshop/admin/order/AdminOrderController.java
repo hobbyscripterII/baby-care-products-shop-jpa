@@ -1,11 +1,9 @@
 package com.baby.babycareproductsshop.admin.order;
 
-import com.baby.babycareproductsshop.admin.model.*;
+import com.baby.babycareproductsshop.admin.order.model.*;
 import com.baby.babycareproductsshop.common.ResVo;
-import com.baby.babycareproductsshop.common.Utils;
 import com.baby.babycareproductsshop.exception.AuthErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.regex.Pattern;
-
-import static com.baby.babycareproductsshop.entity.order.QOrderEntity.orderEntity;
 
 @Slf4j
 @RestController
@@ -247,13 +243,13 @@ public class AdminOrderController {
             if (phoneNumber.length() == 11) {
                 formatPhoneNumber =
                         phoneNumber.substring(0, 3) + "-" +
-                        phoneNumber.substring(3, 7) + "-" +
-                        phoneNumber.substring(7);
+                                phoneNumber.substring(3, 7) + "-" +
+                                phoneNumber.substring(7);
             } else {
                 String pattern = "^\\d{3}-\\d{3,4}-\\d{4}$";
                 boolean result = Pattern.matches(pattern, phoneNumber);
                 log.info("phoneNumber = {} result = {}", phoneNumber, result);
-                if(result) {
+                if (result) {
                     return phoneNumber;
                 } else {
                     throw new RestApiException(AuthErrorCode.SEARCH_FAILED_ERROR);
@@ -269,7 +265,9 @@ public class AdminOrderController {
         boolean result = false;
 
         switch (searchCategory) {
-            case 0, 1:
+            case 0:
+                return true;
+            case 1:
                 Integer temp = Integer.valueOf(keyword);
                 if (temp instanceof Integer) {
                     result = true;
