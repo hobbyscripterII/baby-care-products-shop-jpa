@@ -73,6 +73,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
     @Override
     public List<OrderEntity> orderDeleteList(OrderSmallFilterDto dto) {
         dto.setProcessState(ProcessState.ORDER_CANCEL.getProcessStateNum());
+        log.info("dto = {}", dto);
         return commonListTasks(dto);
     }
 
