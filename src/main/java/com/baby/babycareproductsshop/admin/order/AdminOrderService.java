@@ -99,7 +99,30 @@ public class AdminOrderService {
     }
 
     public List<OrderDeleteVo> orderDeleteList(OrderSmallFilterDto dto) {
-        return null;
+        return adminOrderRepository.orderDeleteList(dto)
+                .stream()
+                .map(orderItem -> {
+                    List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
+                            .map(productItem -> OrderProductVo.builder()
+                                    .repPic(productItem.getProductEntity().getRepPic())
+                                    .productNm(productItem.getProductEntity().getProductNm())
+                                    .cnt(productItem.getProductCnt())
+                                    .processState(productItem.getOrderEntity().getProcessState())
+                                    .amount(productItem.getProductEntity().getPrice())
+                                    .build())
+                            .toList();
+
+                    OrderDeleteVo vo = new OrderDeleteVo();
+                    vo.setIorder(orderItem.getIorder().intValue());
+                    vo.setOrderedAt(orderItem.getCreatedAt().toString());
+                    vo.setProducts(orderProductVoList);
+                    vo.setDeletedAt(orderItem.getDeletedAt().toString());
+                    vo.setOrdered(orderItem.getUserEntity().getNm());
+                    vo.setTotalAmount(orderItem.getTotalPrice());
+                    vo.setPayCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue());
+                    return vo;
+                })
+                .toList();
     }
 
     public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto) {
