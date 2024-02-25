@@ -9,6 +9,10 @@ public class Utils {
         return num == 0 ? false : true;
     }
 
+    public static boolean isNotNull(long num) {
+        return num == 0 ? false : true;
+    }
+
     public static boolean isNotNull(Object object) {
         return object == null ? false : true;
     }

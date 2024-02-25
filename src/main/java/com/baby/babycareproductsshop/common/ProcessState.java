@@ -14,7 +14,7 @@ public enum ProcessState {
     ON_DELIVERY(3, "배송중"),
     DELIVER_SUCCESS(4, "배송완료"),
     ORDER_CANCEL(5, "주문취소"),
-    RETURN(6, "반품");
+    REFUND(6, "환불");
 
     private final int processStateNum;
     private final String processState;
