@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 public class AdminOrderController {
     private final AdminOrderService service;
 
-
     @PutMapping
     @Operation(summary = "주문 일괄 처리",
             description = "<ul><strong>iorders - 주문 번호(PK)</strong></ul>" +
@@ -49,7 +48,7 @@ public class AdminOrderController {
                     "<li>수령자 핸드폰 번호 - 6</li></ul>\n" +
                     "<ul><strong>keyword - 검색 키워드</strong></ul>\n" +
                     "<ul><strong>startDate - (예) 2024-02-22</strong><br></ul>\n" +
-                    "<ul><strong>lastDate - (예) 2024-02-22</strong><br></ul>\n" +
+                    "<ul><strong>endDate - (예) 2024-02-22</strong><br></ul>\n" +
                     "<ul><strong>dateFl</strong><br>\n" +
                     "<li>오늘 - 0</li>\n" +
                     "<li>어제 - 1</li>\n" +
@@ -79,8 +78,14 @@ public class AdminOrderController {
     }
 
     @GetMapping("/details")
-    @Operation(summary = "주문 상세 리스트 출력",
-            description = "<ul><strong>searchCategory</strong><br>" +
+    @Operation(summary = "주문 상세 리스트 출력", description =
+            "<ul><strong>processState - 주문 처리 상태</strong><br>\n" +
+                    "<li>전체 - 0</li>\n" +
+                    "<li>입금 대기 - 1</li>\n" +
+                    "<li>배송 준비중 - 2</li>\n" +
+                    "<li>배송중 - 3</li>\n" +
+                    "<li>배송완료 - 4</li></ul>\n" +
+                    "<ul><strong>searchCategory</strong><br>" +
                     "<li>주문 번호(iorder) - 0</li>\n" +
                     "<li>상품 번호(일련 번호, iproduct) - 1</li>\n" +
                     "<li>회원 아이디 - 2</li>\n" +
@@ -89,14 +94,8 @@ public class AdminOrderController {
                     "<li>수령자명 - 5</li>\n" +
                     "<li>수령자 핸드폰 번호 - 6</li></ul>\n" +
                     "<ul><strong>keyword - 검색 키워드</strong></ul>\n" +
-                    "<ul><strong>dateSearchFl - 기간 검색</strong><br>\n" +
-                    "<li>전체 - 0</li>\n" +
-                    "<li>입금 완료일 - 1</li>\n" +
-                    "<li>배송 완료일 - 2</li>\n" +
-                    "<li>주문 취소일 - 3</li>\n" +
-                    "<li>상품 반품일 - 4</li></ul>\n" +
                     "<ul><strong>startDate - (예) 2024-02-22</strong><br></ul>\n" +
-                    "<ul><strong>lastDate - (예) 2024-02-22</strong><br></ul>\n" +
+                    "<ul><strong>endDate - (예) 2024-02-22</strong><br></ul>\n" +
                     "<ul><strong>dateFl - 기간 선택</strong><br>\n" +
                     "<li>전체 - 0</li>\n" +
                     "<li>오늘 - 1</li>\n" +
@@ -104,7 +103,7 @@ public class AdminOrderController {
                     "<li>일주일 - 3</li>\n" +
                     "<li>지난 달, 1개월 - 4, 5</li>\n" +
                     "<li>3개월 - 6</li></ul>\n" +
-                    "<ul><strong>payCategory</strong><br>\n" +
+                    "<ul><strong>payCategory - 결제 수단</strong><br>\n" +
                     "<li>전체 - 0</li>\n" +
                     "<li>무통장 입금 - 1</li>\n" +
                     "<li>신용카드 - 2</li></ul>\n" +
@@ -117,14 +116,19 @@ public class AdminOrderController {
     public List<OrderDetailsListVo> orderDetailsList(@RequestParam(name = "process_state") int processState, @RequestBody OrderSmallFilterDto dto) {
         dto.setProcessState(processState);
 
-        // 검색어 타입 체크
-        if (searchDataTypeCheck(dto.getSearchCategory(), dto.getKeyword())) {
-            // 휴대폰 번호로 검색 시 휴대폰 번호 유효성 체크
-            if (dto.getSearchCategory() == 6) {
-                String formatPhoneNumber = phoneNumberFormatConverter(dto.getKeyword());
-                dto.setKeyword(formatPhoneNumber);
-            }
+        if (dto.getSearchCategory() == 0) {
+            dto.setKeyword(null);
             return service.orderDetailsList(dto);
+        } else {
+            // 검색어 타입 체크
+            if (searchDataTypeCheck(dto.getSearchCategory(), dto.getKeyword())) {
+                // 휴대폰 번호로 검색 시 휴대폰 번호 유효성 체크
+                if (dto.getSearchCategory() == 6) {
+                    String formatPhoneNumber = phoneNumberFormatConverter(dto.getKeyword());
+                    dto.setKeyword(formatPhoneNumber);
+                }
+                return service.orderDetailsList(dto);
+            }
         }
         throw new RestApiException(AuthErrorCode.SEARCH_FAILED_ERROR);
     }
@@ -141,7 +145,7 @@ public class AdminOrderController {
                     "<li>수령자 핸드폰 번호 - 6</li></ul>\n" +
                     "<ul><strong>keyword - 검색 키워드</strong></ul>\n" +
                     "<ul><strong>startDate - (예) 2024-02-22</strong><br></ul>\n" +
-                    "<ul><strong>lastDate - (예) 2024-02-22</strong><br></ul>\n" +
+                    "<ul><strong>endDate - (예) 2024-02-22</strong><br></ul>\n" +
                     "<ul><strong>dateFl</strong><br>\n" +
                     "<li>오늘 - 0</li>\n" +
                     "<li>어제 - 1</li>\n" +
@@ -176,7 +180,7 @@ public class AdminOrderController {
                     "<li>수령자 핸드폰 번호 - 6</li></ul>\n" +
                     "<ul><strong>keyword - 검색 키워드</strong></ul>\n" +
                     "<ul><strong>startDate - (예) 2024-02-22</strong><br></ul>\n" +
-                    "<ul><strong>lastDate - (예) 2024-02-22</strong><br></ul>\n" +
+                    "<ul><strong>endDate - (예) 2024-02-22</strong><br></ul>\n" +
                     "<ul><strong>dateFl</strong><br>\n" +
                     "<li>오늘 - 0</li>\n" +
                     "<li>어제 - 1</li>\n" +
@@ -211,7 +215,7 @@ public class AdminOrderController {
                     "<li>수령자 핸드폰 번호 - 6</li></ul>\n" +
                     "<ul><strong>keyword - 검색 키워드</strong></ul>\n" +
                     "<ul><strong>startDate - (예) 2024-02-22</strong><br></ul>\n" +
-                    "<ul><strong>lastDate - (예) 2024-02-22</strong><br></ul>\n" +
+                    "<ul><strong>endDate - (예) 2024-02-22</strong><br></ul>\n" +
                     "<ul><strong>dateFl</strong><br>\n" +
                     "<li>오늘 - 0</li>\n" +
                     "<li>어제 - 1</li>\n" +
@@ -240,15 +244,16 @@ public class AdminOrderController {
 
     private String phoneNumberFormatConverter(String phoneNumber) {
         String formatPhoneNumber = null;
+        String pattern = "^\\d{3}-\\d{3,4}-\\d{4}$";
         // 휴대폰 번호 확인
         if (phoneNumber.length() == 11 || phoneNumber.length() == 13 && phoneNumber.startsWith("010") || phoneNumber.startsWith("011")) {
             if (phoneNumber.length() == 11) {
                 formatPhoneNumber =
                         phoneNumber.substring(0, 3) + "-" +
-                        phoneNumber.substring(3, 7) + "-" +
-                        phoneNumber.substring(7);
+                                phoneNumber.substring(3, 7) + "-" +
+                                phoneNumber.substring(7);
             } else {
-                if (Pattern.matches("^\\d{3}-\\d{3,4}-\\d{4}$", phoneNumber)) {
+                if (Pattern.matches(pattern, phoneNumber)) {
                     return phoneNumber;
                 } else {
                     throw new RestApiException(AuthErrorCode.SEARCH_FAILED_ERROR);
@@ -265,7 +270,7 @@ public class AdminOrderController {
 
         try {
             switch (searchCategory) {
-                case 0, 1, 2 -> {
+                case 1, 2 -> {
                     Integer.valueOf(keyword);
                     return true;
                 }
