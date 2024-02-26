@@ -71,8 +71,7 @@ public class AdminOrderController {
                     "<li>주문일 역순 - 0</li>\n" +
                     "<li>주문일 순 - 1</li>\n" +
                     "<li>처리일 역순 - 2</li>\n" +
-                    "<li>처리일 순 - 3</li></ul>\n" +
-                    "\n")
+                    "<li>처리일 순 - 3</li></ul>\n")
     public List<OrderListVo> orderList(OrderFilterDto dto) {
         return service.orderList(dto);
     }
@@ -111,26 +110,27 @@ public class AdminOrderController {
                     "<li>주문일 역순 - 0</li>\n" +
                     "<li>주문일 순 - 1</li>\n" +
                     "<li>처리일 역순 - 2</li>\n" +
-                    "<li>처리일 순 - 3</li></ul>\n" +
-                    "\n")
+                    "<li>처리일 순 - 3</li></ul>\n")
     public List<OrderDetailsListVo> orderDetailsList(@RequestParam(name = "process_state") int processState, @RequestBody OrderSmallFilterDto dto) {
-        dto.setProcessState(processState);
+        if (processState >= 0 && processState <= 6) {
+            dto.setProcessState(processState);
 
-        if (dto.getSearchCategory() == 0) {
-            dto.setKeyword(null);
-            return service.orderDetailsList(dto);
-        } else {
-            // 검색어 타입 체크
-            if (searchDataTypeCheck(dto.getSearchCategory(), dto.getKeyword())) {
-                // 휴대폰 번호로 검색 시 휴대폰 번호 유효성 체크
-                if (dto.getSearchCategory() == 6) {
-                    String formatPhoneNumber = phoneNumberFormatConverter(dto.getKeyword());
-                    dto.setKeyword(formatPhoneNumber);
-                }
+            if (dto.getSearchCategory() == 0) {
+                dto.setKeyword(null);
                 return service.orderDetailsList(dto);
+            } else {
+                // 검색어 타입 체크
+                if (searchDataTypeCheck(dto.getSearchCategory(), dto.getKeyword())) {
+                    // 휴대폰 번호로 검색 시 휴대폰 번호 유효성 체크
+                    if (dto.getSearchCategory() == 6) {
+                        String formatPhoneNumber = phoneNumberFormatConverter(dto.getKeyword());
+                        dto.setKeyword(formatPhoneNumber);
+                    }
+                    return service.orderDetailsList(dto);
+                }
             }
         }
-        throw new RestApiException(AuthErrorCode.SEARCH_FAILED_ERROR);
+        throw new RestApiException(AuthErrorCode.PROCESS_STATE_CODE_NOT_FOUND);
     }
 
     @GetMapping("/delete")
@@ -162,8 +162,7 @@ public class AdminOrderController {
                     "<li>주문일 역순 - 0</li>\n" +
                     "<li>주문일 순 - 1</li>\n" +
                     "<li>처리일 역순 - 2</li>\n" +
-                    "<li>처리일 순 - 3</li></ul>\n" +
-                    "\n")
+                    "<li>처리일 순 - 3</li></ul>\n")
     public List<OrderDeleteVo> orderDeleteList(@RequestBody OrderSmallFilterDto dto) {
         return service.orderDeleteList(dto);
     }
@@ -197,8 +196,7 @@ public class AdminOrderController {
                     "<li>주문일 역순 - 0</li>\n" +
                     "<li>주문일 순 - 1</li>\n" +
                     "<li>처리일 역순 - 2</li>\n" +
-                    "<li>처리일 순 - 3</li></ul>\n" +
-                    "\n")
+                    "<li>처리일 순 - 3</li></ul>\n")
     public List<OrderRefundListVo> orderRefundList(@RequestBody OrderSmallFilterDto dto) {
         return service.orderRefundList(dto);
     }
@@ -236,8 +234,7 @@ public class AdminOrderController {
                     "<li>주문일 역순 - 0</li>\n" +
                     "<li>주문일 순 - 1</li>\n" +
                     "<li>처리일 역순 - 2</li>\n" +
-                    "<li>처리일 순 - 3</li></ul>\n" +
-                    "\n")
+                    "<li>처리일 순 - 3</li></ul>\n")
     public List<OrderMemoListVo> adminMemo(@RequestBody OrderMemoListDto dto) {
         return service.adminMemoList(dto);
     }

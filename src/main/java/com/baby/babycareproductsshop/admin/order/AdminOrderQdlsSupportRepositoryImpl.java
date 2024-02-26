@@ -66,13 +66,13 @@ public class AdminOrderQdlsSupportRepositoryImpl {
     /**
      * @param processState 전체 - 0 | 입금 대기 - 1 | 배송 준비중 - 2 | 배송중 - 3 | 배송완료 - 4 | 취소 - 5 | 반품 - 6
      */
-    protected BooleanExpression processStateEq(int processState) {
+    private BooleanExpression processStateEq(int processState) {
         BooleanExpression booleanExpression = null;
 
         switch (processState) {
             case 1, 2, 3, 4 -> booleanExpression = orderEntity.processState.eq(processState);
             case 5 -> booleanExpression = orderEntity.deleteFl.eq(1);
-            case 6 -> booleanExpression = refundEntity.complateFl.eq(1);
+            case 6 -> booleanExpression = refundEntity.irefund.isNotNull();
             default -> {
                 return null;
             }
@@ -83,7 +83,7 @@ public class AdminOrderQdlsSupportRepositoryImpl {
     /**
      * @param dateFl 전체 - 0 | 오늘 - 1 | 어제 - 2 | 일주일 - 3 | (지난 달 - 4 1개월 - 5) - 4 | 3개월 - 5 | 전체 - 6
      */
-    protected BooleanExpression dateSelectSearch(int dateFl) {
+    private BooleanExpression dateSelectSearch(int dateFl) {
         BooleanExpression booleanExpression = null;
 
         switch (dateFl) {
@@ -91,8 +91,7 @@ public class AdminOrderQdlsSupportRepositoryImpl {
             case 2 -> booleanExpression = orderEntity.createdAt.between(yesterdayStartTime(), yesterdayEndTime());
             case 3 -> booleanExpression = orderEntity.createdAt.between(todayStartTime().minusDays(7), todayEndTime());
             case 4, 5 -> booleanExpression = orderEntity.createdAt.between(monthStartDay(), monthEndDay());
-            case 6 ->
-                    booleanExpression = orderEntity.createdAt.between(monthStartDay().minusMonths(3), monthEndDay().minusMonths(3));
+            case 6 -> booleanExpression = orderEntity.createdAt.between(monthStartDay().minusMonths(3), monthEndDay().minusMonths(3));
             default -> {
                 return null;
             }
@@ -105,10 +104,10 @@ public class AdminOrderQdlsSupportRepositoryImpl {
      * @param start        시작 일자
      * @param end          종료 일자
      */
-    protected BooleanExpression dateRangeSearch(int dateCategory, String start, String end) {
+    private BooleanExpression dateRangeSearch(int dateCategory, String start, String end) {
         BooleanExpression booleanExpression = null;
 
-        if (start.isEmpty() & end.isEmpty()) {
+        if (!Utils.isNotNull(start) || start.isEmpty() && !Utils.isNotNull(end) || end.isEmpty()) {
             return null;
         } else {
             LocalDateTime startDate = LocalDate.parse(start).atTime(LocalTime.MIN);
