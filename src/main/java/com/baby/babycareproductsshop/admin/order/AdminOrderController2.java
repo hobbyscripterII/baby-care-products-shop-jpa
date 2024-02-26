@@ -1,6 +1,8 @@
 package com.baby.babycareproductsshop.admin.order;
 
 import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderStatisticsDto;
+import com.baby.babycareproductsshop.exception.CommonErrorCode;
+import com.baby.babycareproductsshop.exception.RestApiException;
 import com.baby.babycareproductsshop.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +27,11 @@ public class AdminOrderController2 {
             """)
     @GetMapping("/{type}")
     public ApiResponse<?> getOrderStatistics(@PathVariable String type, AdminSelOrderStatisticsDto dto) {
-        return service.getSalesStatistics(dto);
+        log.info(type);
+        return switch (type) {
+            case "sales" -> service.getSalesStatistics(dto);
+            case "orderCnt" -> service.getOrderCntStatistics(dto);
+            default ->  throw new RestApiException(CommonErrorCode.INVALID_PARAMETER);
+        };
     }
-
-    }
+}
