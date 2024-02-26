@@ -82,18 +82,19 @@ public class AdminOrderService {
                                     .build())
                             .toList();
 
-                    OrderDetailsListVo vo = new OrderDetailsListVo();
-                    vo.setIorder(orderItem.getIorder().intValue());
-                    vo.setOrderedAt(orderItem.getCreatedAt().toString());
-                    vo.setProducts(orderProductVoList);
-                    vo.setOrdered(orderItem.getUserEntity().getNm());
-                    vo.setRecipient(orderItem.getUserEntity().getNm());
-                    vo.setTotalAmount(orderProductVoList.stream()
-                            .mapToInt(OrderProductVo::getAmount)
-                            .sum());
-                    vo.setPayCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue());
-                    vo.setBuyComfirmFl(0); // 구매 확정 여부(자동화 추가)
-                    return vo;
+                    return OrderDetailsListVo
+                            .builder()
+                            .iorder(orderItem.getIorder().intValue())
+                            .orderedAt(orderItem.getCreatedAt().toString())
+                            .products(orderProductVoList)
+                            .ordered(orderItem.getUserEntity().getNm())
+                            .recipient(orderItem.getUserEntity().getNm())
+                            .totalAmount(orderProductVoList.stream()
+                                    .mapToInt(OrderProductVo::getAmount)
+                                    .sum())
+                            .payCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
+                            .buyComfirmFl(0)
+                            .build(); // 구매 확정 여부(자동화 추가)
                 })
                 .toList();
     }
@@ -112,21 +113,36 @@ public class AdminOrderService {
                                     .build())
                             .toList();
 
-                    OrderDeleteVo vo = new OrderDeleteVo();
-                    vo.setIorder(orderItem.getIorder().intValue());
-                    vo.setOrderedAt(orderItem.getCreatedAt().toString());
-                    vo.setProducts(orderProductVoList);
-                    vo.setDeletedAt(orderItem.getDeletedAt().toString());
-                    vo.setOrdered(orderItem.getUserEntity().getNm());
-                    vo.setTotalAmount(orderItem.getTotalPrice());
-                    vo.setPayCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue());
-                    return vo;
+                    return OrderDeleteVo
+                            .builder()
+                            .iorder(orderItem.getIorder().intValue())
+                            .orderedAt(orderItem.getCreatedAt().toString())
+                            .products(orderProductVoList)
+                            .deletedAt(orderItem.getDeletedAt().toString())
+                            .ordered(orderItem.getUserEntity().getNm())
+                            .totalAmount(orderItem.getTotalPrice())
+                            .payCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
+                            .build();
                 })
                 .toList();
     }
 
     public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto) {
-        return null;
+        return adminOrderRepository.orderRefundList(dto)
+                .stream()
+                .map(item -> OrderRefundListVo
+                        .builder()
+                        .iorder(item.getOrderDetailsEntity().getOrderEntity().getIorder().intValue())
+                        .orderedAt(item.getOrderDetailsEntity().getOrderEntity().getCreatedAt().toString())
+                        .repPic(item.getOrderDetailsEntity().getProductEntity().getRepPic())
+                        .productNm(item.getOrderDetailsEntity().getProductEntity().getProductNm())
+                        .cnt(item.getRefundCnt())
+                        .productPrice(item.getRefundPrice())
+                        .processState(item.getOrderDetailsEntity().getOrderEntity().getProcessState())
+                        .refundedAt(item.getCreatedAt().toString())
+                        .ordered(item.getOrderDetailsEntity().getOrderEntity().getUserEntity().getNm())
+                        .build())
+                .toList();
     }
 
     public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto) {
