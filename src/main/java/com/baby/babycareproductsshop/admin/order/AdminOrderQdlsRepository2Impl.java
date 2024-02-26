@@ -66,45 +66,59 @@ public class AdminOrderQdlsRepository2Impl extends CommonSearchCondition impleme
         if (dto.getMonth() == 0 && dto.getYear() == 0) {
             query1.groupBy(orderDetailsEntity.createdAt.year());
         }
-        if (dto.getMonth() == 0) {
+        if (dto.getMonth() == 0 && dto.getYear() != 0) {
             query1.groupBy(orderDetailsEntity.createdAt.year(), orderDetailsEntity.createdAt.month());
             query1.having(orderDetailsEntity.createdAt.year().eq(dto.getYear()));
-        } else {
+        }
+        if (dto.getMonth() != 0 && dto.getYear() != 0) {
             query1.groupBy(transformDate(orderDetailsEntity.createdAt));
             query1.having(orderDetailsEntity.createdAt.year().eq(dto.getYear()),
                     orderDetailsEntity.createdAt.month().eq(dto.getMonth()));
         }
         List<AdminSelTotalOrderCntVo> result1 = query1.fetch();
+        if (result1.isEmpty()) {
+            return result1;
+        }
         Map<String, AdminSelTotalOrderCntVo> map = new HashMap<>();
         for (AdminSelTotalOrderCntVo vo : result1) {
-            map.put(vo.getCreatedAt().toLocalDate().toString(), vo);
+            StringBuilder sb = new StringBuilder();
+            map.put(dto.getMonth() != 0 ?
+                            vo.getCreatedAt().toLocalDate().toString()
+                            : dto.getYear() != 0 ?
+                            sb.append(vo.getCreatedAt().getYear()).append("-").append(vo.getCreatedAt().getMonthValue()).toString()
+                            : sb.append(vo.getCreatedAt().getYear()).toString(),
+                    vo);
         }
         log.info("query2");
         JPAQuery<AdminSelTotalOrderCntVo> query2 = jpaQueryFactory.select(Projections.fields(AdminSelTotalOrderCntVo.class,
-                        orderDetailsEntity.productCnt.sum().as("recallCnt"),
+                        orderDetailsEntity.productCnt.as("recallCnt"),
                         orderDetailsEntity.createdAt,
                         orderDetailsEntity.orderEntity.deleteFl,
                         orderDetailsEntity.refundFl
                 ))
-
                 .where(orderDetailsEntity.orderEntity.deleteFl.eq(1).or(orderDetailsEntity.refundFl.eq(1)))
                 .from(orderDetailsEntity)
                 .orderBy(orderDetailsEntity.createdAt.asc());
         if (dto.getMonth() == 0 && dto.getYear() == 0) {
             query2.groupBy(orderDetailsEntity.createdAt.year());
         }
-        if (dto.getMonth() == 0) {
+        if (dto.getMonth() == 0 && dto.getYear() != 0) {
             query2.groupBy(orderDetailsEntity.createdAt.year(), orderDetailsEntity.createdAt.month());
             query2.having(orderDetailsEntity.createdAt.year().eq(dto.getYear()));
-        } else {
-            query2.groupBy(transformDate(orderDetailsEntity.createdAt));
-            query2.having(orderDetailsEntity.createdAt.year().eq(dto.getYear()),
+        }
+        if (dto.getMonth() != 0 && dto.getYear() != 0) {
+            query2.where(orderDetailsEntity.createdAt.year().eq(dto.getYear()),
                     orderDetailsEntity.createdAt.month().eq(dto.getMonth()));
         }
         List<AdminSelTotalOrderCntVo> result2 = query2.fetch();
-
         for (AdminSelTotalOrderCntVo vo : result2) {
-            map.get(vo.getCreatedAt().toLocalDate().toString()).setRecallCnt(vo.getRecallCnt());
+            StringBuilder sb = new StringBuilder();
+            String key = dto.getMonth() != 0 ?
+                    vo.getCreatedAt().toLocalDate().toString()
+                    : dto.getYear() != 0 ?
+                    sb.append(vo.getCreatedAt().getYear()).append("-").append(vo.getCreatedAt().getMonthValue()).toString()
+                    : sb.append(vo.getCreatedAt().getYear()).toString();
+            map.get(key).setRecallCnt(vo.getRecallCnt() + map.get(key).getRecallCnt());
         }
 
         for (AdminSelTotalOrderCntVo vo : result1) {
