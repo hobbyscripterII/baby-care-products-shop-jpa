@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
+import static com.baby.babycareproductsshop.entity.order.QOrderEntity.orderEntity;
 import static com.baby.babycareproductsshop.entity.user.QUserEntity.userEntity;
 
 public abstract class CommonSearchCondition {
@@ -49,5 +50,13 @@ public abstract class CommonSearchCondition {
 
     protected StringTemplate transformDate(Object object) {
         return Expressions.stringTemplate("DATE_FORMAT({0},'{1s}')", object, ConstantImpl.create("%Y-%m-%d"));
+    }
+
+    protected BooleanExpression processStateNq(int processState) {
+        return processState == 0 ? null : orderEntity.processState.ne(processState);
+    }
+
+    protected BooleanExpression deleteFlEq(int deleteFl) {
+        return orderEntity.deleteFl.eq(deleteFl);
     }
 }

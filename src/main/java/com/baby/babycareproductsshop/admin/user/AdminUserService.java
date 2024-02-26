@@ -47,8 +47,6 @@ public class AdminUserService {
     private final UserRepository userRepository;
     private final AdminUserRepository adminUserRepository;
 
-    private final HttpStatus httpStatus = HttpStatus.OK;
-
     @Transactional
     public ApiResponse<?> postSigninAdmin(HttpServletResponse res, UserSignInDto dto) {
         Optional<UserEntity> optEntity = userRepository.findByProviderTypeAndUid(ProviderTypeEnum.LOCAL, dto.getUid());
