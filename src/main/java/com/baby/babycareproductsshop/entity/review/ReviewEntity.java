@@ -46,6 +46,10 @@ public class ReviewEntity extends CreatedAtEntity {
     @ColumnDefault("'0'")
     private int productScore;
 
+    @Column(name = "del_fl")
+    @ColumnDefault("'0'")
+    private int delFl;
+
     @Column(name = "admin_memo",length = 2500)
     private String adminMemo;
 

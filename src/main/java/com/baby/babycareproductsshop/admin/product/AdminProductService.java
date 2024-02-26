@@ -20,12 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -87,50 +82,55 @@ public class AdminProductService {
         OrderRefundAndCancelCountSelVo vo = new OrderRefundAndCancelCountSelVo();
         vo.setRefundFl(orderDetailsRepository.countByRefundFl(1));
         vo.setDeleteFl(orderTotalRepository.countByDeleteFl(1));
-    return vo;
+        return vo;
 
     }
 
 
-    //------------------------------------------------------- 상품삭제
-    @Transactional
-    public ResVo delProduct(Long iproduct) {
-//        int result = productRepository.updatePriceForAllByIdIn(iproduct);
-//        return new ResVo(result);
-        return null;
-    }
 
-    //------------배너출력-------------------------
-    public List<BannerEntity> getBanner() {
-        return bannerRepository.findAllBy();
-    }
-
-    //------------상품진열관리 추천상품
+    //------------상품진열관리 추천상품 조회
     public List<Product2141234Vo> getProductRc() {
-        List<Product2141234Vo> test = productRepository.findAllByRcFl(1L);
-//        List<Product2141234Vo> result = new ArrayList<>();
-//
-//        for (Product2141234Vo vo : test) {
-//            Long currentRc = vo.getRcFl(); // getRc()는 Product2141234Vo의 rc 값을 가져오는 메소드임
-//            vo.setRcFl(currentRc + 1); // setRc()는 Product2141234Vo의 rc 값을 설정하는 메소드임
-//            result.add(vo);
-//        }
-        return test;
+        return productRepository.findAllByRcFl(1);
     }
 
-    //------------상품진열관리 신상품
+    //------------상품진열관리 신상품 조회
     public List<Product2141234Vo> getProductNew() {
-        return productRepository.findAllByNewFl(1L);
+        return productRepository.findAllByNewFl(1);
     }
 
-    //------------상품진열관리 인기상품
+    //------------상품진열관리 인기상품 조회
     public List<Product2141234Vo> getProductPop() {
-        return productRepository.findAllByPopFl(1L);
+        return productRepository.findAllByPopFl(1);
     }
-    // -------------- 상품등록
 
+    //------------상품진열관리 신상품 토글
+    public ResVo putProductNew(Long iproduct) {
+        Optional<ProductEntity> productEntityOptional = productRepository.findById(iproduct);
+        ProductEntity entity = productEntityOptional.get();
+        entity.setNewFl(entity.getNewFl() == 0 ? 1 : 0);
+        productRepository.save(entity);
+        return new ResVo(Const.SUCCESS);
+    }
+    //------------상품진열관리 인기상품 토글
+    public ResVo putProductPop(Long iproduct) {
+        Optional<ProductEntity> productEntityOptional = productRepository.findById(iproduct);
+        ProductEntity entity = productEntityOptional.get();
+        entity.setPopFl(entity.getPopFl() == 0 ? 1 : 0);
+        productRepository.save(entity);
+        return new ResVo(Const.SUCCESS);
+    }
+    //------------상품진열관리 추천상품 토글
+    public ResVo putProductRc(Long iproduct) {
+        Optional<ProductEntity> productEntityOptional = productRepository.findById(iproduct);
+        ProductEntity entity = productEntityOptional.get();
+        entity.setRcFl(entity.getRcFl() == 0 ? 1 : 0);
+        productRepository.save(entity);
+        return new ResVo(Const.SUCCESS);
+    }
+
+    // -------------- 상품등록
     @Transactional
-    public ResVo postProduct(List<MultipartFile> pics, MultipartFile productDetails, ProductInsDto dto) {
+    public ResVo postProduct(List<MultipartFile> pics, MultipartFile productDetails, AdminProductInsDto dto) {
         ProductEntity entity = new ProductEntity();
 
         ProductMainCategoryEntity productMainCategoryEntity = mainCategoryRepository.findById(dto.getImain()).get();
@@ -141,6 +141,7 @@ public class AdminProductService {
         entity.setProductNm(dto.getProductNm());
         entity.setRecommandAge(dto.getRecommendedAge());
         entity.setPrice(dto.getPrice());
+       // entity.setAdminMemo(dtoS.getAdminMemo());
         entity.setRecommandAge(dto.getRemainedCount());
         String target = "/product/" + entity.getIproduct();
 
@@ -157,28 +158,64 @@ public class AdminProductService {
             productPicRepository.save(productPicEntity);
         }
         return new ResVo(Const.SUCCESS);
-
-
-
-
     }
 
-    //-----------배너 생성
-    @Transactional
-    public ResVo postBanner(MultipartFile pic, BannerInsDto dto) {
-        BannerEntity banner = new BannerEntity();
+    // 상품 수정
+    public ResVo putProduct(List<MultipartFile> pics, MultipartFile productDetails, ProductUptDto dto, Long iproduct) {
+        ProductEntity entity = productRepository.findById(iproduct).get();
 
-        banner.setBannerUrl(dto.getBannerUrl());
-        banner.setTarget(dto.getTarget());
+        ProductMainCategoryEntity productMainCategoryEntity = mainCategoryRepository.findById(dto.getImain()).get();
+        entity.setProductMainCategoryEntity(productMainCategoryEntity);
+        ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findById(dto.getImiddle()).get();
+        entity.setMiddleCategoryEntity(middleCategoryEntity);
 
-        bannerRepository.save(banner);
+        entity.setProductNm(dto.getProductNm());
+        entity.setRecommandAge(dto.getRecommendedAge());
+        entity.setPrice(dto.getPrice());
+        entity.setNewFl(dto.getNewFl());
+        entity.setPopFl(dto.getPopFl());
+        entity.setRcFl(dto.getRcFl());
+        entity.setAdminMemo(dto.getAdminMemo());
+        entity.setRecommandAge(dto.getRemainedCount());
 
-        String savedPic = myFileUtils.transferTo(pic, "/banner/" + banner.getIbanner() + "/");
+        String target = "/product/" + entity.getIproduct();
 
-        banner.setBannerPic(savedPic);
-        bannerRepository.save(banner);
+        String detailsFileNm = myFileUtils.transferTo(productDetails, target);
+        entity.setProductDetails(detailsFileNm);
+        entity.setRepPic(pics.toString());
 
+        ProductEntity savedEntity = productRepository.save(entity);
+        for (MultipartFile file : pics) {
+            String fileNm = myFileUtils.transferTo(file, target);
+            ProductPicEntity productPicEntity = new ProductPicEntity();
+            productPicEntity.setProductPic(fileNm);
+            productPicEntity.setProductEntity(savedEntity);
+            productPicRepository.save(productPicEntity);
+        }
         return new ResVo(Const.SUCCESS);
+    }
+
+    //------------------------------------------------------- 상품삭제
+    @Transactional
+    public ResVo delProduct(Long iproduct) {
+        Optional<ProductEntity> productOptional = productRepository.findById(iproduct);
+        ProductEntity product = productOptional.get();
+        product.setDelFl(1);
+        productRepository.save(product);  // 변경
+        return new ResVo(Const.SUCCESS);
+    }
+
+
+    //------리뷰 검색
+    @Transactional
+    public List<SearchReviewSelVo> getSearchReview(ReviewSearchDto dto) {
+        List<SearchReviewSelVo> vo = reviewRepository.selReviewAll(dto);
+        return vo;
+    }
+
+    //------------배너출력-------------------------
+    public List<BannerSelVo> getBanner() {
+        return bannerRepository.bannerSelVo();
     }
 
     //------------ 배너수정
@@ -197,36 +234,63 @@ public class AdminProductService {
         return new ResVo(1);
     }
 
+    //-----------배너 생성
+    @Transactional
+    public ResVo postBanner(MultipartFile pic, BannerInsDto dto) {
+        BannerEntity banner = new BannerEntity();
+
+        banner.setBannerUrl(dto.getBannerUrl());
+        banner.setTarget(dto.getTarget());
+        String savedPic = myFileUtils.transferTo(pic, "/banner/" + banner.getIbanner() + "/");
+        banner.setBannerPic(savedPic);
+        bannerRepository.save(banner);
+        return new ResVo(Const.SUCCESS);
+    }
     //-------배너삭제
     @Transactional
     public ResVo delBanner(Long ibanner) {
         int result = bannerRepository.deleteAllByIbanner(ibanner);
         return new ResVo(result);
     }
-    //------리뷰 검색
+    // 배너토글
+    public ResVo putBanner(Long ibanner) {
+        Optional<BannerEntity> bannerOptional = bannerRepository.findById(ibanner);
+        BannerEntity banner = bannerOptional.get();
+        banner.setStatus(banner.getStatus() == 0 ? 1 : 0);
+        bannerRepository.save(banner);
+        return new ResVo(Const.SUCCESS);
+    }
 
-    @Transactional
-    public List<SearchReviewSelVo> getSearchReview(ReviewSearchDto dto) {
-//        List<ProductEntity> productEntities = productRepository.selProductAll(dto);
-//        List<SearchReviewSelVo> vo = productEntities.stream().map(item ->SearchReviewSelVo
-//                .builder()
-//                .productNm(item.getProductNm())
-//                .build()).collect(Collectors.toList());
-//        return vo;
-        List<ReviewEntity> reviewList =  reviewRepository.selReviewAll(dto);
-
-        List<SearchReviewSelVo> vo = reviewList.stream().map(item -> SearchReviewSelVo
-                        .builder()
-                        .nm(item.getUserEntity().getNm()) // 유저명
-                        .productNm(item.getProductEntity().getProductNm()) // 상품이름
-                        .repPic(item.getProductEntity().getRepPic()) //대표사진
-                        .ipoduct(item.getProductEntity().getIproduct()) //상품코드
-                        .contents(item.getContents()) //리뷰내용
-                        .productScore(item.getProductScore()) //리뷰별점
-                        .build())
-                .collect(Collectors.toList());
-
+    // 숨김리뷰만 조회
+    public List<SearchReviewSelVo> getHiddenReview() {
+        List<SearchReviewSelVo> vo = reviewRepository.findAllByDelFl();
         return vo;
+    }
+    // 숨기지 않는 리뷰
+    public List<SearchReviewSelVo> getReviewSelVo() {
+        List<SearchReviewSelVo> vo = reviewRepository.findAllByNotDelFl();
+        return vo;
+    }
+    //관리자 메모 작성&수정
+    public ResVo postReviewAdminMemo(ReviewMemoInsDto dto) {
+        ReviewEntity entity = reviewRepository.findByIreview(dto.getIreview());
+        entity.setAdminMemo(dto.getAdminMemo());
+        reviewRepository.save(entity);
+        return new ResVo(Const.SUCCESS);
+    }
+
+    public ResVo putReviewTogle(Long ireview) {
+        Optional<ReviewEntity> optionalReview = reviewRepository.findById(ireview);
+        ReviewEntity entity = optionalReview.get();
+        entity.setDelFl(optionalReview.get().getDelFl() == 0 ? 1 : 0);
+        reviewRepository.save(entity);
+        return new ResVo(Const.SUCCESS);
+    }
+
+
+    public List<ReviewHideClickSelVo> getHiCkSelVo(Long ireview) {
+       return reviewRepository.findReview(ireview);
+
 
     }
 }

@@ -1,14 +1,11 @@
 package com.baby.babycareproductsshop.admin.product.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-import java.util.List;
 
-@Getter
-@Setter
-public class ProductInsDto {
+@Data
+public class AdminProductInsDto {
 
     @JsonIgnore
     private Long iproduct;
@@ -20,9 +17,12 @@ public class ProductInsDto {
     private String productNm; // 상품이름
 
     @JsonIgnore
-    private String productDetails;
+    private String productDetails; // 상품 설명
 
     private int recommendedAge; //나이
+
+
+    private String adminMemo;
 
     private int price; // 가격
 
@@ -31,13 +31,11 @@ public class ProductInsDto {
 
     private int remainedCount; //재고
 
-//    private int newFl; // 신상품
-//
-//    private int rcFl; // 추천상품
-//
-//    private int popFl; // 인기상품
 
-    private List<String> pics;
+
+
+
+    //private List<String> pics;
 
 
 }

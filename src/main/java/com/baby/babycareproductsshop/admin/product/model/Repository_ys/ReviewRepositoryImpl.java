@@ -1,6 +1,8 @@
 package com.baby.babycareproductsshop.admin.product.model.Repository_ys;
 
+import com.baby.babycareproductsshop.admin.product.model.ReviewHideClickSelVo;
 import com.baby.babycareproductsshop.admin.product.model.ReviewSearchDto;
+import com.baby.babycareproductsshop.admin.product.model.SearchReviewSelVo;
 import com.baby.babycareproductsshop.entity.review.ReviewEntity;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -20,34 +22,100 @@ import static com.baby.babycareproductsshop.entity.user.QUserEntity.userEntity;
 public class ReviewRepositoryImpl implements ReviewQdslRepository{
 
     private final JPAQueryFactory jpaQueryFactory;
-
+    @Override
+    public List<SearchReviewSelVo> selReviewAll(ReviewSearchDto dto) {
+        JPAQuery<SearchReviewSelVo> query = jpaQueryFactory.select(Projections.constructor(SearchReviewSelVo.class,
+                        reviewEntity.userEntity.nm,
+                        reviewEntity.productEntity.repPic,
+                        reviewEntity.productEntity.iproduct,
+                        reviewEntity.productEntity.productNm,
+                        reviewEntity.contents,
+                        reviewEntity.productScore,
+                        reviewEntity.delFl)
+                )
+                .from(reviewEntity)
+                .rightJoin(reviewEntity.userEntity)
+                .leftJoin(reviewEntity.productEntity)
+                .where(whereProductNm(dto.getKeyword()), whereCategory(dto.getImain(), dto.getImiddle()));
+        return query.fetch();
+    }
 
     @Override
-    public List<ReviewEntity> selReviewAll(ReviewSearchDto dto) {
-        JPAQuery<ReviewEntity> query = jpaQueryFactory.select(Projections.fields(ReviewEntity.class,
-                         reviewEntity.productScore
-                        ,reviewEntity.contents //내용
-//                        ,reviewEntity.userEntity.nm //작성자
-//                        ,reviewEntity.productEntity.productNm // 상품이름
-//                        ,reviewEntity.productEntity.price // 가격
-//                        ,reviewEntity.productEntity.repPic //사진
-//                        ,reviewEntity.productEntity.iproduct)
-                        )
-                ) //상품코드
+    public List<SearchReviewSelVo> findAllByDelFl() {
+            JPAQuery<SearchReviewSelVo> query = jpaQueryFactory.select(Projections.constructor(SearchReviewSelVo.class,
+                            reviewEntity.userEntity.nm,
+                            reviewEntity.productEntity.repPic,
+                            reviewEntity.productEntity.iproduct,
+                            reviewEntity.productEntity.productNm,
+                            reviewEntity.contents,
+                            reviewEntity.productScore,
+                            reviewEntity.delFl)
+                    )
+                    .from(reviewEntity)
+                    .rightJoin(reviewEntity.userEntity)
+                    .leftJoin(reviewEntity.productEntity)
+                    .where(reviewEntity.delFl.eq(1));
+            return query.fetch();
+
+    }
+
+    @Override
+    public List<SearchReviewSelVo> findAllByNotDelFl() {
+        JPAQuery<SearchReviewSelVo> query = jpaQueryFactory.select(Projections.constructor(SearchReviewSelVo.class,
+                        reviewEntity.userEntity.nm,
+                        reviewEntity.productEntity.repPic,
+                        reviewEntity.productEntity.iproduct,
+                        reviewEntity.productEntity.productNm,
+                        reviewEntity.contents,
+                        reviewEntity.productScore,
+                        reviewEntity.delFl)
+                )
                 .from(reviewEntity)
-                .join(reviewEntity.userEntity)
-                .where(whereProductNm(dto.getKeyword()),whereImain(dto.getImain()),whereImiddel(dto.getImiddle()));
+                .rightJoin(reviewEntity.userEntity)
+                .leftJoin(reviewEntity.productEntity)
+                .where(reviewEntity.delFl.eq(0));
         return query.fetch();
+
+    }
+
+    @Override
+    public List<ReviewHideClickSelVo> findReview(Long ireview) {
+        JPAQuery<ReviewHideClickSelVo> query = jpaQueryFactory.select(Projections.constructor(ReviewHideClickSelVo.class,
+                        reviewEntity.userEntity.nm,
+                        reviewEntity.productEntity.repPic,
+                        reviewEntity.productEntity.productNm,
+                        reviewEntity.contents,
+                        reviewEntity.productScore
+                        )
+                )
+                .from(reviewEntity)
+                .rightJoin(reviewEntity.userEntity)
+                .leftJoin(reviewEntity.productEntity)
+                .where(reviewEntity.ireview.eq(ireview));
+        return query.fetch();
+
     }
 
 
     private BooleanExpression whereProductNm(String keyword) {
-        return StringUtils.hasText(keyword) ? reviewEntity.productEntity.productNm.contains(keyword) : null;
+        return StringUtils.hasText(keyword) ? reviewEntity.productEntity.productNm.like("%" + keyword + "%") : null;
     }
-    private BooleanExpression whereImain(Long imain) {
-        return imain == 0 ? null : reviewEntity.productEntity.productMainCategoryEntity.imain.eq(imain);
+    private BooleanExpression whereCategory(Long imain, int imiddle) {
+        if(imain != 0 && imiddle != 0) {
+            // 두 카테고리 모두 선택한 경우
+            return reviewEntity.productEntity.productMainCategoryEntity.imain.eq(imain)
+                    .and(reviewEntity.productEntity.middleCategoryEntity.imiddle.eq(imiddle));
+        } else if(imain != 0) {
+            // Main 카테고리만 선택한 경우
+            return reviewEntity.productEntity.productMainCategoryEntity.imain.eq(imain);
+        } else if(imiddle != 0) {
+            // Middle 카테고리만 선택한 경우
+            return reviewEntity.productEntity.middleCategoryEntity.imiddle.eq(imiddle);
+        } else {
+            // 두 카테고리 모두 선택하지 않은 경우
+            return null;
+        }
     }
-    private BooleanExpression whereImiddel(int imiddel) {
-        return imiddel == 0 ? null : reviewEntity.productEntity.middleCategoryEntity.imiddle.eq(imiddel);
-    }
+
+
 }

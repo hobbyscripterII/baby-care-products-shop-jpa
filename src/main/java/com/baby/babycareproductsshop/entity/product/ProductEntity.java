@@ -58,6 +58,6 @@ public class ProductEntity extends BaseEntity {
     @ColumnDefault("'0'")
     private int delFl;
 
-    @Column(name = "admin_memo",columnDefinition = "BIGINT UNSIGNED")
+    @Column(name = "admin_memo")
     private String adminMemo;
 }

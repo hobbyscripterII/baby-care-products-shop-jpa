@@ -5,7 +5,7 @@ public interface Product2141234Vo {
     Long getPrice();
     String getRepPic();
     Long getIproduct();
-    Long getRcFl();
-    Long setRcFl(long l);
+//    Long getRcFl();
+//    Long setRcFl(long l);
 
 }

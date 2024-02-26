@@ -31,6 +31,8 @@ public class QReviewEntity extends EntityPathBase<ReviewEntity> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
+    public final NumberPath<Integer> delFl = createNumber("delFl", Integer.class);
+
     public final NumberPath<Long> ireview = createNumber("ireview", Long.class);
 
     public final com.baby.babycareproductsshop.entity.order.QOrderEntity orderEntity;

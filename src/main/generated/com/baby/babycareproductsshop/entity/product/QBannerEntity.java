@@ -32,7 +32,7 @@ public class QBannerEntity extends EntityPathBase<BannerEntity> {
 
     public final NumberPath<Integer> status = createNumber("status", Integer.class);
 
-    public final StringPath target = createString("target");
+    public final NumberPath<Integer> target = createNumber("target", Integer.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;

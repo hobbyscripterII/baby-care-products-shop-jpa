@@ -1,9 +1,10 @@
 package com.baby.babycareproductsshop.admin.product;
-
 import com.baby.babycareproductsshop.admin.product.model.*;
-import com.baby.babycareproductsshop.admin.product.model.ProductInsDto;
+import com.baby.babycareproductsshop.common.Const;
 import com.baby.babycareproductsshop.common.ResVo;
-import com.baby.babycareproductsshop.entity.product.BannerEntity;
+
+import com.baby.babycareproductsshop.entity.product.ProductEntity;
+import com.baby.babycareproductsshop.entity.review.ReviewEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -24,14 +26,14 @@ public class AdminProductController {
 
     // 주문총수가격
     @GetMapping("/Total Price & count")
-    @Operation(summary = "주문 총 가격 & 수")
+    @Operation(summary = "주문 총 가격 & 수 dkdhdkhddkdkdkdk")
     public OrderTotalSelVo getOrderTotal() {
         return service.getTotalPriceAndCount();
     }
 
     // 최근주무자
     @GetMapping("recentOrders")
-    @Operation(summary = "최근 주문내역")
+    @Operation(summary = "최근 주문내역dkdhdkhddkdkdkdk")
     public List<OrderRecentSelVo> getRecentOrders() {
 
         return service.getRecentOrders();
@@ -39,97 +41,162 @@ public class AdminProductController {
 
     // 유저가입최근
     @GetMapping("recentUsers")
-    @Operation(summary = "최근 가입유저")
+    @Operation(summary = "최근 가입유저dkdhdkhddkdkdkdk")
     public List<ddddMapping> getRecentUser() {
         return service.getRecentUser();
     }
     //--------------------주문상태현황
 
     @GetMapping("OrderStatus")
-    @Operation(summary = "주문상태현황")
+    @Operation(summary = "주문상태현황dkdhdkhddkdkdkdk")
     public List<OrderStatusCountVo> getOrderStatusCount() {
         return service.getOrderStatusCount();
     }
 
     @GetMapping("OrderCancelCount")
-    @Operation(summary = "반품/취소 수")
+    @Operation(summary = "반품/취소 수dkdhdkhddkdkdkdk")
     public OrderRefundAndCancelCountSelVo getCountRefundAndCancel() {
         return service.getCountRefundAndCancel();
     }
 
-//    //상품삭제
-//    @DeleteMapping("dledledle")
-//    public ResVo updateProductPrice(@PathVariable Long iproduct, @RequestBody Long newPrice) {
-//        return updateProductPrice(newPrice, iproduct);
-//    }
-    //상품삭제
+
+    //-----------------------------------------------------------------상품 등록------------------------------------------------------
+    @PostMapping("/Product")
+    @Operation(summary = "상품등록 ")
+    public ResVo postProduct(@RequestPart(name = "pics") List<MultipartFile> pics,
+                             @RequestPart(name = "productDetails") MultipartFile productDetails,
+                             @RequestPart @Valid AdminProductInsDto dto) {
+        log.info("dto : {}", dto);
+        return service.postProduct(pics, productDetails, dto);
+    }
+    //-----------------------------------------------------------------상품 수정------------------------------------------------------
+    @PatchMapping("putput")
+    @Operation(summary = "상품 수정 ")
+    public ResVo uptProduct (@RequestPart(name = "pics") List<MultipartFile> pics,
+                             @RequestPart(name = "productDetails") MultipartFile productDetails,
+                             @RequestPart @Valid ProductUptDto dto,@RequestParam Long iproduct) {
+        return service.putProduct(pics,productDetails,dto,iproduct);
+    }
+
+    //-----------------------------------------------------------------상품 삭제------------------------------------------------------
     @DeleteMapping("deldel")
-    public ResVo delProduct(Long iproduct) {
+    @Operation(summary = "상품삭제 ")
+    public ResVo delProduct( @RequestParam Long iproduct) {
         return service.delProduct(iproduct);
     }
 
-
-    //------------상품진열관리 추천상품
+    //-----------------------------------------------------------------상품진열관리 추천상품 조회------------------------------------------------------
     @GetMapping("/productRc")
-    @Operation(summary = "진열관리 추천상품")
+    @Operation(summary = "진열관리 추천상품 조회")
     public List<Product2141234Vo> getProductRc() {
         return service.getProductRc();
     }
-    // 상품진열관리 신상품
-
+    //-----------------------------------------------------------------상품진열관리 신상품 조회------------------------------------------------------
     @GetMapping("/productNew")
-    @Operation(summary = "진열관리 신상품")
+    @Operation(summary = "진열관리 신상품 조회")
     public List<Product2141234Vo> getProductNew() {
         return service.getProductNew();
     }
-
-    // 인기상품
+    //-----------------------------------------------------------------상품진열관리 인기상품 조회------------------------------------------------------
     @GetMapping("/productPop")
-    @Operation(summary = "진열관리 인기상품")
+    @Operation(summary = "진열관리 인기상품 조회")
     public List<Product2141234Vo> getProductPop() {
         return service.getProductPop();
     }
-    // 배너출력
-    @GetMapping("banner")
-    @Operation(summary = "배너출력")
-    public List<BannerEntity> getBanner() {
-        return service.getBanner();
+    //------------------------------------------상품진열관리 신상품 토글---------------------------------------------
+    @PutMapping("/productNewDel")
+    @Operation(summary = "진열관리 신상품 토글")
+    public ResVo putProductNew(@RequestParam Long iproduct) {
+        return service.putProductNew(iproduct);
+    }
+    //------------------------------------------상품진열관리 인기상품 토글---------------------------------------------
+    @PutMapping("/productPopDel")
+    @Operation(summary = "진열관리 인기상품 토글")
+    public ResVo putProductPop(@RequestParam Long iproduct) {
+        return service.putProductPop(iproduct);
+    }
+    //------------------------------------------상품진열관리 추천상품 토글---------------------------------------------
+    @PutMapping("/productRcDel")
+    @Operation(summary = "진열관리 추천상품 토글")
+    public ResVo putProductRc(@RequestParam Long iproduct) {
+        return service.putProductRc(iproduct);
     }
 
-    //-----------------배너넣
+
+    //-----------------------------------------------------------------리뷰검색------------------------------------------------------
+    @GetMapping("/dddd")
+    @Operation(summary = "리뷰 검색 수정해야함ㅎ")
+    public List<SearchReviewSelVo> getSearchReview( ReviewSearchDto dto) {
+        return service.getSearchReview(dto);
+    }
+    //-------------------------------------------------------------리뷰 관리자 메모 ------------------------------------------------------
+    @PatchMapping("/review")
+    @Operation(summary = "관리자 메모 작성이랑 수정 둘다댐")
+    public ResVo patchReviewAdminMemo(@RequestBody ReviewMemoInsDto dto) {
+        return service.postReviewAdminMemo(dto);
+    }
+    //-------------------------------------------------------------숨김리뷰------------------------------------------------------
+    @GetMapping("/reviewwww")
+    @Operation(summary = "숨김리뷰조회")
+    public List<SearchReviewSelVo> getHiddenReviewSelVo() {
+        return service.getHiddenReview();
+    }
+    //-------------------------------------------------------------숨기지않은리뷰------------------------------------------------------
+    @GetMapping("/review")
+    @Operation(summary = "리뷰조회")
+    public List<SearchReviewSelVo> getReviewSelVo() {
+        return service.getReviewSelVo();
+    }
+    //----------------------------------------------------------리뷰 숨김 복구 토글*-------------------------------------------------
+    @PutMapping("/review")
+    @Operation(summary = "리뷰 숨김&복구 토글")
+    public ResVo putReviewTogle(Long ireview) {
+        return service.putReviewTogle(ireview);
+    }
+    @GetMapping("/hick")
+    @Operation(summary = "리뷰 숨김클릭시")
+    public List<ReviewHideClickSelVo> getHiCkSelVo (Long ireview) {
+        return service.getHiCkSelVo(ireview);
+    }
+//    @GetMapping("/hickReview")
+//    @Operation(summary = "관리자 메모만그거")
+//    public List<ReviewHideClickSelVo> getHiCkSelVo (Long ireview) {
+//        return service.getHiCkSelVo(ireview);
+//
+//    }
+
+    //-----------------------------------------------------------------배너조회------------------------------------------------------
+    @GetMapping("banner")
+    @Operation(summary = "배너조회")
+    public List<BannerSelVo> getBanner() {
+        return service.getBanner();
+    }
+    //-----------------------------------------------------------------배너등록------------------------------------------------------
     @PostMapping("/banner")
     @Operation(summary = "배너등록")
     public ResVo postBanner(@RequestPart MultipartFile pics, @RequestPart BannerInsDto dto) {
         return service.postBanner(pics, dto);
     }
-
-    // ----------배너 수정
+    //-----------------------------------------------------------------배너수정------------------------------------------------------
     @PatchMapping("/banner")
     @Operation(summary = "배너수정")
     public ResVo updateBanner(@RequestParam Long id, @RequestPart(required = false) MultipartFile pic, @RequestPart BannerInsDto dto) {
         return service.updateBanner(id, pic, dto);
     }
-    //배너 삭제
+    //-----------------------------------------------------------------배너삭제------------------------------------------------------
     @DeleteMapping("/banner")
     @Operation(summary = "배너삭제")
     public ResVo delbanner(@RequestBody Long ibanner) {
         return service.delBanner(ibanner);
     }
+    //-----------------------------------------------------------------배너토글처리------------------------------------------------------
+    @PatchMapping("/bannerrr")
+    @Operation(summary = "배너토글")
+    public ResVo putBanner(@RequestBody Long ibanner) {
+        return service.putBanner(ibanner);
+    }
 
 
-    // 주인장 리뷰 검색
-    @GetMapping("/dddd")
-    public List<SearchReviewSelVo> getSearchReview( ReviewSearchDto dto) {
-        return service.getSearchReview(dto);
-    }
-    //상품 등록
-    @PostMapping("/Product")
-    @Operation(summary = "상품등록 수정해야함 대긴함 ㅠ")
-    public ResVo postProduct(@RequestPart(name = "pics") List<MultipartFile> pics,
-                             @RequestPart(name = "productDetails") MultipartFile productDetails,
-                             @RequestPart @Valid ProductInsDto dto) {
-        return service.postProduct(pics, productDetails, dto);
-    }
 
 }
 

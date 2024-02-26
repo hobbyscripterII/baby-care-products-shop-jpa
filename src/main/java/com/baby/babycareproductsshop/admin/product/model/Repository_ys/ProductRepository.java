@@ -11,12 +11,10 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity,Long>, ProductQdslRepository  {
 
-    List<Product2141234Vo> findAllByRcFl(Long rcFl);
+    List<Product2141234Vo> findAllByRcFl(int rcFl);
 
-    List<Product2141234Vo> findAllByNewFl(Long newFl);
+    List<Product2141234Vo> findAllByNewFl(int newFl);
 
-    List<Product2141234Vo> findAllByPopFl(Long popFl);
-
-    /*int updateByIproduct (Long iproduct);*/
+    List<Product2141234Vo> findAllByPopFl(int popFl);
 
 }

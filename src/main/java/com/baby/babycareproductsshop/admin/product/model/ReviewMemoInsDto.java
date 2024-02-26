@@ -3,8 +3,8 @@ package com.baby.babycareproductsshop.admin.product.model;
 import lombok.Data;
 
 @Data
-public class BannerInsDto {
+public class ReviewMemoInsDto {
+    private Long ireview;
+    private String adminMemo;
 
-    private String bannerUrl;
-    private int target;
 }

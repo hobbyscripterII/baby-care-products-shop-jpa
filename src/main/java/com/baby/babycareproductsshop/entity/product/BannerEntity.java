@@ -25,6 +25,6 @@ public class BannerEntity extends BaseEntity {
     @ColumnDefault("'0'")
     private int status;
 
-    @Column(length = 1000, nullable = false)
-    private String target;
+    @Column(nullable = false)
+    private int target;
 }
