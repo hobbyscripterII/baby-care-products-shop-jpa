@@ -116,7 +116,7 @@ public class AdminOrderQdlsSupportRepositoryImpl {
             switch (dateCategory) {
                 case 0 -> booleanExpression = orderEntity.createdAt.between(startDate, endDate);
                 case 1 -> booleanExpression = orderEntity.depositedAt.between(startDate, endDate);
-                case 2 -> booleanExpression = orderEntity.deliveryCompletedAt.between(startDate, endDate);
+                case 2 -> booleanExpression = orderEntity.deliveredAt.between(startDate, endDate);
                 case 3 -> booleanExpression = orderEntity.deletedAt.between(startDate, endDate);
                 case 4 -> booleanExpression = orderDetailsEntity.refundedAt.between(startDate, endDate); // *
                 default -> {
