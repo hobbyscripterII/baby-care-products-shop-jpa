@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-public class AdminSelOrderSalesDto {
+public class AdminSelOrderStatisticsDto {
     @Schema(title = "연도")
     private int year;
     @Schema(title = "월")
