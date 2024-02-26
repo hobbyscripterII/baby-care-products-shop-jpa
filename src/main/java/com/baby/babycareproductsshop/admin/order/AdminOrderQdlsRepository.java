@@ -14,4 +14,5 @@ public interface AdminOrderQdlsRepository {
     List<OrderEntity> orderDeleteList(OrderSmallFilterDto dto);
     List<RefundEntity> orderRefundList(OrderSmallFilterDto dto);
     List<OrderEntity> adminMemoList(OrderMemoListDto dto);
+    List<OrderEntity> orderDetails(int iorder);
 }
