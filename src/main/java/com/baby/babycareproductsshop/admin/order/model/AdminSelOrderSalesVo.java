@@ -6,18 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
 public class AdminSelOrderSalesVo {
     private int totalSales;
-    private LocalDate createAt;
+    private LocalDateTime createdAt;
     @JsonIgnore
     private int processState;
     @JsonIgnore
     private int deleteFl;
 
-//    private int earnings;
-//    private int costPrice;
+    private int earnings;
+    private int costPrice;
 
 }
