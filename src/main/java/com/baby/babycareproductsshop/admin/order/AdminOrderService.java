@@ -29,10 +29,10 @@ public class AdminOrderService {
         LocalDateTime now = LocalDateTime.now();
 
         // >>>>> 정상적인 주문 처리 상태 코드가 맞는지 확인
-        if (processStateCheck(beforeProcessState)) {
-            List<Integer> list = dto.getIorders()
-                    .stream()
-                    .peek(iorder -> {
+        List<Integer> list = dto.getIorders()
+                .stream()
+                .peek(iorder -> {
+                    if (processStateCheck(iorder, beforeProcessState)) {
                         OrderEntity entity = adminOrderRepository.getReferenceById(iorder.longValue());
                         entity.setIorder(iorder.longValue());
                         entity.setProcessState(afterProcessState); // 1. 값 변환
@@ -43,17 +43,17 @@ public class AdminOrderService {
                         }
 
                         adminOrderRepository.save(entity); // 2. 주문 처리 상태 및 완료일자 수정
-                    })
-                    .toList();
+                    } else {
+                        throw new RestApiException(AuthErrorCode.PROCESS_STATE_CODE_ERROR);
+                    }
+                })
+                .toList();
 
-            // 2. 변환 후 변환된 개수와 dto에 넘어온 값 확인
-            if (list.size() == dto.getIorders().size()) {
-                return new ResVo(Const.SUCCESS);
-            } else {
-                throw new RestApiException(AuthErrorCode.ORDER_BATCH_PROCESS_FAIL);
-            }
+        // 2. 변환 후 변환된 개수와 dto에 넘어온 값 확인
+        if (list.size() == dto.getIorders().size()) {
+            return new ResVo(Const.SUCCESS);
         } else {
-            throw new RestApiException(AuthErrorCode.PROCESS_STATE_CODE_NOT_FOUND);
+            throw new RestApiException(AuthErrorCode.ORDER_BATCH_PROCESS_FAIL);
         }
     }
 
@@ -177,8 +177,15 @@ public class AdminOrderService {
         return null;
     }
 
-    private boolean processStateCheck(int processState) {
-        return processState > 0 && processState < 4;
+    private boolean processStateCheck(int iorder, int processState) {
+        boolean result = false;
+        switch (iorder) {
+            case 1 -> result = processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
+            case 2 -> result = processState == ProcessState.ON_DELIVERY.getProcessStateNum();
+            case 3 -> result = processState == ProcessState.DELIVER_SUCCESS.getProcessStateNum();
+            case 5 -> result = processState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
+        }
+        return result;
     }
 
     private int changeProcessState(int processState) {
