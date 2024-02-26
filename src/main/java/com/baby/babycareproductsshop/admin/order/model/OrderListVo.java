@@ -2,11 +2,15 @@ package com.baby.babycareproductsshop.admin.order.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class OrderListVo {
     @JsonIgnore
     private int processState;
@@ -26,10 +30,4 @@ public class OrderListVo {
     private int payCategory;
     @Schema(title = "반품 신청", description = "0 - '반품 신청' 버튼 출력 X<br>1 - '반품 신청' 버튼 출력 O")
     private int refundFl;
-
-    // 반품 신청 버튼 출력 여부
-    // 주문 처리 상태 확인 후 flag 지정
-    private int getRefundFl() {
-        return processState == 4 ? 1 : 0;
-    }
 }

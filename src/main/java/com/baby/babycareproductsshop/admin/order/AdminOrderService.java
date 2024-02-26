@@ -58,7 +58,35 @@ public class AdminOrderService {
     }
 
     public List<OrderListVo> orderList(OrderFilterDto dto) {
-        return null;
+        return adminOrderRepository.orderList(dto)
+                .stream()
+                .map(orderItem -> {
+                    List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
+                            .map(productItem -> OrderProductVo.builder()
+                                    .repPic(productItem.getProductEntity().getRepPic())
+                                    .productNm(productItem.getProductEntity().getProductNm())
+                                    .cnt(productItem.getProductCnt())
+                                    .processState(productItem.getOrderEntity().getProcessState())
+                                    .amount(productItem.getProductEntity().getPrice())
+                                    .build())
+                            .toList();
+
+                    return OrderListVo
+                            .builder()
+                            .processState(orderItem.getProcessState())
+                            .iorder(orderItem.getIorder().intValue())
+                            .orderedAt(orderItem.getCreatedAt().toString())
+                            .products(orderProductVoList)
+                            .ordered(orderItem.getUserEntity().getNm())
+                            .recipient(orderItem.getUserEntity().getNm())
+                            .totalAmount(orderProductVoList.stream()
+                                    .mapToInt(OrderProductVo::getAmount)
+                                    .sum())
+                            .payCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
+                            .refundFl(orderItem.getProcessState() == ProcessState.DELIVER_SUCCESS.getProcessStateNum() ? 1 : 0)
+                            .build();
+                })
+                .toList();
     }
 
     // select문은 @Transactional 필요 x(<- 어노테이션은 rollback이 있을 수 있는 곳만)
@@ -93,8 +121,8 @@ public class AdminOrderService {
                                     .mapToInt(OrderProductVo::getAmount)
                                     .sum())
                             .payCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
-                            .buyComfirmFl(0)
-                            .build(); // 구매 확정 여부(자동화 추가)
+                            .buyComfirmFl(0) // 구매 확정 여부(자동화 추가)
+                            .build();
                 })
                 .toList();
     }
