@@ -224,14 +224,14 @@ public class AdminOrderController {
                     "<li>1개월 - 4</li>\n" +
                     "<li>3개월 - 5</li>\n" +
                     "<li>전체 - 6</li></ul>\n" +
-                    "<ul><strong>processState</strong><br>\n" +
-                    "<li>전체 - 0</li>\n" +
-                    "<li>어제 - 1</li>\n" +
-                    "<li>일주일 - 2</li>\n" +
-                    "<li>지난 달 - 3</li>\n" +
-                    "<li>1개월 - 4</li>\n" +
-                    "<li>3개월 - 5</li>\n" +
-                    "<li>전체 - 6</li></ul>\n" +
+//                    "<ul><strong>processState</strong><br>\n" +
+//                    "<li>전체 - 0</li>\n" +
+//                    "<li>어제 - 1</li>\n" +
+//                    "<li>일주일 - 2</li>\n" +
+//                    "<li>지난 달 - 3</li>\n" +
+//                    "<li>1개월 - 4</li>\n" +
+//                    "<li>3개월 - 5</li>\n" +
+//                    "<li>전체 - 6</li></ul>\n" +
                     "<ul><strong>sort</strong><br>\n" +
                     "<li>주문일 역순 - 0</li>\n" +
                     "<li>주문일 순 - 1</li>\n" +

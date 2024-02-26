@@ -62,7 +62,8 @@ public class AdminOrderService {
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
-                            .map(productItem -> OrderProductVo.builder()
+                            .map(productItem -> OrderProductVo
+                                    .builder()
                                     .repPic(productItem.getProductEntity().getRepPic())
                                     .productNm(productItem.getProductEntity().getProductNm())
                                     .cnt(productItem.getProductCnt())
@@ -101,7 +102,8 @@ public class AdminOrderService {
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
-                            .map(productItem -> OrderProductVo.builder()
+                            .map(productItem -> OrderProductVo
+                                    .builder()
                                     .repPic(productItem.getProductEntity().getRepPic())
                                     .productNm(productItem.getProductEntity().getProductNm())
                                     .cnt(productItem.getProductCnt())
@@ -132,7 +134,8 @@ public class AdminOrderService {
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
-                            .map(productItem -> OrderProductVo.builder()
+                            .map(productItem -> OrderProductVo
+                                    .builder()
                                     .repPic(productItem.getProductEntity().getRepPic())
                                     .productNm(productItem.getProductEntity().getProductNm())
                                     .cnt(productItem.getProductCnt())
@@ -174,7 +177,19 @@ public class AdminOrderService {
     }
 
     public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto) {
-        return null;
+        return adminOrderRepository.adminMemoList(dto)
+                .stream()
+                .map(item ->
+                        OrderMemoListVo
+                                .builder()
+                                .iorder(item.getIorder().intValue())
+                                .orderedAt(item.getCreatedAt().toString())
+                                .ordered(item.getUserEntity().getNm())
+                                .processState(item.getProcessState())
+                                .memo(item.getAdminMemo())
+                                .build()
+                )
+                .toList();
     }
 
     private boolean processStateCheck(int iorder, int processState) {

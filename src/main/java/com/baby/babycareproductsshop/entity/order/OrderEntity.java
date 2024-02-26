@@ -57,4 +57,6 @@ public class OrderEntity extends BaseEntity {
     private LocalDateTime depositedAt; // 입금 완료 일자
     private LocalDateTime deliveryCompletedAt; // 배송 완료 일자
     private LocalDateTime deletedAt; // 주문 취소 일자
+
+    private String adminMemo;
 }

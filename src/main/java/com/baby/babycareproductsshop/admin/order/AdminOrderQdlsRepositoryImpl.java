@@ -18,7 +18,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
         super(jpaQueryFactory);
     }
 
-    private List<OrderEntity> commonDtoTasks(OrderCommonSearchFilterDto dto) {
+    private List<OrderEntity> commonJpaQuery(OrderCommonSearchFilterDto dto) {
         return jpaQueryFactory
                 .select(orderEntity)
                 .from(orderEntity)
@@ -31,6 +31,18 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .where(commonSearchFilter(dto))
                 .orderBy(orderListSort(dto.getSort()))
                 .fetch();
+    }
+
+    public List<OrderEntity> commonListTasks(OrderFilterDto dto) {
+        return commonJpaQuery(commonDtoTasks(dto));
+    }
+
+    public List<OrderEntity> commonListTasks(OrderSmallFilterDto dto) {
+        return commonJpaQuery(commonDtoTasks(dto));
+    }
+
+    public List<OrderEntity> commonListTasks(OrderMemoListDto dto) {
+        return commonJpaQuery(commonDtoTasks(dto));
     }
 
     private OrderCommonSearchFilterDto commonDtoTasks(OrderSmallFilterDto dto) {
@@ -61,12 +73,16 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .build();
     }
 
-    public List<OrderEntity> commonListTasks(OrderSmallFilterDto dto) {
-        return commonDtoTasks(commonDtoTasks(dto));
-    }
-
-    public List<OrderEntity> commonListTasks(OrderFilterDto dto) {
-        return commonDtoTasks(commonDtoTasks(dto));
+    private OrderCommonSearchFilterDto commonDtoTasks(OrderMemoListDto dto) {
+        return OrderCommonSearchFilterDto
+                .builder()
+                .searchCategory(dto.getSearchCategory())
+                .keyword(dto.getKeyword())
+                .dateFl(dto.getDateFl())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .sort(dto.getSort())
+                .build();
     }
 
     @Override
@@ -102,6 +118,6 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
 
     @Override
     public List<OrderEntity> adminMemoList(OrderMemoListDto dto) {
-        return null;
+        return commonListTasks(dto);
     }
 }
