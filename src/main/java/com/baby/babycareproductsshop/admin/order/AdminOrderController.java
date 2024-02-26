@@ -1,7 +1,9 @@
 package com.baby.babycareproductsshop.admin.order;
 
 import com.baby.babycareproductsshop.admin.order.model.*;
+import com.baby.babycareproductsshop.common.ProcessState;
 import com.baby.babycareproductsshop.common.ResVo;
+import com.baby.babycareproductsshop.common.Utils;
 import com.baby.babycareproductsshop.exception.AuthErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -246,7 +248,7 @@ public class AdminOrderController {
         if (phoneNumber.length() == 11 || phoneNumber.length() == 13 && phoneNumber.startsWith("010") || phoneNumber.startsWith("011")) {
             if (phoneNumber.length() == 11) {
                 formatPhoneNumber =
-                        phoneNumber.substring(0, 3) + "-" +
+                                phoneNumber.substring(0, 3) + "-" +
                                 phoneNumber.substring(3, 7) + "-" +
                                 phoneNumber.substring(7);
             } else {
