@@ -35,7 +35,7 @@ public class QOrderEntity extends EntityPathBase<OrderEntity> {
 
     public final NumberPath<Integer> deleteFl = createNumber("deleteFl", Integer.class);
 
-    public final DateTimePath<java.time.LocalDateTime> deliveryCompletedAt = createDateTime("deliveryCompletedAt", java.time.LocalDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> deliveredAt = createDateTime("deliveredAt", java.time.LocalDateTime.class);
 
     public final StringPath deliveryRequest = createString("deliveryRequest");
 

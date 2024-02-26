@@ -39,7 +39,7 @@ public class AdminOrderService {
 
                         switch (afterProcessState) {
                             case 3 -> entity.setDepositedAt(now);
-                            case 4 -> entity.setDeliveryCompletedAt(now);
+                            case 4 -> entity.setDeliveredAt(now);
                         }
 
                         adminOrderRepository.save(entity); // 2. 주문 처리 상태 및 완료일자 수정
