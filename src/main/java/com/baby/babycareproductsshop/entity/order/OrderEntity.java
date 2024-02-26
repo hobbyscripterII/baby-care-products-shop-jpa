@@ -22,7 +22,7 @@ public class OrderEntity extends BaseEntity {
     @JoinColumn(name = "iuser", nullable = false)
     private UserEntity userEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // lazy 에러 발생으로 eager 타입으로 변경 2024-02-26
     @JoinColumn(name = "iaddress", nullable = false)
     private UserAddressEntity userAddressEntity;
 

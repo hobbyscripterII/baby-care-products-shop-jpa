@@ -18,6 +18,18 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
         super(jpaQueryFactory);
     }
 
+    public List<OrderEntity> commonListTasks(OrderFilterDto dto) {
+        return commonJpaQuery(commonDtoTasks(dto));
+    }
+
+    public List<OrderEntity> commonListTasks(OrderSmallFilterDto dto) {
+        return commonJpaQuery(commonDtoTasks(dto));
+    }
+
+    public List<OrderEntity> commonListTasks(OrderMemoListDto dto) {
+        return commonJpaQuery(commonDtoTasks(dto));
+    }
+
     private List<OrderEntity> commonJpaQuery(OrderCommonSearchFilterDto dto) {
         return jpaQueryFactory
                 .select(orderEntity)
@@ -33,19 +45,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .fetch();
     }
 
-    public List<OrderEntity> commonListTasks(OrderFilterDto dto) {
-        return commonJpaQuery(commonDtoTasks(dto));
-    }
-
-    public List<OrderEntity> commonListTasks(OrderSmallFilterDto dto) {
-        return commonJpaQuery(commonDtoTasks(dto));
-    }
-
-    public List<OrderEntity> commonListTasks(OrderMemoListDto dto) {
-        return commonJpaQuery(commonDtoTasks(dto));
-    }
-
-    private OrderCommonSearchFilterDto commonDtoTasks(OrderSmallFilterDto dto) {
+    private OrderCommonSearchFilterDto commonDtoTasks(OrderFilterDto dto) {
         return OrderCommonSearchFilterDto
                 .builder()
                 .searchCategory(dto.getSearchCategory())
@@ -59,7 +59,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .build();
     }
 
-    private OrderCommonSearchFilterDto commonDtoTasks(OrderFilterDto dto) {
+    private OrderCommonSearchFilterDto commonDtoTasks(OrderSmallFilterDto dto) {
         return OrderCommonSearchFilterDto
                 .builder()
                 .searchCategory(dto.getSearchCategory())
@@ -110,8 +110,6 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .from(refundEntity)
                 .leftJoin(orderEntity)
                 .on(refundEntity.orderDetailsEntity.orderEntity.iorder.eq(orderDetailsEntity.orderEntity.iorder))
-                .leftJoin(productEntity)
-                .on(refundEntity.orderDetailsEntity.productEntity.iproduct.eq(productEntity.iproduct))
                 .where(commonSearchFilter(filter))
                 .orderBy(orderListSort(dto.getSort())).fetch();
     }
@@ -119,5 +117,14 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
     @Override
     public List<OrderEntity> adminMemoList(OrderMemoListDto dto) {
         return commonListTasks(dto);
+    }
+
+    @Override
+    public List<OrderEntity> orderDetails(int iorder) {
+        return jpaQueryFactory
+                .select(orderEntity)
+                .from(orderEntity)
+                .where(orderEntity.iorder.eq((long)iorder))
+                .fetch();
     }
 }

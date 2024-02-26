@@ -80,9 +80,7 @@ public class AdminOrderService {
                             .products(orderProductVoList)
                             .ordered(orderItem.getUserEntity().getNm())
                             .recipient(orderItem.getUserEntity().getNm())
-                            .totalAmount(orderProductVoList.stream()
-                                    .mapToInt(OrderProductVo::getAmount)
-                                    .sum())
+                            .totalAmount(orderItem.getTotalPrice())
                             .payCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
                             .refundFl(orderItem.getProcessState() == ProcessState.DELIVER_SUCCESS.getProcessStateNum() ? 1 : 0)
                             .build();
@@ -184,12 +182,69 @@ public class AdminOrderService {
                                 .builder()
                                 .iorder(item.getIorder().intValue())
                                 .orderedAt(item.getCreatedAt().toString())
-                                .ordered(item.getUserEntity().getNm())
+                                .ordered(item.getAddressNm())
                                 .processState(item.getProcessState())
                                 .memo(item.getAdminMemo())
                                 .build()
                 )
                 .toList();
+    }
+
+
+    public List<OrderDetailsVo> orderDetails(int iorder) {
+        return adminOrderRepository.orderDetails(iorder)
+                .stream()
+                .map(item -> {
+                    List<OrderProductVo> products = adminOrderDetailsRepository.findAll(iorder).stream()
+                            .map(productItem -> OrderProductVo
+                                    .builder()
+                                    .repPic(productItem.getProductEntity().getRepPic())
+                                    .productNm(productItem.getProductEntity().getProductNm())
+                                    .cnt(productItem.getProductCnt())
+                                    .processState(productItem.getOrderEntity().getProcessState())
+                                    .amount(productItem.getProductEntity().getPrice())
+                                    .refundFl(productItem.getRefundFl())
+                                    .build())
+                            .toList();
+
+                    int deleteAmount = getDeleteAmount(item.getDeleteFl(), item.getTotalPrice());
+                    int refundAmount = getRefundAmount(products);
+
+                    return OrderDetailsVo
+                            .builder()
+                            .products(products)
+                            .productAmount(item.getTotalPrice())
+                            .deleteAmount(deleteAmount)
+                            .refundAmount(refundAmount)
+                            .totalAmount(refundAmount != 0 ? (item.getTotalPrice() - refundAmount) : item.getTotalPrice() - deleteAmount)
+                            .iorder(item.getIorder().intValue())
+                            .orderedAt(item.getCreatedAt().toString())
+                            .payCategory(item.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
+                            .processState(item.getProcessState())
+                            .ordered(item.getUserEntity().getNm())
+                            .orderedEmail(item.getUserEntity().getEmail())
+                            .orderedPhoneNumber(item.getPhoneNumber())
+                            .recipient(item.getAddressNm())
+                            .recipientPhoneNumber(item.getPhoneNumber())
+                            .address(item.getUserAddressEntity().getAddress())
+                            .adminMemo(item.getAdminMemo())
+                            .build();
+                })
+                .toList();
+    }
+
+    private int getDeleteAmount(int deleteFl, int totalAmount) {
+        return deleteFl == 1 ? totalAmount : 0;
+    }
+
+    private int getRefundAmount(List<OrderProductVo> products) {
+        int refundAmount = 0;
+        for (OrderProductVo product : products) {
+            if (product.getRefundFl() == 1) {
+                refundAmount += product.getAmount();
+            }
+        }
+        return refundAmount;
     }
 
     private boolean processStateCheck(int iorder, int processState) {
