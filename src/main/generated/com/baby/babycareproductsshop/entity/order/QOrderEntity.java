@@ -26,6 +26,8 @@ public class QOrderEntity extends EntityPathBase<OrderEntity> {
 
     public final StringPath addressNm = createString("addressNm");
 
+    public final StringPath adminMemo = createString("adminMemo");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 

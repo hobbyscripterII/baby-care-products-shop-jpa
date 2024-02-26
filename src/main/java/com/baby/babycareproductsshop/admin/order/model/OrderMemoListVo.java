@@ -1,9 +1,13 @@
 package com.baby.babycareproductsshop.admin.order.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class OrderMemoListVo {
     @Schema(title = "주문번호", description = "")
     private int iorder;
