@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -30,11 +31,15 @@ public class AdminUserController {
 
     @Operation(summary = "회원 정보 전체 조회", description = """
             unregisterFl = 0 : 탈퇴하지 않은 회원 정보 조회<br>
-            unregisterFl = 1 : 탈퇴한 회원 정보 조회
+            unregisterFl = 1 : 탈퇴한 회원 정보 조회<br>
+            <br>
+            page : 1부터 시작<br>
+            size : 한 페이지에 들어갈 데이터 개수<br>
+            sort : 지금은 작동 안하니까 그냥 그대로 두시면 됩니다.
             """)
     @GetMapping("/user")
-    public ApiResponse<?> getUserList(AdminSelAllUserDto dto) {
-        return service.getUserList(dto, null);
+    public ApiResponse<?> getUserList(AdminSelAllUserDto dto, @PageableDefault(page = 1, size = 10) Pageable pageable) {
+        return service.getUserList(dto, pageable);
     }
 
     @Operation(summary = "회원 정보 수정 시 기존 데이터 호출")

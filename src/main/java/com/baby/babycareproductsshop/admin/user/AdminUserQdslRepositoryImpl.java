@@ -13,6 +13,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -27,7 +28,7 @@ public class AdminUserQdslRepositoryImpl extends CommonSearchCondition implement
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<UserEntity> selUserAll(AdminSelAllUserDto dto) {
+    public List<UserEntity> selUserAll(AdminSelAllUserDto dto, Pageable pageable) {
         log.info("dto : {}", dto);
         JPAQuery<UserEntity> query = jpaQueryFactory.select(Projections.fields(UserEntity.class,
                         userEntity.iuser, userEntity.nm, userEntity.email,
@@ -35,7 +36,9 @@ public class AdminUserQdslRepositoryImpl extends CommonSearchCondition implement
                 ))
                 .from(userEntity)
                 .where(whereUnregisteredFl(dto.getUnregisteredFl()))
-                .orderBy(userEntity.iuser.desc());
+                .orderBy(userEntity.iuser.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize());
 
         query.where(dto.getKeywordType() == 0 ? null :
                 dto.getKeywordType() == 1 ?

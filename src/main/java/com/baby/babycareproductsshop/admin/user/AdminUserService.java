@@ -85,7 +85,7 @@ public class AdminUserService {
     }
 
     public ApiResponse<?> getUserList(AdminSelAllUserDto dto, Pageable pageable) {
-        List<UserEntity> entityList = adminUserRepository.selUserAll(dto);
+        List<UserEntity> entityList = adminUserRepository.selUserAll(dto, pageable);
         log.info("userEntity : {}", entityList);
         List<AdminSelAllUserVo> result = entityList.stream().filter(item -> item.getIuser() != 1)
                 .map(item -> AdminSelAllUserVo.builder()
