@@ -219,7 +219,7 @@ public class AdminOrderController {
                     <li>주문일 순 - 1</li>
                     <li>처리일 역순 - 2</li>
                     <li>처리일 순 - 3</li></ul>""")
-    public List<OrderMemoListVo> adminMemo(@RequestBody OrderMemoListDto dto) {
+    public List<OrderMemoListVo> adminMemoList(@RequestBody OrderMemoListDto dto) {
         return service.adminMemoList(dto);
     }
 

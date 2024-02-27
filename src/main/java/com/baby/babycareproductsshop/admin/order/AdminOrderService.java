@@ -1,14 +1,13 @@
 package com.baby.babycareproductsshop.admin.order;
 
 import com.baby.babycareproductsshop.admin.order.model.*;
-import com.baby.babycareproductsshop.common.Const;
-import com.baby.babycareproductsshop.common.ProcessState;
-import com.baby.babycareproductsshop.common.ResVo;
+import com.baby.babycareproductsshop.common.*;
 import com.baby.babycareproductsshop.entity.order.OrderEntity;
 import com.baby.babycareproductsshop.exception.AuthErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +21,17 @@ public class AdminOrderService {
     private final AdminOrderRepository adminOrderRepository;
     private final AdminOrderDetailsRepository adminOrderDetailsRepository;
 
+    @Scheduled(cron = "0 0 0 * * *")
+    void deliveredAutoChange() {
+        adminOrderRepository.deliveredAutoChange();
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+//    @Scheduled(cron = "0/5 * * * * ?") // 5초 주기 / 테스트용
+    void orderCancelAutoChange() {
+        adminOrderRepository.orderCancelAutoChange();
+    }
+
     @Transactional // 주문 일괄 처리
     public ResVo orderBatchProcess(OrderBatchProcessDto dto) {
         int beforeProcessState = dto.getProcessState();
@@ -32,7 +42,7 @@ public class AdminOrderService {
         List<Integer> list = dto.getIorders()
                 .stream()
                 .peek(iorder -> {
-                    if (processStateCheck(iorder, beforeProcessState)) {
+                    if (processStateCheck(iorder, beforeProcessState)) { // 수정 요청 상태가 이전 주문 요청 상태와 맞는지
                         OrderEntity entity = adminOrderRepository.getReferenceById(iorder.longValue());
                         entity.setIorder(iorder.longValue());
                         entity.setProcessState(afterProcessState); // 1. 값 변환
