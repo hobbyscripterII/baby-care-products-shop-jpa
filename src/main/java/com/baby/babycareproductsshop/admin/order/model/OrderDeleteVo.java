@@ -25,4 +25,6 @@ public class OrderDeleteVo {
     private int totalAmount;
     @Schema(title = "결제수단", description = "")
     private int payCategory;
+    @Schema(title = "번호", description = "")
+    private int idx;
 }
