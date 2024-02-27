@@ -1,14 +1,9 @@
 package com.baby.babycareproductsshop.admin.user;
 
-import com.baby.babycareproductsshop.admin.CommonSearchCondition;
 import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserDto;
 import com.baby.babycareproductsshop.admin.user.model.AdminSelUserSignupDto;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
-import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +19,7 @@ import static com.baby.babycareproductsshop.entity.user.QUserEntity.userEntity;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AdminUserQdslRepositoryImpl extends CommonSearchCondition implements AdminUserQdslRepository {
+public class AdminUserQdslRepositoryImpl extends AdminUserSearchCondition implements AdminUserQdslRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override

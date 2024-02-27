@@ -1,10 +1,8 @@
 package com.baby.babycareproductsshop.admin.order;
 
-import com.baby.babycareproductsshop.admin.CommonSearchCondition;
-import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderStatisticsDto;
 import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderSalesVo;
+import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderStatisticsDto;
 import com.baby.babycareproductsshop.admin.order.model.AdminSelTotalOrderCntVo;
-import com.baby.babycareproductsshop.admin.order.model.StatisticsVo;
 import com.baby.babycareproductsshop.common.Utils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -21,7 +19,7 @@ import static com.baby.babycareproductsshop.entity.order.QOrderEntity.orderEntit
 
 @Slf4j
 @RequiredArgsConstructor
-public class AdminOrderQdlsRepository2Impl extends CommonSearchCondition implements AdminOrderQdlsRepository2 {
+public class AdminOrderQdlsRepository2Impl extends AdminOrderSearchCondition implements AdminOrderQdlsRepository2 {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
@@ -42,14 +40,14 @@ public class AdminOrderQdlsRepository2Impl extends CommonSearchCondition impleme
 
         if (dto.getMonth() == 0) {
             query.groupBy(orderEntity.createdAt.year(), orderEntity.createdAt.month());
-            query.having(orderEntity.createdAt.year().eq(dto.getYear()),
+            query.having(yearEq(dto.getYear()),
                     processStateNq(1), deleteFlEq(0));
             return query.fetch();
         }
 
         query.groupBy(transformDate(orderEntity.createdAt));
-        query.having(orderEntity.createdAt.year().eq(dto.getYear()),
-                orderEntity.createdAt.month().eq(dto.getMonth()),
+        query.having(yearEq(dto.getYear()),
+                monthEq(dto.getMonth()),
                 processStateNq(1), deleteFlEq(0));
         return query.fetch();
     }
@@ -70,12 +68,12 @@ public class AdminOrderQdlsRepository2Impl extends CommonSearchCondition impleme
         }
         if (dto.getMonth() == 0 && dto.getYear() != 0) {
             query1.groupBy(orderDetailsEntity.createdAt.year(), orderDetailsEntity.createdAt.month());
-            query1.having(orderDetailsEntity.createdAt.year().eq(dto.getYear()));
+            query1.having(yearEqFromOrderDetail(dto.getYear()));
         }
         if (dto.getMonth() != 0 && dto.getYear() != 0) {
             query1.groupBy(transformDate(orderDetailsEntity.createdAt));
-            query1.having(orderDetailsEntity.createdAt.year().eq(dto.getYear()),
-                    orderDetailsEntity.createdAt.month().eq(dto.getMonth()));
+            query1.having(yearEqFromOrderDetail(dto.getYear()),
+                    monthEqFromOrderDetail(dto.getMonth()));
         }
         List<AdminSelTotalOrderCntVo> result1 = query1.fetch();
         if (result1.isEmpty()) {
@@ -102,11 +100,11 @@ public class AdminOrderQdlsRepository2Impl extends CommonSearchCondition impleme
         }
         if (dto.getMonth() == 0 && dto.getYear() != 0) {
             query2.groupBy(orderDetailsEntity.createdAt.year(), orderDetailsEntity.createdAt.month());
-            query2.having(orderDetailsEntity.createdAt.year().eq(dto.getYear()));
+            query2.having(yearEqFromOrderDetail(dto.getYear()));
         }
         if (dto.getMonth() != 0 && dto.getYear() != 0) {
-            query2.where(orderDetailsEntity.createdAt.year().eq(dto.getYear()),
-                    orderDetailsEntity.createdAt.month().eq(dto.getMonth()));
+            query2.where(yearEqFromOrderDetail(dto.getYear()),
+                    monthEqFromOrderDetail(dto.getMonth()));
         }
         List<AdminSelTotalOrderCntVo> result2 = query2.fetch();
         for (AdminSelTotalOrderCntVo vo : result2) {

@@ -1,4 +1,4 @@
-package com.baby.babycareproductsshop.admin;
+package com.baby.babycareproductsshop.admin.order;
 
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -8,32 +8,34 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
+import static com.baby.babycareproductsshop.entity.order.QOrderDetailsEntity.orderDetailsEntity;
 import static com.baby.babycareproductsshop.entity.order.QOrderEntity.orderEntity;
 import static com.baby.babycareproductsshop.entity.user.QUserEntity.userEntity;
 
-public abstract class CommonSearchCondition {
-    protected BooleanExpression whereUnregisteredFl(long unregisteredFl) {
-        return userEntity.unregisterFl.eq(unregisteredFl);
+public abstract class AdminOrderSearchCondition {
+
+    protected BooleanExpression yearEq(int year) {
+        return year == 0 ? null : orderEntity.createdAt.year().eq(year);
     }
 
-    protected BooleanExpression likeNm(String nm) {
-        return StringUtils.hasText(nm) ? userEntity.nm.contains(nm) : null;
+    protected BooleanExpression monthEq(int month) {
+        return month == 0 ? null : orderEntity.createdAt.month().eq(month);
     }
 
-    protected BooleanExpression likeUid(String uid) {
-        return StringUtils.hasText(uid) ? userEntity.uid.contains(uid) : null;
+    protected BooleanExpression yearEqFromOrderDetail(int year) {
+        return year == 0 ? null : orderDetailsEntity.createdAt.year().eq(year);
+    }
+
+    protected BooleanExpression monthEqFromOrderDetail(int month) {
+        return month == 0 ? null : orderDetailsEntity.createdAt.month().eq(month);
     }
 
     protected BooleanExpression goeCreatedAt(LocalDateTime condition) {
-        return condition == null ? null : userEntity.createdAt.goe(condition);
-    }
-
-    protected BooleanExpression likePhoneNumber(String phoneNumber) {
-        return phoneNumber == null ? null : userEntity.phoneNumber.contains(phoneNumber);
+        return condition == null ? null : orderEntity.createdAt.goe(condition);
     }
 
     protected BooleanExpression betweenCreatedAt(LocalDateTime before, LocalDateTime after) {
-        return before == null || after == null ? null : userEntity.createdAt.between(before, after);
+        return before == null || after == null ? null : orderEntity.createdAt.between(before, after);
     }
 
     protected BooleanExpression betweenCreatedAt(LocalDateTime before) {
@@ -41,11 +43,11 @@ public abstract class CommonSearchCondition {
     }
 
     protected BooleanExpression whereYear(int year) {
-        return year == 0 ? null : userEntity.createdAt.year().eq(year);
+        return year == 0 ? null : orderEntity.createdAt.year().eq(year);
     }
 
     protected BooleanExpression whereMonth(int month) {
-        return month == 0 ? null : userEntity.createdAt.month().eq(month);
+        return month == 0 ? null : orderEntity.createdAt.month().eq(month);
     }
 
     protected StringTemplate transformDate(Object object) {
