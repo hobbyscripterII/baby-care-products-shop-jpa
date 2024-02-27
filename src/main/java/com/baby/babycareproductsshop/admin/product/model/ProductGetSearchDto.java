@@ -3,7 +3,7 @@ package com.baby.babycareproductsshop.admin.product.model;
 import lombok.Data;
 
 @Data
-public class ReviewSearchDto {
+public class ProductGetSearchDto {
     private String keyword;
 
     private Long iproduct;
@@ -11,8 +11,10 @@ public class ReviewSearchDto {
     private Long imain;
 
     private Long imiddle;
-
-
-    private int sortBy;
+    private int minPrice;
+    private int maxPrice;
+    private int dateFl;
+//    private int startDate;
+//    private int endDate;
 
 }

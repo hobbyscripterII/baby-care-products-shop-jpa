@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface ReviewQdslRepository {
 
-    List<SearchReviewSelVo> selReviewAll(ReviewSearchDto dto);
-    List<SearchReviewSelVo> findAllByDelFl();
-    List<SearchReviewSelVo> findAllByNotDelFl();
+    List<ReviewEntity> selReview(ReviewSearchDto dto);
+    List<SearchReviewSelVo> selReviewDel(ReviewSearchDto dto);
+    //List<SearchReviewSelVo> findAllByNotDelFl();
 
     List<ReviewHideClickSelVo> findReview(Long ireview);
 

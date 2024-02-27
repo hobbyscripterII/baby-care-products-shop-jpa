@@ -29,7 +29,7 @@ public class QProductMiddleCategoryEntity extends EntityPathBase<ProductMiddleCa
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
-    public final NumberPath<Integer> imiddle = createNumber("imiddle", Integer.class);
+    public final NumberPath<Long> imiddle = createNumber("imiddle", Long.class);
 
     public final StringPath middleCategory = createString("middleCategory");
 

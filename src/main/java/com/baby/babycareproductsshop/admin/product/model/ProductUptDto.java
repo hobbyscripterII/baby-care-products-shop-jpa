@@ -27,12 +27,12 @@ public class ProductUptDto {
         private String repPic; // 상품대표사진
 
         private int remainedCount; //재고
-
-        private int newFl; // 신상품
-
-        private int rcFl; // 추천상품
-
-        private int popFl; // 인기상품
+        //
+//        private int newFl; // 신상품
+//
+//        private int rcFl; // 추천상품
+//
+//        private int popFl; // 인기상품
         private String adminMemo;
 
         //private List<String> pics;
