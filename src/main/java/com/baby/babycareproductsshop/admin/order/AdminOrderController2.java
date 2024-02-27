@@ -23,7 +23,11 @@ public class AdminOrderController2 {
 
     @Operation(summary = "매출 및 주문 통계 조회", description = """
             type = sales : 매출 통계<br>
-            type = orderCnt : 주문 통계
+            type = orderCnt : 주문 통계<br>
+            <br>
+            year & month = 0 : 연도별<br>
+            year != 0 & month = 0 : 월별<br>
+            year & month  != 0: 일별
             """)
     @GetMapping("/{type}")
     public ApiResponse<?> getOrderStatistics(@PathVariable String type, AdminSelOrderStatisticsDto dto) {

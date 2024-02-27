@@ -49,7 +49,11 @@ public class AdminUserController {
         return service.patchUserInfo(iuser, dto);
     }
 
-    @Operation(summary = "가입통계분석 조회")
+    @Operation(summary = "가입통계분석 조회", description = """
+            year & month = 0 : 연도별<br>
+            year != 0 & month = 0 : 월별<br>
+            year & month  != 0: 일별
+            """)
     @GetMapping("/user/signup")
     public ApiResponse<?> getUserSignupStatistics(AdminSelUserSignupDto dto) {
         return service.getUserSignupStatistics(dto);

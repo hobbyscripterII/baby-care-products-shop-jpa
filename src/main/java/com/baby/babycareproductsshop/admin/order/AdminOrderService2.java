@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,21 +24,50 @@ public class AdminOrderService2 {
 
     public ApiResponse<?> getSalesStatistics(AdminSelOrderStatisticsDto dto) {
         List<AdminSelOrderSalesVo> result = orderRepository.selOrderSales(dto);
-        Map<String, AdminSelOrderSalesVo> resultMap = new HashMap<>();
+        Map<String, AdminSelOrderSalesVo> map = new HashMap<>();
         for (AdminSelOrderSalesVo vo : result) {
-            vo.setCostPrice((int)(vo.getTotalSales() * 0.5));
-            vo.setEarnings((int)(vo.getTotalSales() * 0.9) - vo.getCostPrice());
-            resultMap.put(vo.getCreatedAt().toLocalDate().toString(), vo);
-            String key = Utils.getDate(dto, vo);
+            vo.setCostPrice((int) (vo.getTotalSales() * 0.5));
+            vo.setEarnings((int) (vo.getTotalSales() * 0.9) - vo.getCostPrice());
+            String key = Utils.getDate(dto.getYear(), dto.getMonth(), vo);
             vo.setDate(key);
+            map.put(key, vo);
         }
-        log.info("resultMap : {}", resultMap);
+        if (dto.getYear() == 0 && dto.getMonth() == 0) {
+            return new ApiResponse<>(result);
+        }
+        int date = Utils.getDaysOrMonths(dto.getYear(), dto.getMonth());
+        for (int i = 1; i <= date; i++) {
+            String key = Utils.getKey(dto.getYear(), dto.getMonth(), i);
+            AdminSelOrderSalesVo vo = map.get(key);
+            if (vo == null) {
+                map.put(key, new AdminSelOrderSalesVo(key));
+            }
+        }
+        log.info("resultMap : {}", map);
+        result = map.values().stream().sorted().toList();
         return new ApiResponse<>(result);
     }
 
     public ApiResponse<?> getOrderCntStatistics(AdminSelOrderStatisticsDto dto) {
         List<AdminSelTotalOrderCntVo> result = orderRepository.selTotalOrderCnt(dto);
-
+        Map<String, AdminSelTotalOrderCntVo> resultMap = new HashMap<>();
+        if (dto.getYear() == 0 && dto.getMonth() == 0) {
+            return new ApiResponse<>(result);
+        }
+        for (AdminSelTotalOrderCntVo vo : result) {
+            String key = Utils.getDate(dto.getYear(), dto.getMonth(), vo);
+            resultMap.put(key, vo);
+        }
+        int date = Utils.getDaysOrMonths(dto.getYear(), dto.getMonth());
+        for (int i = 1; i <= date; i++) {
+            String key = Utils.getKey(dto.getYear(), dto.getMonth(), i);
+            AdminSelTotalOrderCntVo vo = resultMap.get(key);
+            if (vo == null) {
+                resultMap.put(key, new AdminSelTotalOrderCntVo(key));
+            }
+        }
+        log.info("resultMap : {}", resultMap);
+        result = resultMap.values().stream().sorted().toList();
         return new ApiResponse<>(result);
     }
 }

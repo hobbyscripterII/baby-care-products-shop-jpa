@@ -8,6 +8,7 @@ import lombok.Data;
 import static com.baby.babycareproductsshop.common.Const.*;
 
 @Data
+@Schema(title = "[Patch]api/admin/user/{iuser} request", description = "관리자에 의한 회원 정보 수정 필요 데이터")
 public class AdminUpdUserDto {
     @Schema(description = "유저 비밀번호", example = "특수문자는 @$!%*?&#~_-를 사용할 수 있습니다.")
     @NotNull(message = PASSWORD_IS_BLANK)
