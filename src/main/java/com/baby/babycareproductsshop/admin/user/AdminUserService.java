@@ -1,5 +1,7 @@
 package com.baby.babycareproductsshop.admin.user;
 
+import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderSalesVo;
+import com.baby.babycareproductsshop.admin.order.model.AdminSelTotalOrderCntVo;
 import com.baby.babycareproductsshop.admin.user.model.*;
 import com.baby.babycareproductsshop.common.*;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
@@ -26,8 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -84,7 +85,6 @@ public class AdminUserService {
     }
 
     public ApiResponse<?> getUserList(AdminSelAllUserDto dto, Pageable pageable) {
-//        List<UserEntity> entityList = userRepository.findAllByUnregisterFl(unregisterFl);
         List<UserEntity> entityList = adminUserRepository.selUserAll(dto);
         log.info("userEntity : {}", entityList);
         List<AdminSelAllUserVo> result = entityList.stream().filter(item -> item.getIuser() != 1)
@@ -139,22 +139,72 @@ public class AdminUserService {
     }
 
     public ApiResponse<?> getUserSignupStatistics(AdminSelUserSignupDto dto) {
+//        List<AdminSelUserSignupVo> result = adminUserRepository.selUserSignupStatistics(dto);
+//        Map<String, AdminSelUserSignupVo> map = new HashMap<>();
+//        int totalRegisterCnt = 0;
+//        for (AdminSelUserSignupVo vo : result) {
+//            String key = Utils.getDate(dto.getYear(),dto.getMonth(), vo);
+//            map.put(key, vo);
+//            vo.setDate(key);
+//            totalRegisterCnt += vo.getRegisterCnt();
+//        }
+//        int date = Utils.getDaysOrMonths(dto.getYear(), dto.getMonth());
+//        for (int i = 1; i <= date; i++) {
+//            String key = Utils.getKey(dto.getYear(), dto.getMonth(), i);
+//            AdminSelUserSignupVo vo = map.get(key);
+//            if (vo == null) {
+//                map.put(key, new AdminSelUserSignupVo(key));
+//                break;
+//            }
+//            vo.setRegisterRate(String.format("%.2f", (double) vo.getRegisterCnt() / totalRegisterCnt));
+//        }
+//        result = map.values().stream().sorted().toList();
+
         List<UserEntity> entityList = adminUserRepository.selUserSignupStatistics(dto);
+        Map<String, AdminSelUserSignupVo> map = new HashMap<>();
         AtomicInteger atomicInteger = new AtomicInteger(0);
+        int totalRegisterCnt = 0;
         for (UserEntity entity : entityList) {
             atomicInteger.set(atomicInteger.get() + entity.getIuser().intValue());
+            totalRegisterCnt += entity.getIuser();
         }
-        List<AdminSelUserSignupVo> result = entityList.stream().map(item ->
-                        AdminSelUserSignupVo.builder()
-                                .date(dto.getMonth() == 0 ?
-                                        dto.getYear() + "-" + item.getCreatedAt().getMonthValue()
-                                        : dto.getYear() + "-" + dto.getMonth() + "-" + item.getCreatedAt().getDayOfMonth())
-                                .registerCnt(item.getIuser().intValue())
-                                .totalRegisterCnt(atomicInteger.get())
-                                .registerRate(String.format("%.2f", (double) item.getIuser().intValue() / atomicInteger.get()))
-                                .build()
-                )
-                .collect(Collectors.toList());
+
+        List<AdminSelUserSignupVo> result = new ArrayList<>();
+        for (UserEntity entity : entityList) {
+            AdminSelUserSignupVo vo = new AdminSelUserSignupVo();
+            vo.setRegisterCnt(entity.getIuser().intValue());
+            vo.setCreatedAt(entity.getCreatedAt());
+            vo.setDate(Utils.getDate(dto.getYear(), dto.getMonth(), vo));
+            vo.setTotalRegisterCnt(totalRegisterCnt);
+            vo.setRegisterRate(String.format("%.2f", (double) vo.getRegisterCnt() / totalRegisterCnt));
+            map.put(Utils.getDate(dto.getYear(), dto.getMonth(), vo), vo);
+            result.add(vo);
+        }
+        if (dto.getYear() == 0 && dto.getMonth() == 0) {
+            return new ApiResponse<>(result);
+        }
+        int date = Utils.getDaysOrMonths(dto.getYear(), dto.getMonth());
+        for (int i = 1; i <= date; i++) {
+            String key = Utils.getKey(dto.getYear(), dto.getMonth(), i);
+            AdminSelUserSignupVo vo = map.get(key);
+            if (vo == null) {
+                map.put(key, new AdminSelUserSignupVo(key));
+            }
+        }
+        result = map.values().stream().sorted().toList();
+
+//        List<AdminSelUserSignupVo> result = entityList.stream().map(item ->
+//                        AdminSelUserSignupVo.builder()
+//                                .date(dto.getMonth() == 0 ?
+//                                        dto.getYear() + "-" + item.getCreatedAt().getMonthValue()
+//                                        : dto.getYear() + "-" + dto.getMonth() + "-" + item.getCreatedAt().getDayOfMonth())
+//                                .registerCnt(item.getIuser().intValue())
+//                                .totalRegisterCnt(atomicInteger.get())
+//                                .registerRate(String.format("%.2f", (double) item.getIuser().intValue() / atomicInteger.get()))
+//                                .build()
+//                )
+//                .collect(Collectors.toList());
+
         return new ApiResponse<>(result);
     }
 }

@@ -3,7 +3,7 @@ package com.baby.babycareproductsshop.common;
 import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderStatisticsDto;
 import com.baby.babycareproductsshop.admin.order.model.StatisticsVo;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Utils {
     public static boolean isNotNull(String str) {
@@ -22,17 +22,28 @@ public class Utils {
         return object == null ? false : true;
     }
 
-    public static String getDate(AdminSelOrderStatisticsDto dto, StatisticsVo vo) {
+    public static String getDate(int year, int month, StatisticsVo vo) {
         StringBuilder sb = new StringBuilder();
-        return dto.getMonth() != 0 ?
-                vo.getCreatedAt().toLocalDate().toString()
-                : dto.getYear() != 0 ?
+        return month != 0 ?
+                sb.append(vo.getCreatedAt().getYear()).append("-").append(vo.getCreatedAt().getMonthValue()).append("-").append(vo.getCreatedAt().getDayOfMonth()).toString()
+                : year != 0 ?
                 sb.append(vo.getCreatedAt().getYear()).append("-").append(vo.getCreatedAt().getMonthValue()).toString()
                 : sb.append(vo.getCreatedAt().getYear()).toString();
     }
 
-    public int getDaysOrMonths(AdminSelOrderStatisticsDto dto) {
+    public static int getDaysOrMonths(int year, int month) {
+        if (year != 0 && month != 0) {
+            LocalDate date = LocalDate.of(year, month, 1);
+            return date.lengthOfMonth();
+        }
+        return 12;
+    }
 
-        return 0;
+    public static String getKey(int year, int month, int dateOrMonth) {
+        StringBuilder sb = new StringBuilder();
+        if (month == 0) {
+            return sb.append(year).append("-").append(dateOrMonth).toString();
+        }
+        return sb.append(year).append("-").append(month).append("-").append(dateOrMonth).toString();
     }
 }

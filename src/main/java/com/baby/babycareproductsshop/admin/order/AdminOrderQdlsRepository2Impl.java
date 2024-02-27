@@ -83,12 +83,7 @@ public class AdminOrderQdlsRepository2Impl extends CommonSearchCondition impleme
         }
         Map<String, AdminSelTotalOrderCntVo> map = new HashMap<>();
         for (AdminSelTotalOrderCntVo vo : result1) {
-            StringBuilder sb = new StringBuilder();
-            String key = dto.getMonth() != 0 ?
-                    vo.getCreatedAt().toLocalDate().toString()
-                    : dto.getYear() != 0 ?
-                    sb.append(vo.getCreatedAt().getYear()).append("-").append(vo.getCreatedAt().getMonthValue()).toString()
-                    : sb.append(vo.getCreatedAt().getYear()).toString();
+            String key = Utils.getDate(dto.getYear(), dto.getMonth(), vo);
             vo.setDate(key);
             map.put(key, vo);
         }
@@ -115,7 +110,7 @@ public class AdminOrderQdlsRepository2Impl extends CommonSearchCondition impleme
         }
         List<AdminSelTotalOrderCntVo> result2 = query2.fetch();
         for (AdminSelTotalOrderCntVo vo : result2) {
-            String key = Utils.getDate(dto, vo);
+            String key = Utils.getDate(dto.getYear(), dto.getMonth(), vo);
             map.get(key).setRecallCnt(vo.getRecallCnt() + map.get(key).getRecallCnt());
         }
 
