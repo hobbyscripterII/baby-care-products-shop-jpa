@@ -29,6 +29,7 @@ public enum AuthErrorCode implements ErrorCode {
 
     // 회원
     INVALID_ADDRESS_SIZE(HttpStatus.BAD_REQUEST, "주소는 최소 1개 최대 3개 까지 저장할 수 있습니다."),
+    ADDRESS_UPDATE_FAIL(HttpStatus.NOT_FOUND, "주소 수정에 실패했습니다."),
     DUPLICATED_UID(HttpStatus.BAD_REQUEST, "이미 사용중인 아이디입니다."),
     PASSWORD_NOT_MATCHED(HttpStatus.NOT_FOUND, "비밀번호를 확인해주세요."),
     LOGIN_FAIL(HttpStatus.NOT_FOUND, "아이디와 비밀번호를 확인해주세요."),

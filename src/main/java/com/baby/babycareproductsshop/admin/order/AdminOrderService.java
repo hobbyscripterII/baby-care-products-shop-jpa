@@ -32,6 +32,20 @@ public class AdminOrderService {
         adminOrderRepository.orderCancelAutoChange();
     }
 
+    @Transactional
+    public ResVo updateAdminMemo(OrderAdminMemoUpdDto dto) {
+        try {
+            OrderEntity orderEntity = adminOrderRepository.getReferenceById(dto.getIorder());
+            orderEntity.setIorder(dto.getIorder());
+            orderEntity.setAdminMemo(dto.getAdminMemo());
+            OrderEntity save = adminOrderRepository.save(orderEntity);
+            log.info("save = {}", save);
+            return new ResVo(Const.SUCCESS);
+        } catch (Exception e) {
+            throw new RestApiException(AuthErrorCode.ADDRESS_UPDATE_FAIL);
+        }
+    }
+
     @Transactional // 주문 일괄 처리
     public ResVo orderBatchProcess(OrderBatchProcessDto dto) {
         int beforeProcessState = dto.getProcessState();
@@ -235,7 +249,7 @@ public class AdminOrderService {
                             .orderedPhoneNumber(item.getPhoneNumber())
                             .recipient(item.getAddressNm())
                             .recipientPhoneNumber(item.getPhoneNumber())
-                            .address(item.getUserAddressEntity().getAddress())
+                            .address(item.getUserAddressEntity().getAddress() + " " + item.getUserAddressEntity().getAddressDetail())
                             .adminMemo(item.getAdminMemo())
                             .build();
                 })
@@ -262,7 +276,8 @@ public class AdminOrderService {
             case 1 -> result = processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
             case 2 -> result = processState == ProcessState.ON_DELIVERY.getProcessStateNum();
             case 3 -> result = processState == ProcessState.DELIVER_SUCCESS.getProcessStateNum();
-            case 5 -> result = processState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
+            case 5 ->
+                    result = processState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
         }
         return result;
     }
