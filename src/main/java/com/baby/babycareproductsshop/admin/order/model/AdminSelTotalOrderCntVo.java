@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-@Schema(title = "[Get]api/admin/order/{type} response",description = "주문 통계 조회 응답 데이터")
+@Schema(title = "주문 통계 response", description = "주문 통계 조회 응답 데이터")
 public class AdminSelTotalOrderCntVo implements StatisticsVo, Comparable<AdminSelTotalOrderCntVo>{
     @Schema(title = "순수 주문량")
     private int totalOrderCnt;
