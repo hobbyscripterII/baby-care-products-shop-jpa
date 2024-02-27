@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,12 @@ import java.util.regex.Pattern;
 @Tag(name = "관리자 기능 - 주문 관리 API❤️")
 public class AdminOrderController {
     private final AdminOrderService service;
+
+    @Operation(summary = "관리자 메모 변경", description = "<ul><strong>iorders - 주문 번호(PK)</strong></ul> <ul><strong>adminMemo - 관리자 메모</strong><br></ul>")
+    @PatchMapping("/memo")
+    public ResVo updateAdminMemo(@RequestBody OrderAdminMemoUpdDto dto) {
+        return service.updateAdminMemo(dto);
+    }
 
     @PutMapping
     @Operation(summary = "주문 일괄 처리",
@@ -157,7 +164,7 @@ public class AdminOrderController {
                     <li>주문일 순 - 1</li>
                     <li>처리일 역순 - 2</li>
                     <li>처리일 순 - 3</li></ul>""")
-    public List<OrderDeleteVo> orderDeleteList(@RequestBody OrderSmallFilterDto dto) {
+    public List<OrderDeleteVo> orderDeleteList(@RequestBody OrderSmallFilterDto dto, Pageable pageable) {
         return service.orderDeleteList(dto);
     }
 
