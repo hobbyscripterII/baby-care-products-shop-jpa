@@ -45,7 +45,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .where(commonSearchFilter(dto))
                 .offset(dto.getOffSet())
                 .limit(dto.getSize())
-//                .orderBy(orderListSort(dto.getSort()))
+                .orderBy(orderListSort(dto.getSort()))
                 .fetch();
     }
 
@@ -115,13 +115,15 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
     public List<RefundEntity> orderRefundList(OrderSmallFilterDto dto, Pageable pageable) {
         dto.setProcessState(ProcessState.REFUND.getProcessStateNum());
         OrderCommonSearchFilterDto filter = commonDtoTasks(dto, pageable);
+        int sort = dto.getSort();
         return jpaQueryFactory
                 .select(refundEntity)
                 .from(refundEntity)
                 .leftJoin(orderEntity)
                 .on(refundEntity.orderDetailsEntity.orderEntity.iorder.eq(orderDetailsEntity.orderEntity.iorder))
                 .where(commonSearchFilter(filter))
-                .orderBy(orderListSort(dto.getSort())).fetch();
+                .orderBy(orderListSort(sort))
+                .fetch();
     }
 
     @Override
