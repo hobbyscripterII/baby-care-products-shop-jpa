@@ -49,7 +49,7 @@ public class AdminUserService {
     private final AdminUserRepository adminUserRepository;
 
     @Transactional
-    public ApiResponse<?> postSigninAdmin(HttpServletResponse res, UserSignInDto dto) {
+    public ApiResponse<UserSignInVo> postSigninAdmin(HttpServletResponse res, UserSignInDto dto) {
         Optional<UserEntity> optEntity = userRepository.findByProviderTypeAndUid(ProviderTypeEnum.LOCAL, dto.getUid());
         UserEntity entity = optEntity.orElseThrow(() -> new RestApiException(AuthErrorCode.LOGIN_FAIL));
         if (!RoleEnum.ADMIN.equals(entity.getRole())) {
@@ -84,7 +84,7 @@ public class AdminUserService {
         return new ApiResponse<>(result);
     }
 
-    public ApiResponse<?> getUserList(AdminSelAllUserDto dto, Pageable pageable) {
+    public ApiResponse<List<AdminSelAllUserVo>> getUserList(AdminSelAllUserDto dto, Pageable pageable) {
         List<UserEntity> entityList = adminUserRepository.selUserAll(dto, pageable);
         log.info("userEntity : {}", entityList);
         List<AdminSelAllUserVo> result = entityList.stream().filter(item -> item.getIuser() != 1)
@@ -101,7 +101,7 @@ public class AdminUserService {
     }
 
     @Transactional
-    public ApiResponse<?> getUserInfo(long iuser) {
+    public ApiResponse<AdminSelUserVo> getUserInfo(long iuser) {
         Optional<UserEntity> optEntity = userRepository.findById(iuser);
         if (optEntity.isEmpty()) {
             throw new RestApiException(CommonErrorCode.INVALID_PARAMETER);
@@ -138,28 +138,7 @@ public class AdminUserService {
         return new ApiResponse<>(null);
     }
 
-    public ApiResponse<?> getUserSignupStatistics(AdminSelUserSignupDto dto) {
-//        List<AdminSelUserSignupVo> result = adminUserRepository.selUserSignupStatistics(dto);
-//        Map<String, AdminSelUserSignupVo> map = new HashMap<>();
-//        int totalRegisterCnt = 0;
-//        for (AdminSelUserSignupVo vo : result) {
-//            String key = Utils.getDate(dto.getYear(),dto.getMonth(), vo);
-//            map.put(key, vo);
-//            vo.setDate(key);
-//            totalRegisterCnt += vo.getRegisterCnt();
-//        }
-//        int date = Utils.getDaysOrMonths(dto.getYear(), dto.getMonth());
-//        for (int i = 1; i <= date; i++) {
-//            String key = Utils.getKey(dto.getYear(), dto.getMonth(), i);
-//            AdminSelUserSignupVo vo = map.get(key);
-//            if (vo == null) {
-//                map.put(key, new AdminSelUserSignupVo(key));
-//                break;
-//            }
-//            vo.setRegisterRate(String.format("%.2f", (double) vo.getRegisterCnt() / totalRegisterCnt));
-//        }
-//        result = map.values().stream().sorted().toList();
-
+    public ApiResponse<List<AdminSelUserSignupVo>> getUserSignupStatistics(AdminSelUserSignupDto dto) {
         List<UserEntity> entityList = adminUserRepository.selUserSignupStatistics(dto);
         Map<String, AdminSelUserSignupVo> map = new HashMap<>();
         AtomicInteger atomicInteger = new AtomicInteger(0);
@@ -192,19 +171,11 @@ public class AdminUserService {
             }
         }
         result = map.values().stream().sorted().toList();
-
-//        List<AdminSelUserSignupVo> result = entityList.stream().map(item ->
-//                        AdminSelUserSignupVo.builder()
-//                                .date(dto.getMonth() == 0 ?
-//                                        dto.getYear() + "-" + item.getCreatedAt().getMonthValue()
-//                                        : dto.getYear() + "-" + dto.getMonth() + "-" + item.getCreatedAt().getDayOfMonth())
-//                                .registerCnt(item.getIuser().intValue())
-//                                .totalRegisterCnt(atomicInteger.get())
-//                                .registerRate(String.format("%.2f", (double) item.getIuser().intValue() / atomicInteger.get()))
-//                                .build()
-//                )
-//                .collect(Collectors.toList());
-
         return new ApiResponse<>(result);
+    }
+
+    public ApiResponse<?> unregisterUser(long iuser) {
+
+        return new ApiResponse<>(null);
     }
 }

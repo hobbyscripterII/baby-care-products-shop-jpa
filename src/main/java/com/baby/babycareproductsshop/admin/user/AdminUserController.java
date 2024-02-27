@@ -1,10 +1,9 @@
 package com.baby.babycareproductsshop.admin.user;
 
-import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserDto;
-import com.baby.babycareproductsshop.admin.user.model.AdminSelUserSignupDto;
-import com.baby.babycareproductsshop.admin.user.model.AdminUpdUserDto;
+import com.baby.babycareproductsshop.admin.user.model.*;
 import com.baby.babycareproductsshop.response.ApiResponse;
 import com.baby.babycareproductsshop.user.model.UserSignInDto;
+import com.baby.babycareproductsshop.user.model.UserSignInVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -25,7 +26,7 @@ public class AdminUserController {
 
     @Operation(summary = "관리자 로그인")
     @PostMapping
-    public ApiResponse<?> postSigninAdmin(HttpServletResponse res, @RequestBody UserSignInDto dto) {
+    public ApiResponse<UserSignInVo> postSigninAdmin(HttpServletResponse res, @RequestBody UserSignInDto dto) {
         return service.postSigninAdmin(res, dto);
     }
 
@@ -38,13 +39,13 @@ public class AdminUserController {
             sort : 지금은 작동 안하니까 그냥 그대로 두시면 됩니다.
             """)
     @GetMapping("/user")
-    public ApiResponse<?> getUserList(AdminSelAllUserDto dto, @PageableDefault(page = 1, size = 10) Pageable pageable) {
+    public ApiResponse<List<AdminSelAllUserVo>> getUserList(AdminSelAllUserDto dto, @PageableDefault(page = 1, size = 10) Pageable pageable) {
         return service.getUserList(dto, pageable);
     }
 
     @Operation(summary = "회원 정보 수정 시 기존 데이터 호출")
     @GetMapping("/user/{iuser}")
-    public ApiResponse<?> getUserInfo(@PathVariable long iuser) {
+    public ApiResponse<AdminSelUserVo> getUserInfo(@PathVariable long iuser) {
         return service.getUserInfo(iuser);
     }
 
@@ -60,7 +61,7 @@ public class AdminUserController {
             year & month  != 0: 일별
             """)
     @GetMapping("/user/signup")
-    public ApiResponse<?> getUserSignupStatistics(AdminSelUserSignupDto dto) {
+    public ApiResponse<List<AdminSelUserSignupVo>> getUserSignupStatistics(AdminSelUserSignupDto dto) {
         return service.getUserSignupStatistics(dto);
     }
 }
