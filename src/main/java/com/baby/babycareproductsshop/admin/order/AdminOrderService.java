@@ -7,6 +7,7 @@ import com.baby.babycareproductsshop.exception.AuthErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +34,12 @@ public class AdminOrderService {
     }
 
     @Transactional
-    public ResVo updateAdminMemo(OrderAdminMemoUpdDto dto) {
+    public ResVo updateAdminMemo(OrderMemoUpdDto dto) {
         try {
             OrderEntity orderEntity = adminOrderRepository.getReferenceById(dto.getIorder());
             orderEntity.setIorder(dto.getIorder());
             orderEntity.setAdminMemo(dto.getAdminMemo());
             OrderEntity save = adminOrderRepository.save(orderEntity);
-            log.info("save = {}", save);
             return new ResVo(Const.SUCCESS);
         } catch (Exception e) {
             throw new RestApiException(AuthErrorCode.ADDRESS_UPDATE_FAIL);
@@ -81,8 +81,8 @@ public class AdminOrderService {
         }
     }
 
-    public List<OrderListVo> orderList(OrderFilterDto dto) {
-        return adminOrderRepository.orderList(dto)
+    public List<OrderListVo> orderList(OrderFilterDto dto, Pageable pageable) {
+        List<OrderListVo> orderListVoList = adminOrderRepository.orderList(dto, pageable)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -110,6 +110,20 @@ public class AdminOrderService {
                             .build();
                 })
                 .toList();
+
+//        int sortFl = dto.getSort();
+//        int idx = sortFl == 0 || sortFl == 2 ? orderListVoList.size() : 1;
+//        if (idx == 1) {
+//            for (OrderListVo vo : orderListVoList) {
+//                vo.setIdx(idx++);
+//            }
+//        } else {
+//            for (OrderListVo vo : orderListVoList) {
+//                vo.setIdx(idx--);
+//            }
+//        }
+
+        return orderListVoList;
     }
 
     // select문은 @Transactional 필요 x(<- 어노테이션은 rollback이 있을 수 있는 곳만)
@@ -119,8 +133,8 @@ public class AdminOrderService {
      * iorder에 종속된 idetails : N
      * idetails가 갖고있는 iproduct : 1
      */
-    public List<OrderDetailsListVo> orderDetailsList(OrderSmallFilterDto dto) {
-        return adminOrderRepository.orderDetailsList(dto)
+    public List<OrderDetailsListVo> orderDetailsList(OrderSmallFilterDto dto, Pageable pageable) {
+        return adminOrderRepository.orderDetailsList(dto, pageable)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -151,8 +165,8 @@ public class AdminOrderService {
                 .toList();
     }
 
-    public List<OrderDeleteVo> orderDeleteList(OrderSmallFilterDto dto) {
-        return adminOrderRepository.orderDeleteList(dto)
+    public List<OrderDeleteVo> orderDeleteList(OrderSmallFilterDto dto, Pageable pageable) {
+        return adminOrderRepository.orderDeleteList(dto, pageable)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -180,8 +194,8 @@ public class AdminOrderService {
                 .toList();
     }
 
-    public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto) {
-        return adminOrderRepository.orderRefundList(dto)
+    public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto, Pageable pageable) {
+        return adminOrderRepository.orderRefundList(dto, pageable)
                 .stream()
                 .map(item -> OrderRefundListVo
                         .builder()
@@ -198,8 +212,8 @@ public class AdminOrderService {
                 .toList();
     }
 
-    public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto) {
-        return adminOrderRepository.adminMemoList(dto)
+    public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto, Pageable pageable) {
+        return adminOrderRepository.adminMemoList(dto, pageable)
                 .stream()
                 .map(item ->
                         OrderMemoListVo
@@ -276,8 +290,7 @@ public class AdminOrderService {
             case 1 -> result = processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
             case 2 -> result = processState == ProcessState.ON_DELIVERY.getProcessStateNum();
             case 3 -> result = processState == ProcessState.DELIVER_SUCCESS.getProcessStateNum();
-            case 5 ->
-                    result = processState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
+            case 5 -> result = processState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
         }
         return result;
     }
