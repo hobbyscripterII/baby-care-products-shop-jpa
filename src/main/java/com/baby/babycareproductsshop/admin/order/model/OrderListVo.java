@@ -31,5 +31,5 @@ public class OrderListVo {
     @Schema(title = "반품 신청", description = "0 - '반품 신청' 버튼 출력 X<br>1 - '반품 신청' 버튼 출력 O")
     private int refundFl;
     @Schema(title = "번호", description = "")
-    private int idx;
+    private long idx;
 }
