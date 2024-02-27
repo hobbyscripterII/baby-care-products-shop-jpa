@@ -3,6 +3,7 @@ package com.baby.babycareproductsshop.admin.order;
 import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderSalesVo;
 import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderStatisticsDto;
 import com.baby.babycareproductsshop.admin.order.model.AdminSelTotalOrderCntVo;
+import com.baby.babycareproductsshop.common.Utils;
 import com.baby.babycareproductsshop.response.ApiResponse;
 import com.baby.babycareproductsshop.security.AuthenticationFacade;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,8 @@ public class AdminOrderService2 {
             vo.setCostPrice((int)(vo.getTotalSales() * 0.5));
             vo.setEarnings((int)(vo.getTotalSales() * 0.9) - vo.getCostPrice());
             resultMap.put(vo.getCreatedAt().toLocalDate().toString(), vo);
+            String key = Utils.getDate(dto, vo);
+            vo.setDate(key);
         }
         log.info("resultMap : {}", resultMap);
         return new ApiResponse<>(result);

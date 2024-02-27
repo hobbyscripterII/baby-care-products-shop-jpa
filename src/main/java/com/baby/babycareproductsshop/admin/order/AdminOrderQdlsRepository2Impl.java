@@ -4,6 +4,8 @@ import com.baby.babycareproductsshop.admin.CommonSearchCondition;
 import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderStatisticsDto;
 import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderSalesVo;
 import com.baby.babycareproductsshop.admin.order.model.AdminSelTotalOrderCntVo;
+import com.baby.babycareproductsshop.admin.order.model.StatisticsVo;
+import com.baby.babycareproductsshop.common.Utils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -82,12 +84,13 @@ public class AdminOrderQdlsRepository2Impl extends CommonSearchCondition impleme
         Map<String, AdminSelTotalOrderCntVo> map = new HashMap<>();
         for (AdminSelTotalOrderCntVo vo : result1) {
             StringBuilder sb = new StringBuilder();
-            map.put(dto.getMonth() != 0 ?
-                            vo.getCreatedAt().toLocalDate().toString()
-                            : dto.getYear() != 0 ?
-                            sb.append(vo.getCreatedAt().getYear()).append("-").append(vo.getCreatedAt().getMonthValue()).toString()
-                            : sb.append(vo.getCreatedAt().getYear()).toString(),
-                    vo);
+            String key = dto.getMonth() != 0 ?
+                    vo.getCreatedAt().toLocalDate().toString()
+                    : dto.getYear() != 0 ?
+                    sb.append(vo.getCreatedAt().getYear()).append("-").append(vo.getCreatedAt().getMonthValue()).toString()
+                    : sb.append(vo.getCreatedAt().getYear()).toString();
+            vo.setDate(key);
+            map.put(key, vo);
         }
         log.info("query2");
         JPAQuery<AdminSelTotalOrderCntVo> query2 = jpaQueryFactory.select(Projections.fields(AdminSelTotalOrderCntVo.class,
@@ -112,12 +115,7 @@ public class AdminOrderQdlsRepository2Impl extends CommonSearchCondition impleme
         }
         List<AdminSelTotalOrderCntVo> result2 = query2.fetch();
         for (AdminSelTotalOrderCntVo vo : result2) {
-            StringBuilder sb = new StringBuilder();
-            String key = dto.getMonth() != 0 ?
-                    vo.getCreatedAt().toLocalDate().toString()
-                    : dto.getYear() != 0 ?
-                    sb.append(vo.getCreatedAt().getYear()).append("-").append(vo.getCreatedAt().getMonthValue()).toString()
-                    : sb.append(vo.getCreatedAt().getYear()).toString();
+            String key = Utils.getDate(dto, vo);
             map.get(key).setRecallCnt(vo.getRecallCnt() + map.get(key).getRecallCnt());
         }
 
@@ -126,4 +124,5 @@ public class AdminOrderQdlsRepository2Impl extends CommonSearchCondition impleme
         }
         return result1;
     }
+
 }
