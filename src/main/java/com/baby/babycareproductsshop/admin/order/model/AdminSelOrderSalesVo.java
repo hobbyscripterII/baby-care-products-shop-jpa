@@ -1,16 +1,14 @@
 package com.baby.babycareproductsshop.admin.order.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-public class AdminSelOrderSalesVo {
+public class AdminSelOrderSalesVo implements StatisticsVo{
     private int totalSales;
+    @JsonIgnore
     private LocalDateTime createdAt;
     @JsonIgnore
     private int processState;
@@ -19,5 +17,6 @@ public class AdminSelOrderSalesVo {
 
     private int earnings;
     private int costPrice;
+    private String date;
 
 }
