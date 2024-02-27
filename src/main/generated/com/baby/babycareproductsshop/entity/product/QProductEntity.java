@@ -43,8 +43,6 @@ public class QProductEntity extends EntityPathBase<ProductEntity> {
 
     public final StringPath productDetails = createString("productDetails");
 
-    public final QProductMainCategoryEntity productMainCategoryEntity;
-
     public final StringPath productNm = createString("productNm");
 
     public final NumberPath<Integer> rcFl = createNumber("rcFl", Integer.class);
@@ -77,7 +75,6 @@ public class QProductEntity extends EntityPathBase<ProductEntity> {
     public QProductEntity(Class<? extends ProductEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.middleCategoryEntity = inits.isInitialized("middleCategoryEntity") ? new QProductMiddleCategoryEntity(forProperty("middleCategoryEntity"), inits.get("middleCategoryEntity")) : null;
-        this.productMainCategoryEntity = inits.isInitialized("productMainCategoryEntity") ? new QProductMainCategoryEntity(forProperty("productMainCategoryEntity")) : null;
     }
 
 }

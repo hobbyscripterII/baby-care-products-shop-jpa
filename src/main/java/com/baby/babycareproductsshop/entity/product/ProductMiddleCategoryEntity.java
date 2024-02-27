@@ -20,7 +20,7 @@ public class ProductMiddleCategoryEntity extends CreatedAtEntity {
     private ProductMainCategoryEntity productMainCategory;
 
     @Column(name = "imiddle", columnDefinition = "BIGINT UNSIGNED")
-    private int imiddle;
+    private Long imiddle;
 
     @Column(name = "middle_category", nullable = false)
     private String middleCategory;

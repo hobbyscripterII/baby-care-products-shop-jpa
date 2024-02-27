@@ -16,11 +16,7 @@ public class ProductEntity extends BaseEntity {
     private Long iproduct;
 
     @ManyToOne
-    @JoinColumn(name = "imain", columnDefinition = "BIGINT UNSIGNED")
-    private ProductMainCategoryEntity productMainCategoryEntity;
-
-    @ManyToOne
-    @JoinColumn(name = "imiddle", columnDefinition = "BIGINT UNSIGNED")
+    @JoinColumn(name = "candidate_key",columnDefinition = "BIGINT UNSIGNED")
     private ProductMiddleCategoryEntity middleCategoryEntity;
 
     @Column(length = 150, nullable = false)

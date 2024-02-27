@@ -24,40 +24,36 @@ import java.util.Optional;
 public class AdminProductController {
     private final AdminProductService service;
 
-    // 주문총수가격
-    @GetMapping("/Total Price & count")
-    @Operation(summary = "주문 총 가격 & 수 dkdhdkhddkdkdkdk")
-    public OrderTotalSelVo getOrderTotal() {
-        return service.getTotalPriceAndCount();
-    }
-
-    // 최근주무자
-    @GetMapping("recentOrders")
-    @Operation(summary = "최근 주문내역dkdhdkhddkdkdkdk")
-    public List<OrderRecentSelVo> getRecentOrders() {
-
-        return service.getRecentOrders();
-    }
-
-    // 유저가입최근
-    @GetMapping("recentUsers")
-    @Operation(summary = "최근 가입유저dkdhdkhddkdkdkdk")
-    public List<ddddMapping> getRecentUser() {
-        return service.getRecentUser();
-    }
-    //--------------------주문상태현황
-
-    @GetMapping("OrderStatus")
-    @Operation(summary = "주문상태현황dkdhdkhddkdkdkdk")
-    public List<OrderStatusCountVo> getOrderStatusCount() {
-        return service.getOrderStatusCount();
-    }
-
-    @GetMapping("OrderCancelCount")
-    @Operation(summary = "반품/취소 수dkdhdkhddkdkdkdk")
-    public OrderRefundAndCancelCountSelVo getCountRefundAndCancel() {
-        return service.getCountRefundAndCancel();
-    }
+    //    // 주문총수가격
+//    @GetMapping("/Total Price & count")
+//    @Operation(summary = "주문 총 가격 & 수 dkdhdkhddkdkdkdk")
+//    public OrderTotalSelVo getOrderTotal() {
+//        return service.getTotalPriceAndCount();
+//    }
+//    // 최근주무자
+//    @GetMapping("recentOrders")
+//    @Operation(summary = "최근 주문내역dkdhdkhddkdkdkdk")
+//    public List<OrderRecentSelVo> getRecentOrders() {
+//
+//        return service.getRecentOrders();
+//    }
+//    // 유저가입최근
+//    @GetMapping("recentUsers")
+//    @Operation(summary = "최근 가입유저dkdhdkhddkdkdkdk")
+//    public List<ddddMapping> getRecentUser() {
+//        return service.getRecentUser();
+//    }
+//    //--------------------주문상태현황
+//    @GetMapping("OrderStatus")
+//    @Operation(summary = "주문상태현황dkdhdkhddkdkdkdk")
+//    public List<OrderStatusCountVo> getOrderStatusCount() {
+//        return service.getOrderStatusCount();
+//    }
+//    @GetMapping("OrderCancelCount")
+//    @Operation(summary = "반품/취소 수dkdhdkhddkdkdkdk")
+//    public OrderRefundAndCancelCountSelVo getCountRefundAndCancel() {
+//        return service.getCountRefundAndCancel();
+//    }
 
 
     //-----------------------------------------------------------------상품 등록------------------------------------------------------
@@ -74,7 +70,7 @@ public class AdminProductController {
     @Operation(summary = "상품 수정 ")
     public ResVo uptProduct (@RequestPart(name = "pics") List<MultipartFile> pics,
                              @RequestPart(name = "productDetails") MultipartFile productDetails,
-                             @RequestPart @Valid ProductUptDto dto,@RequestParam Long iproduct) {
+                             @RequestPart @Valid AdminProductInsDto dto,@RequestParam Long iproduct) {
         return service.putProduct(pics,productDetails,dto,iproduct);
     }
 
@@ -84,6 +80,14 @@ public class AdminProductController {
     public ResVo delProduct( @RequestParam Long iproduct) {
         return service.delProduct(iproduct);
     }
+
+    @GetMapping("/getget")
+    @Operation(summary = "상품검색 ")
+    public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto) {
+        return service.getSearchProductSelVo(dto);
+    }
+
+
 
     //-----------------------------------------------------------------상품진열관리 추천상품 조회------------------------------------------------------
     @GetMapping("/productRc")
@@ -121,13 +125,26 @@ public class AdminProductController {
     public ResVo putProductRc(@RequestParam Long iproduct) {
         return service.putProductRc(iproduct);
     }
+    //-----------------------진열관리 상품검색---------------
+    @GetMapping("/ssssss")
+    @Operation(summary = "진열관리 상품검색")
+    public List<AdminProductSearchSelVo> getSearchProduct(AdminProductSearchDto dto ) {
+        return service.getSearchProduct(dto);
+    }
+
 
 
     //-----------------------------------------------------------------리뷰검색------------------------------------------------------
     @GetMapping("/dddd")
-    @Operation(summary = "리뷰 검색 수정해야함ㅎ")
+    @Operation(summary = "리뷰 검색")
     public List<SearchReviewSelVo> getSearchReview( ReviewSearchDto dto) {
         return service.getSearchReview(dto);
+    }
+    //-------------------------------------------------------------숨김리뷰검색------------------------------------------------------
+    @GetMapping("/reviewwww")
+    @Operation(summary = "숨김리뷰조회")
+    public List<SearchReviewSelVo> getHiddenReviewSelVo(ReviewSearchDto dto) {
+        return service.getHiddenReview(dto);
     }
     //-------------------------------------------------------------리뷰 관리자 메모 ------------------------------------------------------
     @PatchMapping("/review")
@@ -135,38 +152,29 @@ public class AdminProductController {
     public ResVo patchReviewAdminMemo(@RequestBody ReviewMemoInsDto dto) {
         return service.postReviewAdminMemo(dto);
     }
-    //-------------------------------------------------------------숨김리뷰------------------------------------------------------
-    @GetMapping("/reviewwww")
-    @Operation(summary = "숨김리뷰조회")
-    public List<SearchReviewSelVo> getHiddenReviewSelVo() {
-        return service.getHiddenReview();
-    }
-    //-------------------------------------------------------------숨기지않은리뷰------------------------------------------------------
-    @GetMapping("/review")
-    @Operation(summary = "리뷰조회")
-    public List<SearchReviewSelVo> getReviewSelVo() {
-        return service.getReviewSelVo();
-    }
+
     //----------------------------------------------------------리뷰 숨김 복구 토글*-------------------------------------------------
     @PutMapping("/review")
     @Operation(summary = "리뷰 숨김&복구 토글")
     public ResVo putReviewTogle(Long ireview) {
         return service.putReviewTogle(ireview);
     }
+    //-----------------------------------관리자 리뷰 관리 클릭할때-------------------------
     @GetMapping("/hick")
     @Operation(summary = "리뷰 숨김클릭시")
     public List<ReviewHideClickSelVo> getHiCkSelVo (Long ireview) {
         return service.getHiCkSelVo(ireview);
     }
-//    @GetMapping("/hickReview")
-//    @Operation(summary = "관리자 메모만그거")
-//    public List<ReviewHideClickSelVo> getHiCkSelVo (Long ireview) {
-//        return service.getHiCkSelVo(ireview);
-//
-//    }
+    //-----------------------------------------------------------------------------
+    @GetMapping("/momo")
+    @Operation(summary = "리뷰관리자메모")
+    public String getReviewMemo(Long ireview) {
+        return service.getReviewMeMo(ireview);
+    }
+
 
     //-----------------------------------------------------------------배너조회------------------------------------------------------
-    @GetMapping("banner")
+    @GetMapping("/banner")
     @Operation(summary = "배너조회")
     public List<BannerSelVo> getBanner() {
         return service.getBanner();
@@ -199,6 +207,7 @@ public class AdminProductController {
 
 
 }
+
 
 
 
