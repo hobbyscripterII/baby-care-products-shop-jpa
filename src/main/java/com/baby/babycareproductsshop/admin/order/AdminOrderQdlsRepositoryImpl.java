@@ -42,7 +42,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .leftJoin(refundEntity)
                 .on(orderDetailsEntity.idetails.eq(refundEntity.orderDetailsEntity.idetails))
                 .where(commonSearchFilter(dto))
-                .offset(dto.getPageNumber())
+                .offset(dto.getOffSet())
                 .limit(dto.getSize())
                 .orderBy(orderListSort(dto.getSort()))
                 .fetch();
@@ -58,7 +58,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .endDate(dto.getEndDate())
                 .payCategory(dto.getPayCategory())
                 .processState(dto.getProcessState())
-                .pageNumber((int)pageable.getOffset())
+                .offSet(pageable.getOffset())
                 .size(pageable.getPageSize())
                 .sort(dto.getSort())
                 .build();
@@ -74,7 +74,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .endDate(dto.getEndDate())
                 .payCategory(dto.getPayCategory())
                 .processState(dto.getProcessState())
-                .pageNumber((int)pageable.getOffset())
+                .offSet(pageable.getOffset())
                 .size(pageable.getPageSize())
                 .sort(dto.getSort())
                 .build();
@@ -88,7 +88,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .dateFl(dto.getDateFl())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
-                .pageNumber((int)pageable.getOffset())
+                .offSet(pageable.getOffset())
                 .size(pageable.getPageSize())
                 .sort(dto.getSort())
                 .build();
