@@ -1,7 +1,6 @@
 package com.baby.babycareproductsshop.admin.order.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
@@ -16,5 +15,6 @@ public class OrderSmallFilterDto {
     private String endDate;
     private int dateFl;
     private int payCategory;
+    private int page;
     private int sort;
 }
