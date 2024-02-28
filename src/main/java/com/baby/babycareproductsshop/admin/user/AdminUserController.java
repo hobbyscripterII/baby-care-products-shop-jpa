@@ -67,7 +67,7 @@ public class AdminUserController {
 
     @Operation(summary = "관리자에 의한 회원 탈퇴")
     @DeleteMapping("/user/{iuser}")
-    public ApiResponse<?> delUser(@PathVariable long iuser) {
+    public ApiResponse<?> unregisterUser(@PathVariable long iuser) {
         return service.unregisterUser(iuser);
     }
 }

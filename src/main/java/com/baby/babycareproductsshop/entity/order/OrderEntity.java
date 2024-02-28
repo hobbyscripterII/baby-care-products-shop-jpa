@@ -19,11 +19,11 @@ public class OrderEntity extends BaseEntity {
     private Long iorder;
 
     @ManyToOne
-    @JoinColumn(name = "iuser", nullable = false)
+    @JoinColumn(name = "iuser")
     private UserEntity userEntity;
 
     @ManyToOne(fetch = FetchType.EAGER) // lazy 에러 발생으로 eager 타입으로 변경 2024-02-26
-    @JoinColumn(name = "iaddress", nullable = false)
+    @JoinColumn(name = "iaddress")
     private UserAddressEntity userAddressEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)

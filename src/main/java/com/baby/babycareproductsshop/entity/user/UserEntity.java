@@ -9,12 +9,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
+@OnDelete(action = OnDeleteAction.CASCADE)
 @Table(name = "t_user", uniqueConstraints = {
         @UniqueConstraint(
                 columnNames = {"uid", "provider_type"}
