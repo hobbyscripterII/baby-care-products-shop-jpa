@@ -114,24 +114,12 @@ public class AdminOrderService {
                 })
                 .toList();
 
-        long startIdx = (page - 1) * size + 1;
-//        long endIdx = startIdx + orderListVoList.size() - 1;
-
-        for (int i = 0; i < orderListVoList.size(); i++) {
-            orderListVoList.get(i).setIdx(startIdx - i);
-        }
-
-//        int sortFl = dto.getSort();
-//        int idx = sortFl == 0 || sortFl == 2 ? orderListVoList.size() : 1;
-//        if (idx == 1) {
-//            for (OrderListVo vo : orderListVoList) {
-//                vo.setIdx(idx++);
-//            }
-//        } else {
-//            for (OrderListVo vo : orderListVoList) {
-//                vo.setIdx(idx--);
-//            }
-//        }
+//        long startIdx = (page - 1) * size + 1;
+////        long endIdx = startIdx + orderListVoList.size() - 1;
+//
+////        for (int i = 0; i < orderListVoList.size(); i++) {
+////            orderListVoList.get(i).setIdx(startIdx - i);
+////        }
 
         return orderListVoList;
     }

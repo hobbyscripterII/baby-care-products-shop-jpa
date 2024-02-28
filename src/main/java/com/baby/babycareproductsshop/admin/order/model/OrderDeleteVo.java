@@ -11,6 +11,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class OrderDeleteVo {
+    @Schema(title = "번호", description = "")
+    private int idx;
     @Schema(title = "주문번호", description = "")
     private int iorder;
     @Schema(title = "주문일시", description = "")
@@ -25,6 +27,4 @@ public class OrderDeleteVo {
     private int totalAmount;
     @Schema(title = "결제수단", description = "")
     private int payCategory;
-    @Schema(title = "번호", description = "")
-    private int idx;
 }

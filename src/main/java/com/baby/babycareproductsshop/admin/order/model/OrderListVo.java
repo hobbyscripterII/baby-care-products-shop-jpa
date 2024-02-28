@@ -14,6 +14,8 @@ import java.util.List;
 public class OrderListVo {
     @JsonIgnore
     private int processState;
+    @Schema(title = "번호", description = "")
+    private long idx;
     @Schema(title = "주문번호", description = "")
     private int iorder;
     @Schema(title = "주문일시", description = "")
@@ -30,6 +32,4 @@ public class OrderListVo {
     private int payCategory;
     @Schema(title = "반품 신청", description = "0 - '반품 신청' 버튼 출력 X<br>1 - '반품 신청' 버튼 출력 O")
     private int refundFl;
-    @Schema(title = "번호", description = "")
-    private long idx;
 }
