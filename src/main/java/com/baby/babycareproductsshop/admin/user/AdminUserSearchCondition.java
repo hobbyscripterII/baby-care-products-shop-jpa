@@ -20,8 +20,8 @@ public abstract class AdminUserSearchCondition {
         return StringUtils.hasText(nm) ? userEntity.nm.contains(nm) : null;
     }
 
-    protected BooleanExpression likeUid(String uid) {
-        return StringUtils.hasText(uid) ? userEntity.uid.contains(uid) : null;
+    protected BooleanExpression likeEmail(String email) {
+        return StringUtils.hasText(email) ? userEntity.email.contains(email) : null;
     }
 
     protected BooleanExpression goeCreatedAt(LocalDateTime condition) {
