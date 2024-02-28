@@ -502,5 +502,11 @@ INSERT INTO `t_order_details` (`product_cnt`, `product_price`, `product_total_pr
 INSERT INTO `t_order_details` (`product_cnt`, `product_price`, `product_total_price`, `refund_fl`, `created_at`, `idetails`, `iorder`, `iproduct`, `refunded_at`, `updated_at`) VALUES (1, 50000, 50000, 0, '2024-06-13 14:31:23.000000', 174, 100064, 52, NULL, '2024-02-01 14:53:42.000000');
 INSERT INTO `t_order_details` (`product_cnt`, `product_price`, `product_total_price`, `refund_fl`, `created_at`, `idetails`, `iorder`, `iproduct`, `refunded_at`, `updated_at`) VALUES (3, 28000, 84000, 0, '2024-06-13 14:31:23.000000', 144, 100064, 58, NULL, '2024-02-01 14:53:42.000000');
 
+-- t_refund
 INSERT INTO `t_refund` (`complate_fl`, `refund_cnt`, `refund_price`, `created_at`, `idetails`, `irefund`, `updated_at`, `contents`) VALUES (0, 1, 34000, '2024-02-26 21:51:04.000000', 117, 2, NULL, '반품 신청');
 INSERT INTO `t_refund` (`complate_fl`, `refund_cnt`, `refund_price`, `created_at`, `idetails`, `irefund`, `updated_at`, `contents`) VALUES (0, 1, 32900, '2024-02-26 21:51:31.000000', 461, 3, NULL, '반품 신청');
+
+-- t_banner
+INSERT INTO `t_banner` (`status`, `target`, `created_at`, `ibanner`, `updated_at`, `banner_pic`, `banner_url`) VALUES (0, 1, '2024-02-28 01:56:08.219666', 1, '2024-02-28 01:56:08.219666', 'e005b96e-f5eb-4956-84c1-0d0a398a6d4d.PNG', '캐로로중사');
+INSERT INTO `t_banner` (`status`, `target`, `created_at`, `ibanner`, `updated_at`, `banner_pic`, `banner_url`) VALUES (0, 1, '2024-02-28 01:56:19.012483', 2, '2024-02-28 01:56:19.012483', 'ff6fa051-bcd9-41d9-8d0c-24398663e4e3.PNG', '캐로로중사');
+INSERT INTO `t_banner` (`status`, `target`, `created_at`, `ibanner`, `updated_at`, `banner_pic`, `banner_url`) VALUES (0, 1, '2024-02-28 01:56:24.576060', 3, '2024-02-28 01:56:24.576060', '4953cf66-ef5c-4951-bc6d-3fa2d71e0b5e.PNG', '캐로로중사');
