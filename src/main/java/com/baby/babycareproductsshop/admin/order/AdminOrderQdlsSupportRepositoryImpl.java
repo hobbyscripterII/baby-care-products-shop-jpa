@@ -32,6 +32,7 @@ public class AdminOrderQdlsSupportRepositoryImpl {
      */
     protected BooleanBuilder commonSearchFilter(OrderCommonSearchFilterDto dto) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
+
         return booleanBuilder
                 .and(targetKeyword(dto.getSearchCategory(), dto.getKeyword())) // 검색 카테고리 + 검색어
                 .and(dateSelectSearch(dto.getDateFl())) // 기간 선택

@@ -42,7 +42,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .leftJoin(refundEntity)
                 .on(orderDetailsEntity.idetails.eq(refundEntity.orderDetailsEntity.idetails))
                 .where(commonSearchFilter(dto))
-                .offset(dto.getOffSet())
+                .offset(dto.getPageNumber())
                 .limit(dto.getSize())
                 .orderBy(orderListSort(dto.getSort()))
                 .fetch();
@@ -58,7 +58,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .endDate(dto.getEndDate())
                 .payCategory(dto.getPayCategory())
                 .processState(dto.getProcessState())
-                .offSet(pageable.getOffset())
+                .pageNumber(pageable.getPageNumber())
                 .size(pageable.getPageSize())
                 .sort(dto.getSort())
                 .build();
@@ -74,7 +74,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .endDate(dto.getEndDate())
                 .payCategory(dto.getPayCategory())
                 .processState(dto.getProcessState())
-                .offSet(pageable.getOffset())
+                .pageNumber(pageable.getPageNumber())
                 .size(pageable.getPageSize())
                 .sort(dto.getSort())
                 .build();
@@ -88,7 +88,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .dateFl(dto.getDateFl())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
-                .offSet(pageable.getOffset())
+                .pageNumber(pageable.getPageNumber())
                 .size(pageable.getPageSize())
                 .sort(dto.getSort())
                 .build();
@@ -125,6 +125,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
         dto.setProcessState(ProcessState.REFUND.getProcessStateNum());
         OrderCommonSearchFilterDto filter = commonDtoTasks(dto, pageable);
         int sort = dto.getSort();
+
         return jpaQueryFactory
                 .select(refundEntity)
                 .from(refundEntity)
