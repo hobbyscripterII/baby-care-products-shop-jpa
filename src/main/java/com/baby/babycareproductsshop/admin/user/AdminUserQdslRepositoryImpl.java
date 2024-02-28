@@ -37,7 +37,7 @@ public class AdminUserQdslRepositoryImpl extends AdminUserSearchCondition implem
 
         query.where(dto.getKeywordType() == 0 ? null :
                 dto.getKeywordType() == 1 ?
-                        likeUid(dto.getKeyword()) : likeNm(dto.getKeyword()));
+                        likeEmail(dto.getKeyword()) : likeNm(dto.getKeyword()));
 
         if (dto.getBefore() != null) {
             query.where(dto.getAfter() == null ? betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN))

@@ -43,6 +43,8 @@ public class UserService {
     private final AuthenticationFacade authenticationFacade;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
+    private final UserSignupClauseRepository signupClauseRepository;
+
 
     //회원가입
     @Transactional
@@ -64,13 +66,21 @@ public class UserService {
 
     //회원가입 약관 조회
     public List<UserClauseVo> getClause() {
-        return userMapper.selClause();
+        List<UserClauseVo> result = signupClauseRepository.findAllByRequired("Y").stream()
+                .map(item -> UserClauseVo.builder()
+                        .iclause(item.getIclause().intValue())
+                        .title(item.getTitle())
+                        .contents(item.getContents())
+                        .required(item.getRequired())
+                        .build())
+                .toList();
+        return result;
     }
 
     //아이디 중복 체크
     public ResVo postCheckUid(UserCheckUidDto dto) {
-        UserSignInProcDto result = userMapper.selSignInInfoByUid(dto.getUid());
-        if (result != null) {
+        Optional<UserEntity> result = userRepository.findByUid(dto.getUid());
+        if (result.isPresent()) {
             throw new RestApiException(AuthErrorCode.DUPLICATED_UID);
         }
         return new ResVo(Const.SUCCESS);
@@ -116,6 +126,7 @@ public class UserService {
     //마이 페이지 회원 정보 조회
     public UserSelMyInfoVo getMyInfo() {
         int iuser = authenticationFacade.getLoginUserPk();
+        UserEntity userEntity = userRepository.findById((long)iuser).orElse(null);
         UserSelMyInfoVo myInfoVo = userMapper.selMyInfo(iuser);
         List<ProductSelWishListVo> wishList = wishListMapper.selWishList(iuser);
         myInfoVo.setMyWishList(wishList);

@@ -1,9 +1,11 @@
 package com.baby.babycareproductsshop.user.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class UserClauseVo {
     @Schema(title = "약관 pk")
     private int iclause;

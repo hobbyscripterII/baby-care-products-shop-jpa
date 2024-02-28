@@ -139,10 +139,8 @@ public class AdminUserService {
     public ApiResponse<List<AdminSelUserSignupVo>> getUserSignupStatistics(AdminSelUserSignupDto dto) {
         List<UserEntity> entityList = adminUserRepository.selUserSignupStatistics(dto);
         Map<String, AdminSelUserSignupVo> map = new HashMap<>();
-        AtomicInteger atomicInteger = new AtomicInteger(0);
         int totalRegisterCnt = 0;
         for (UserEntity entity : entityList) {
-            atomicInteger.set(atomicInteger.get() + entity.getIuser().intValue());
             totalRegisterCnt += entity.getIuser();
         }
 
@@ -184,7 +182,6 @@ public class AdminUserService {
             orderEntity.setUserAddressEntity(null);
         }
         userRepository.deleteAll(userEntityList);
-//        userRepository.delete(userRepository.getReferenceById(iuser));
         return new ApiResponse<>(null);
     }
 
