@@ -39,7 +39,7 @@ public class AdminOrderService {
             OrderEntity orderEntity = adminOrderRepository.getReferenceById(dto.getIorder());
             orderEntity.setIorder(dto.getIorder());
             orderEntity.setAdminMemo(dto.getAdminMemo());
-            OrderEntity save = adminOrderRepository.save(orderEntity);
+            adminOrderRepository.save(orderEntity);
             return new ResVo(Const.SUCCESS);
         } catch (Exception e) {
             throw new RestApiException(AuthErrorCode.ADDRESS_UPDATE_FAIL);
@@ -82,10 +82,7 @@ public class AdminOrderService {
     }
 
     public List<OrderListVo> orderList(OrderFilterDto dto, Pageable pageable) {
-        long page = pageable.getOffset();
-        long size = pageable.getPageSize();
-
-        List<OrderListVo> orderListVoList = adminOrderRepository.orderList(dto, pageable)
+        return adminOrderRepository.orderList(dto, pageable)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -98,7 +95,6 @@ public class AdminOrderService {
                                     .amount(productItem.getProductEntity().getPrice())
                                     .build())
                             .toList();
-
                     return OrderListVo
                             .builder()
                             .processState(orderItem.getProcessState())
@@ -113,15 +109,6 @@ public class AdminOrderService {
                             .build();
                 })
                 .toList();
-
-//        long startIdx = (page - 1) * size + 1;
-////        long endIdx = startIdx + orderListVoList.size() - 1;
-//
-////        for (int i = 0; i < orderListVoList.size(); i++) {
-////            orderListVoList.get(i).setIdx(startIdx - i);
-////        }
-
-        return orderListVoList;
     }
 
     // select문은 @Transactional 필요 x(<- 어노테이션은 rollback이 있을 수 있는 곳만)
