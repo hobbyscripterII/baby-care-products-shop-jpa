@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -173,14 +174,30 @@ public class AdminUserService {
 
     @Transactional
     public ApiResponse<?> unregisterUser(long iuser) {
+        List<UserEntity> userEntityList = new ArrayList<>();
         UserEntity userEntity = new UserEntity();
         userEntity.setIuser(iuser);
-        List<OrderEntity> list = orderRepository.findAllByUserEntity(userEntity);
+        userEntityList.add(userEntity);
+        List<OrderEntity> list = orderRepository.findAllByUserEntityIn(userEntityList);
         for (OrderEntity orderEntity : list) {
             orderEntity.setUserEntity(null);
             orderEntity.setUserAddressEntity(null);
         }
-        userRepository.delete(userRepository.getReferenceById(iuser));
+        userRepository.deleteAll(userEntityList);
+//        userRepository.delete(userRepository.getReferenceById(iuser));
         return new ApiResponse<>(null);
+    }
+
+    @Transactional
+    public ApiResponse<?> unregisterUsersTest() {
+        List<UserEntity> userEntityList = userRepository.findAllByUnregisterFlAndUpdatedAtLessThan(1L, LocalDateTime.now().minusDays(30));
+        List<OrderEntity> orderEntityList = orderRepository.findAllByUserEntityIn(userEntityList);
+        for (OrderEntity orderEntity : orderEntityList) {
+            orderEntity.setUserEntity(null);
+            orderEntity.setUserAddressEntity(null);
+        }
+        userRepository.deleteAll(userEntityList);
+        return new ApiResponse<>(null);
+
     }
 }

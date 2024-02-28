@@ -70,4 +70,10 @@ public class AdminUserController {
     public ApiResponse<?> unregisterUser(@PathVariable long iuser) {
         return service.unregisterUser(iuser);
     }
+
+    @Operation(summary = "스케줄에 의한 회원 탈퇴 테스트용")
+    @DeleteMapping("/user")
+    public ApiResponse<?> unregisterUsersTest() {
+        return service.unregisterUsersTest();
+    }
 }
