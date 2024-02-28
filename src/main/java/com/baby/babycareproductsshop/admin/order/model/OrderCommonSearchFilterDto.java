@@ -17,7 +17,6 @@ public class OrderCommonSearchFilterDto {
     private int processState;
     private int payCategory;
     private int sort;
-
     private int pageNumber;
     private int size;
 }

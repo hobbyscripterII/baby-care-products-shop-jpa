@@ -58,7 +58,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .endDate(dto.getEndDate())
                 .payCategory(dto.getPayCategory())
                 .processState(dto.getProcessState())
-                .pageNumber(pageable.getPageNumber())
+                .pageNumber((int)pageable.getOffset())
                 .size(pageable.getPageSize())
                 .sort(dto.getSort())
                 .build();
@@ -74,7 +74,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .endDate(dto.getEndDate())
                 .payCategory(dto.getPayCategory())
                 .processState(dto.getProcessState())
-                .pageNumber(pageable.getPageNumber())
+                .pageNumber((int)pageable.getOffset())
                 .size(pageable.getPageSize())
                 .sort(dto.getSort())
                 .build();
@@ -88,7 +88,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .dateFl(dto.getDateFl())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
-                .pageNumber(pageable.getPageNumber())
+                .pageNumber((int)pageable.getOffset())
                 .size(pageable.getPageSize())
                 .sort(dto.getSort())
                 .build();
