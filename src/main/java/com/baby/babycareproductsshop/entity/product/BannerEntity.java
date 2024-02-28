@@ -15,7 +15,7 @@ public class BannerEntity extends BaseEntity {
     @Column(columnDefinition = "BIGINT UNSIGNED")
     private Long ibanner;
 
-    @Column(length = 2500,name = "banner_pic", nullable = false)
+    @Column(length = 2500,name = "banner_pic")
     private String bannerPic;
 
     @Column(length = 2500,name = "banner_url" )

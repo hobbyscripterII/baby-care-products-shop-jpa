@@ -1,9 +1,6 @@
 package com.baby.babycareproductsshop.admin.product.model.Repository_ys;
 
-import com.baby.babycareproductsshop.admin.product.model.AdminProductSearchDto;
-import com.baby.babycareproductsshop.admin.product.model.ProductGetSearchDto;
-import com.baby.babycareproductsshop.admin.product.model.ProductGetSearchSelVo;
-import com.baby.babycareproductsshop.admin.product.model.ReviewSearchDto;
+import com.baby.babycareproductsshop.admin.product.model.*;
 import com.baby.babycareproductsshop.entity.product.ProductEntity;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -27,20 +24,20 @@ import static com.baby.babycareproductsshop.entity.review.QReviewEntity.reviewEn
 @RequiredArgsConstructor
 public class ProductRepositoryImpl implements ProductQdslRepository{
     private final JPAQueryFactory jpaQueryFactory;
-    // 물어봐야함 이거 태그 들어감
+    //진열관리 태그없음
     @Override
-    public List<ProductEntity> selProductAll(AdminProductSearchDto dto) {
-        JPAQuery<ProductEntity> query = jpaQueryFactory.select(Projections.fields(ProductEntity.class,
+    public List<AdminProductSearchSelVo> selProductAll(AdminProductSearchDto dto) {
+        JPAQuery<AdminProductSearchSelVo> query = jpaQueryFactory.select(Projections.fields(AdminProductSearchSelVo.class,
                          productEntity.productNm
                         ,productEntity.iproduct
                         ,productEntity.price
                         ,productEntity.middleCategoryEntity.productMainCategory.imain
                         ,productEntity.middleCategoryEntity.imiddle
                         ,productEntity.repPic))
-                .where(ProductNm(dto.getKeyword())
+                .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
-                        ,Category(dto.getImain(),dto.getImiddle())
-                        ,tage(dto.getNewFl(),dto.getPopFl(),dto.getRcFl())
+                        ,category(dto.getImain(),dto.getImiddle())
+                       // ,tage(dto.getNewFl(),dto.getPopFl(),dto.getRcFl())
                 )
                 .from(productEntity);
         return query.fetch();
@@ -57,9 +54,9 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         ,productEntity.middleCategoryEntity.productMainCategory.imain
                         ,productEntity.middleCategoryEntity.imiddle
                         ,productEntity.repPic))
-                .where(ProductNm(dto.getKeyword())
+                .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
-                        ,Category(dto.getImain(),dto.getImiddle())
+                        ,category(dto.getImain(),dto.getImiddle())
                         ,dateSelectSearch(dto.getDateFl())
                         ,price(dto.getMinPrice(),dto.getMaxPrice())
                         ,searchDateFilter(dto.getSearchStartDate(),dto.getSearchEndDate())
@@ -72,17 +69,17 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
     //*---------------------------------------------------------------------------------
 
 
-    private BooleanExpression ProductNm(String keyword) { //상품이름
+    private BooleanExpression productNm(String keyword) { //상품이름
         return StringUtils.hasText(keyword) ? productEntity.productNm.contains(keyword) : null;
     }
 
     private BooleanExpression iproduct(Long iproduct) { //상품코드
         return iproduct != 0 ? reviewEntity.productEntity.iproduct.eq(iproduct) : null;
     }
-    private BooleanExpression Category(Long imain, Long imiddle) { //카테고리
+    private BooleanExpression category(Long imain, Long imiddle) { //카테고리
         if(imain != 0 && imiddle != 0) {
             return productEntity.middleCategoryEntity.productMainCategory.imain.eq(imain)
-                    .and(reviewEntity.productEntity.middleCategoryEntity.imiddle.eq(imiddle));
+                    .and(productEntity.middleCategoryEntity.imiddle.eq(imiddle));
         } else if(imain != 0) {
             return productEntity.middleCategoryEntity.productMainCategory.imain.eq(imain);
         } else if(imiddle != 0) {
@@ -119,38 +116,38 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
         }
     }
 
-    private BooleanExpression tage(int newFl, int popFl, int rcFl) {
-        if (newFl != 0 && popFl != 0 && rcFl != 0) {
-            // 모두 선택한 경우
-            return productEntity.newFl.eq(newFl)
-                    .and(productEntity.popFl.eq(popFl))
-                    .and(productEntity.rcFl.eq(rcFl));
-        } else if (newFl != 0 && popFl != 0) {
-            // newFl과 popFl만 선택한 경우
-            return productEntity.newFl.eq(newFl)
-                    .and(productEntity.popFl.eq(popFl));
-        } else if (newFl != 0 && rcFl != 0) {
-            // newFl과 rcFl만 선택한 경우
-            return productEntity.newFl.eq(newFl)
-                    .and(productEntity.rcFl.eq(rcFl));
-        } else if (popFl != 0 && rcFl != 0) {
-            // popFl과 rcFl만 선택한 경우
-            return productEntity.popFl.eq(popFl)
-                    .and(productEntity.rcFl.eq(rcFl));
-        } else if (newFl != 0) {
-            // newFl만 선택한 경우
-            return productEntity.newFl.eq(newFl);
-        } else if (popFl != 0) {
-            // popFl만 선택한 경우
-            return productEntity.popFl.eq(popFl);
-        } else if (rcFl != 0) {
-            // rcFl만 선택한 경우
-            return productEntity.rcFl.eq(rcFl);
-        } else {
-            // 모두 선택하지 않은 경우
-            return null;
-        }
-    }
+//    private BooleanExpression tage(int newFl, int popFl, int rcFl) {
+//        if (newFl != 0 && popFl != 0 && rcFl != 0) {
+//            // 모두 선택한 경우
+//            return productEntity.newFl.eq(newFl)
+//                    .and(productEntity.popFl.eq(popFl))
+//                    .and(productEntity.rcFl.eq(rcFl));
+//        } else if (newFl != 0 && popFl != 0) {
+//            // newFl과 popFl만 선택한 경우
+//            return productEntity.newFl.eq(newFl)
+//                    .and(productEntity.popFl.eq(popFl));
+//        } else if (newFl != 0 && rcFl != 0) {
+//            // newFl과 rcFl만 선택한 경우
+//            return productEntity.newFl.eq(newFl)
+//                    .and(productEntity.rcFl.eq(rcFl));
+//        } else if (popFl != 0 && rcFl != 0) {
+//            // popFl과 rcFl만 선택한 경우
+//            return productEntity.popFl.eq(popFl)
+//                    .and(productEntity.rcFl.eq(rcFl));
+//        } else if (newFl != 0) {
+//            // newFl만 선택한 경우
+//            return productEntity.newFl.eq(newFl);
+//        } else if (popFl != 0) {
+//            // popFl만 선택한 경우
+//            return productEntity.popFl.eq(popFl);
+//        } else if (rcFl != 0) {
+//            // rcFl만 선택한 경우
+//            return productEntity.rcFl.eq(rcFl);
+//        } else {
+//            // 모두 선택하지 않은 경우
+//            return null;
+//        }
+//    }
     private BooleanExpression dateSelectSearch(int dateFl) {
         BooleanExpression booleanExpression = null;
 

@@ -2,6 +2,7 @@ package com.baby.babycareproductsshop.admin.product.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Data
@@ -27,9 +28,11 @@ public class AdminProductInsDto {
     private int price; // 가격
 
     @JsonIgnore
-    private String repPic; // 상품대표사진
+    private MultipartFile repPic; // 상품대표사진
 
     private int remainedCount; //재고
+    private int newFl;
+    private int popFl;
 
 
 

@@ -43,7 +43,8 @@ public class AdminProductService {
 
     //상품진열관리 검색
     public List<AdminProductSearchSelVo> getSearchProduct(AdminProductSearchDto dto) {
-        return null;
+        List<AdminProductSearchSelVo> vo = productRepository.selProductAll(dto);
+        return vo;
     }
 
     //------------상품진열관리 추천상품 조회
@@ -96,33 +97,24 @@ public class AdminProductService {
         try {
             ProductEntity entity = new ProductEntity();
 
-//            ProductMainCategoryEntity MainCategoryEntity = mainCategoryRepository.findById(dto.getImain()).get();
-//            ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findById((long) dto.getImiddle()).get();
-//
-//
-//            entity.getMiddleCategoryEntity().setProductMainCategory(MainCategoryEntity);
-//            entity.getMiddleCategoryEntity().setImiddle(middleCategoryEntity.getImiddle());
-            ProductMainCategoryEntity MainCategoryEntity = mainCategoryRepository.findById(dto.getImain()).get();
-            ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findById((long) dto.getImiddle()).get();
-
-            middleCategoryEntity.setProductMainCategory(MainCategoryEntity);
-            middleCategoryEntity.setImiddle(dto.getImiddle());
-
+            ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findByImiddleAndProductMainCategory_Imain(dto.getImiddle(), dto.getImain());
             entity.setMiddleCategoryEntity(middleCategoryEntity);
             entity.setProductNm(dto.getProductNm());
             entity.setRecommandAge(dto.getRecommendedAge());
             entity.setPrice(dto.getPrice());
             entity.setAdminMemo(dto.getAdminMemo());
             entity.setRecommandAge(dto.getRemainedCount());
+            productRepository.save(entity);
             String target = "/product/" + entity.getIproduct();
 
             String detailsFileNm = myFileUtils.transferTo(productDetails, target);
             entity.setProductDetails(detailsFileNm);
-            entity.setRepPic(pics.toString());
+            entity.setNewFl(dto.getNewFl());
+            entity.setPopFl(dto.getPopFl());
 
             ProductEntity savedEntity = productRepository.save(entity);
-            for (MultipartFile file : pics) {
-                String fileNm = myFileUtils.transferTo(file, target);
+            for (MultipartFile pic : pics) {
+                String fileNm = myFileUtils.transferTo(pic, target);
                 ProductPicEntity productPicEntity = new ProductPicEntity();
                 productPicEntity.setProductPic(fileNm);
                 productPicEntity.setProductEntity(savedEntity);
@@ -139,7 +131,7 @@ public class AdminProductService {
         try {
             ProductEntity entity = productRepository.findById(iproduct).get();
             ProductMainCategoryEntity MainCategoryEntity = mainCategoryRepository.findById(dto.getImain()).get();
-            ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findById((long) dto.getImiddle()).get();
+            ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findById( dto.getImiddle()).get();
 
             middleCategoryEntity.setProductMainCategory(MainCategoryEntity);
             middleCategoryEntity.setImiddle(dto.getImiddle());
@@ -149,8 +141,12 @@ public class AdminProductService {
             entity.setPrice(dto.getPrice());
             entity.setAdminMemo(dto.getAdminMemo());
             entity.setRecommandAge(dto.getRemainedCount());
+            entity.setNewFl(dto.getNewFl());
+            entity.setPopFl(dto.getPopFl());
+            productRepository.save(entity);
 
             String target = "/product/" + entity.getIproduct();
+            myFileUtils.delDirTrigger(target);
 
             String detailsFileNm = myFileUtils.transferTo(productDetails, target);
             entity.setProductDetails(detailsFileNm);
@@ -204,18 +200,19 @@ public class AdminProductService {
 
     //------------ 배너수정
     @Transactional
-    public ResVo updateBanner(Long id, MultipartFile pic, BannerInsDto dto) {
+    public ResVo updateBanner(Long ibanner, MultipartFile pic, BannerInsDto dto) {
         try {
-            BannerEntity banner = bannerRepository.findById(id).orElse(null);
+            BannerEntity banner = bannerRepository.findById(ibanner).get();
             banner.setBannerUrl(dto.getBannerUrl());
             banner.setTarget(dto.getTarget());
-            if (pic != null) {
-                myFileUtils.delDirTrigger("/banner/" + id + "/" + banner.getBannerPic());
-                String picName = myFileUtils.transferTo(pic, "/banner/" + id);
-                banner.setBannerPic(picName);
-            }
             bannerRepository.save(banner);
-            return new ResVo(1);
+//            myFileUtils.delDirTrigger("/banner/" + banner.getBannerPic());
+            String target = "/banner/" + banner.getIbanner();
+            myFileUtils.delDirTrigger(target);
+            String picName = myFileUtils.transferTo(pic, "/banner/" + ibanner);
+            banner.setBannerPic(picName);
+            bannerRepository.save(banner);
+            return new ResVo(Const.SUCCESS);
         } catch (Exception e) {
             return new ResVo(Const.FAIL);
         }
@@ -228,9 +225,11 @@ public class AdminProductService {
             BannerEntity banner = new BannerEntity();
             banner.setBannerUrl(dto.getBannerUrl());
             banner.setTarget(dto.getTarget());
-            String savedPic = myFileUtils.transferTo(pic, "/banner/" + banner.getIbanner() + "/");
+            bannerRepository.save(banner);
+            String savedPic = myFileUtils.transferTo(pic, "/banner/" + banner.getIbanner());
             banner.setBannerPic(savedPic);
             bannerRepository.save(banner);
+
             return new ResVo(Const.SUCCESS);
         } catch (Exception e) {
             return new ResVo(Const.FAIL);
@@ -289,6 +288,29 @@ public class AdminProductService {
         String vo = reviewRepository.findAdminMemoByIreview(ireview);
         return vo;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //    // 배너토글
 //    public ResVo putBanner(Long ibanner) {
