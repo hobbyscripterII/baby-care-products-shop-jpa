@@ -176,6 +176,7 @@ public class AdminUserService {
 
     public ApiResponse<?> unregisterUser(long iuser) {
 
+        userRepository.delete(userRepository.getReferenceById(iuser));
         return new ApiResponse<>(null);
     }
 }

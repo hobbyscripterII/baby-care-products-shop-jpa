@@ -64,4 +64,10 @@ public class AdminUserController {
     public ApiResponse<List<AdminSelUserSignupVo>> getUserSignupStatistics(AdminSelUserSignupDto dto) {
         return service.getUserSignupStatistics(dto);
     }
+
+    @Operation(summary = "관리자에 의한 회원 탈퇴")
+    @DeleteMapping("/user/{iuser}")
+    public ApiResponse<?> delUser(@PathVariable long iuser) {
+        return service.unregisterUser(iuser);
+    }
 }
