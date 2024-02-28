@@ -2,10 +2,12 @@ package com.baby.babycareproductsshop.admin.product.model.Repository_ys;
 
 import com.baby.babycareproductsshop.admin.product.model.AdminProductSearchDto;
 import com.baby.babycareproductsshop.admin.product.model.ProductGetSearchDto;
+import com.baby.babycareproductsshop.admin.product.model.ProductGetSearchSelVo;
 import com.baby.babycareproductsshop.admin.product.model.ReviewSearchDto;
 import com.baby.babycareproductsshop.entity.product.ProductEntity;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +27,15 @@ import static com.baby.babycareproductsshop.entity.review.QReviewEntity.reviewEn
 @RequiredArgsConstructor
 public class ProductRepositoryImpl implements ProductQdslRepository{
     private final JPAQueryFactory jpaQueryFactory;
-    // 물어봐야함 이거
+    // 물어봐야함 이거 태그 들어감
     @Override
     public List<ProductEntity> selProductAll(AdminProductSearchDto dto) {
         JPAQuery<ProductEntity> query = jpaQueryFactory.select(Projections.fields(ProductEntity.class,
-                        productEntity.productNm
+                         productEntity.productNm
                         ,productEntity.iproduct
                         ,productEntity.price
-//                        ,productEntity.middleCategoryEntity.productMainCategory.imain
-//                        ,productEntity.middleCategoryEntity.imiddle
+                        ,productEntity.middleCategoryEntity.productMainCategory.imain
+                        ,productEntity.middleCategoryEntity.imiddle
                         ,productEntity.repPic))
                 .where(ProductNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
@@ -47,8 +49,8 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
 
     //상품검색
     @Override
-    public List<ProductEntity> findProduct(ProductGetSearchDto dto) {
-        JPAQuery<ProductEntity> query = jpaQueryFactory.select(Projections.fields(ProductEntity.class,
+    public List<ProductGetSearchSelVo> findProduct(ProductGetSearchDto dto) {
+        JPAQuery<ProductGetSearchSelVo> query = jpaQueryFactory.select(Projections.fields(ProductGetSearchSelVo.class,
                         productEntity.productNm
                         ,productEntity.iproduct
                         ,productEntity.price
@@ -59,10 +61,11 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         ,iproduct(dto.getIproduct())
                         ,Category(dto.getImain(),dto.getImiddle())
                         ,dateSelectSearch(dto.getDateFl())
-
+                        ,price(dto.getMinPrice(),dto.getMaxPrice())
+                        ,searchDateFilter(dto.getSearchStartDate(),dto.getSearchEndDate())
                 )
                 .from(productEntity);
-                //.leftJoin(productEntity.middleCategoryEntity);
+
         return query.fetch();
     }
 
@@ -78,16 +81,44 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
     }
     private BooleanExpression Category(Long imain, Long imiddle) { //카테고리
         if(imain != 0 && imiddle != 0) {
-            return reviewEntity.productEntity.middleCategoryEntity.productMainCategory.imain.eq(imain)
-                    .and(reviewEntity.productEntity.middleCategoryEntity.imiddle.eq((long) imiddle));
+            return productEntity.middleCategoryEntity.productMainCategory.imain.eq(imain)
+                    .and(reviewEntity.productEntity.middleCategoryEntity.imiddle.eq(imiddle));
         } else if(imain != 0) {
-            return reviewEntity.productEntity.middleCategoryEntity.productMainCategory.imain.eq(imain);
+            return productEntity.middleCategoryEntity.productMainCategory.imain.eq(imain);
         } else if(imiddle != 0) {
-            return reviewEntity.productEntity.middleCategoryEntity.imiddle.eq((long) imiddle);
+            return productEntity.middleCategoryEntity.imiddle.eq( imiddle);
         } else {
             return null;
         }
     }
+    private BooleanExpression price(int minPrice, int maxPrice) {
+        if (minPrice != 0 && maxPrice != 0) {
+            return productEntity.price.between(minPrice, maxPrice);
+        }
+        if (minPrice != 0) {
+            return productEntity.price.goe(minPrice);
+        }
+        if (maxPrice != 0) {
+            return productEntity.price.loe(maxPrice);
+        }
+        return null;
+    }
+    private BooleanExpression searchDateFilter(LocalDate searchStartDate, LocalDate searchEndDate) {
+        if(searchStartDate == null || searchEndDate == null){
+            return null;
+        }
+        if(searchStartDate.isAfter(searchEndDate)){
+            return null;
+        }
+        try{
+            BooleanExpression isGoeStartDate = productEntity.createdAt.goe(LocalDateTime.of(searchStartDate, LocalTime.MIN));
+            BooleanExpression isLoeEndDate = productEntity.createdAt.loe(LocalDateTime.of(searchEndDate, LocalTime.MAX).withNano(0));
+            return Expressions.allOf(isGoeStartDate, isLoeEndDate);
+        }catch(Exception e){
+            return null;
+        }
+    }
+
     private BooleanExpression tage(int newFl, int popFl, int rcFl) {
         if (newFl != 0 && popFl != 0 && rcFl != 0) {
             // 모두 선택한 경우

@@ -1,6 +1,6 @@
 package com.baby.babycareproductsshop.admin.product.model;
 
-public interface Product2141234Vo {
+public interface ProductManagementSelVo {
     String getProductNm();
     Long getPrice();
     String getRepPic();

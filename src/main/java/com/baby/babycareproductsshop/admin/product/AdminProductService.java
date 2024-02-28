@@ -13,15 +13,11 @@ import com.baby.babycareproductsshop.security.AuthenticationFacade;
 ;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -45,68 +41,23 @@ public class AdminProductService {
 
 
 
-
-
-//    // ------------------------------------------------총 주문가격 &수
-//    public OrderTotalSelVo getTotalPriceAndCount() {
-//        return orderTotalRepository.getTotalPriceAndCount();
-//    }
-//
-//    // ------------------------------------------------------최근주문
-//    public List<OrderRecentSelVo> getRecentOrders() {
-//        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
-//        List<OrderRecentSelVo> recentOrders = orderTotalRepository.findRecentOrders(pageable);
-//
-//        return recentOrders;
-//    }
-//    // ------------------------------------------------------최근가입
-//
-//    public List<ddddMapping> getRecentUser() {
-//        return userRepository2.findAllBy();
-//
-//    }
-//
-//    // *-------------------------------------------주문상태현황
-//    public List<OrderStatusCountVo> getOrderStatusCount() {
-//        List<OrderStatusCountVo> result = new ArrayList<>();
-//
-//        result.add(new OrderStatusCountVo("입금전", orderTotalRepository.countByProcessState(0)));
-//        result.add(new OrderStatusCountVo("입금완료", orderTotalRepository.countByProcessState(1)));
-//        result.add(new OrderStatusCountVo("배송준비중", orderTotalRepository.countByProcessState(2)));
-//        result.add(new OrderStatusCountVo("배송중", orderTotalRepository.countByProcessState(3)));
-//        result.add(new OrderStatusCountVo("배송완료", orderTotalRepository.countByProcessState(4)));
-//
-//        return result;
-//    }
-//    //-----------------------------qksvn반품취소
-//    public OrderRefundAndCancelCountSelVo getCountRefundAndCancel() {
-//        OrderRefundAndCancelCountSelVo vo = new OrderRefundAndCancelCountSelVo();
-//        vo.setRefundFl(orderDetailsRepository.countByRefundFl(1));
-//        vo.setDeleteFl(orderTotalRepository.countByDeleteFl(1));
-//        return vo;
-//
-//    }
-
-
-
-
     //상품진열관리 검색
     public List<AdminProductSearchSelVo> getSearchProduct(AdminProductSearchDto dto) {
         return null;
     }
 
     //------------상품진열관리 추천상품 조회
-    public List<Product2141234Vo> getProductRc() {
+    public List<ProductManagementSelVo> getProductRc() {
         return productRepository.findAllByRcFl(1);
     }
 
     //------------상품진열관리 신상품 조회
-    public List<Product2141234Vo> getProductNew() {
+    public List<ProductManagementSelVo> getProductNew() {
         return productRepository.findAllByNewFl(1);
     }
 
     //------------상품진열관리 인기상품 조회
-    public List<Product2141234Vo> getProductPop() {
+    public List<ProductManagementSelVo> getProductPop() {
         return productRepository.findAllByPopFl(1);
     }
 
@@ -233,15 +184,16 @@ public class AdminProductService {
     }
     //상품검색
     public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto) {
-        List<ProductEntity> entity = productRepository.findProduct(dto);
-        List<ProductGetSearchSelVo> vo = entity.stream().map(item -> ProductGetSearchSelVo
-                .builder()
-                .productNm(item.getProductNm())
-                .price(item.getPrice())
+//        List<ProductEntity> entity = productRepository.findProduct(dto);
+//        List<ProductGetSearchSelVo> vo = entity.stream().map(item -> ProductGetSearchSelVo
+//                .builder()
+//                .productNm(item.getProductNm())
+//                .price(item.getPrice())
 //                .imain(item.getMiddleCategoryEntity().getProductMainCategory().getImain())
 //                .imiddle(item.getMiddleCategoryEntity().getImiddle())
-                .repPic(item.getRepPic())
-                .build()).collect(Collectors.toList());
+//                .repPic(item.getRepPic())
+//                .build()).collect(Collectors.toList());
+        List<ProductGetSearchSelVo> vo = productRepository.findProduct(dto);
         return vo;
     }
 
@@ -293,18 +245,12 @@ public class AdminProductService {
         }
         return new ResVo(Const.FAIL);
     }
-    // 배너토글
-    public ResVo putBanner(Long ibanner) {
-        Optional<BannerEntity> bannerOptional = bannerRepository.findById(ibanner);
-        BannerEntity banner = bannerOptional.get();
-        banner.setStatus(banner.getStatus() == 0 ? 1 : 0);
-        bannerRepository.save(banner);
-        return new ResVo(banner.getStatus() == 0 ? Const.SUCCESS : Const.FAIL);
-    }
+
     //------리뷰 검색
     public List<SearchReviewSelVo> getSearchReview(ReviewSearchDto dto) {
-        List<ReviewEntity> result = reviewRepository.selReview(dto);
-        List<SearchReviewSelVo> vo = new ArrayList<>();
+//        List<ReviewEntity> result = reviewRepository.selReview(dto);
+//        List<SearchReviewSelVo> vo = new ArrayList<>();
+        List<SearchReviewSelVo> vo = reviewRepository.selReview(dto);
         return vo;
     }
 
@@ -313,11 +259,7 @@ public class AdminProductService {
         List<SearchReviewSelVo> vo = reviewRepository.selReviewDel(dto);
         return vo;
     }
-    //    // 숨기지 않는 리뷰
-//    public List<SearchReviewSelVo> getReviewSelVo() {
-//        List<SearchReviewSelVo> vo = reviewRepository.findAllByNotDelFl();
-//        return vo;
-//    }
+
     //관리자 메모 작성&수정
     public ResVo postReviewAdminMemo(ReviewMemoInsDto dto) {
         ReviewEntity entity = reviewRepository.findByIreview(dto.getIreview());
@@ -347,6 +289,59 @@ public class AdminProductService {
         String vo = reviewRepository.findAdminMemoByIreview(ireview);
         return vo;
     }
+
+//    // 배너토글
+//    public ResVo putBanner(Long ibanner) {
+//        Optional<BannerEntity> bannerOptional = bannerRepository.findById(ibanner);
+//        BannerEntity banner = bannerOptional.get();
+//        banner.setStatus(banner.getStatus() == 0 ? 1 : 0);
+//        bannerRepository.save(banner);
+//        return new ResVo(banner.getStatus() == 0 ? Const.SUCCESS : Const.FAIL);
+//    }
+    //    // 숨기지 않는 리뷰
+//    public List<SearchReviewSelVo> getReviewSelVo() {
+//        List<SearchReviewSelVo> vo = reviewRepository.findAllByNotDelFl();
+//        return vo;
+//    }
+    //    // ------------------------------------------------총 주문가격 &수
+//    public OrderTotalSelVo getTotalPriceAndCount() {
+//        return orderTotalRepository.getTotalPriceAndCount();
+//    }
+//
+//    // ------------------------------------------------------최근주문
+//    public List<OrderRecentSelVo> getRecentOrders() {
+//        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
+//        List<OrderRecentSelVo> recentOrders = orderTotalRepository.findRecentOrders(pageable);
+//
+//        return recentOrders;
+//    }
+//    // ------------------------------------------------------최근가입
+//
+//    public List<ddddMapping> getRecentUser() {
+//        return userRepository2.findAllBy();
+//
+//    }
+//
+//    // *-------------------------------------------주문상태현황
+//    public List<OrderStatusCountVo> getOrderStatusCount() {
+//        List<OrderStatusCountVo> result = new ArrayList<>();
+//
+//        result.add(new OrderStatusCountVo("입금전", orderTotalRepository.countByProcessState(0)));
+//        result.add(new OrderStatusCountVo("입금완료", orderTotalRepository.countByProcessState(1)));
+//        result.add(new OrderStatusCountVo("배송준비중", orderTotalRepository.countByProcessState(2)));
+//        result.add(new OrderStatusCountVo("배송중", orderTotalRepository.countByProcessState(3)));
+//        result.add(new OrderStatusCountVo("배송완료", orderTotalRepository.countByProcessState(4)));
+//
+//        return result;
+//    }
+//    //-----------------------------qksvn반품취소
+//    public OrderRefundAndCancelCountSelVo getCountRefundAndCancel() {
+//        OrderRefundAndCancelCountSelVo vo = new OrderRefundAndCancelCountSelVo();
+//        vo.setRefundFl(orderDetailsRepository.countByRefundFl(1));
+//        vo.setDeleteFl(orderTotalRepository.countByDeleteFl(1));
+//        return vo;
+//
+//    }
 
 
 }

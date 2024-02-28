@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ReviewQdslRepository {
 
-    List<ReviewEntity> selReview(ReviewSearchDto dto);
+    List<SearchReviewSelVo> selReview(ReviewSearchDto dto);
     List<SearchReviewSelVo> selReviewDel(ReviewSearchDto dto);
     //List<SearchReviewSelVo> findAllByNotDelFl();
 

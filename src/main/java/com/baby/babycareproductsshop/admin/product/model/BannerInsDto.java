@@ -7,4 +7,5 @@ public class BannerInsDto {
 
     private String bannerUrl;
     private int target;
+    private int status;
 }

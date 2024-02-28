@@ -1,10 +1,13 @@
 package com.baby.babycareproductsshop.admin.product.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductGetSearchSelVo {
     private String productNm;
     private Long iproduct;
