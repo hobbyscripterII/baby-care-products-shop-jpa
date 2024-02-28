@@ -106,7 +106,7 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
                 .join(productMiddleCategoryEntity.productMainCategory)
                 .where(ProductNm(dto.getKeyword()),
                         iproduct(dto.getIproduct()),
-                        Category(dto.getImain(), dto.getImiddle()),
+                        Category(dto.getImain(),dto.getImiddle()),
                         reviewEntity.delFl.eq(1)
                 )
                 .orderBy(sortBy(dto.getSortBy()));
@@ -143,7 +143,7 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
         if(imain != 0 && imiddle != 0) {
             return productEntity.middleCategoryEntity.productMainCategory.imain.eq(imain)
 
-                    .and(reviewEntity.productEntity.middleCategoryEntity.imiddle.eq( imiddle));
+                    .and(reviewEntity.productEntity.middleCategoryEntity.imiddle.eq(imiddle));
         } else if(imain != 0) {
 //            log.info("reviewEntity : {}", reviewEntity);
 //            log.info("productEntity : {}", reviewEntity.productEntity);

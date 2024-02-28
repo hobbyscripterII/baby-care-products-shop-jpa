@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MiddleCategoryRepository extends JpaRepository<ProductMiddleCategoryEntity,Long> {
+    ProductMiddleCategoryEntity findByImiddleAndProductMainCategory_Imain(Long imiddle,Long imain);
 }

@@ -20,37 +20,6 @@ import java.util.List;
 public class AdminProductController {
     private final AdminProductService service;
 
-    //    // 주문총수가격
-//    @GetMapping("/Total Price & count")
-//    @Operation(summary = "주문 총 가격 & 수 dkdhdkhddkdkdkdk")
-//    public OrderTotalSelVo getOrderTotal() {
-//        return service.getTotalPriceAndCount();
-//    }
-//    // 최근주무자
-//    @GetMapping("recentOrders")
-//    @Operation(summary = "최근 주문내역dkdhdkhddkdkdkdk")
-//    public List<OrderRecentSelVo> getRecentOrders() {
-//
-//        return service.getRecentOrders();
-//    }
-//    // 유저가입최근
-//    @GetMapping("recentUsers")
-//    @Operation(summary = "최근 가입유저dkdhdkhddkdkdkdk")
-//    public List<ddddMapping> getRecentUser() {
-//        return service.getRecentUser();
-//    }
-//    //--------------------주문상태현황
-//    @GetMapping("OrderStatus")
-//    @Operation(summary = "주문상태현황dkdhdkhddkdkdkdk")
-//    public List<OrderStatusCountVo> getOrderStatusCount() {
-//        return service.getOrderStatusCount();
-//    }
-//    @GetMapping("OrderCancelCount")
-//    @Operation(summary = "반품/취소 수dkdhdkhddkdkdkdk")
-//    public OrderRefundAndCancelCountSelVo getCountRefundAndCancel() {
-//        return service.getCountRefundAndCancel();
-//    }
-
 
     //-----------------------------------------------------------------상품 등록------------------------------------------------------
     @PostMapping("/AdminProduct")
@@ -82,8 +51,6 @@ public class AdminProductController {
     public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto) {
         return service.getSearchProductSelVo(dto);
     }
-
-
 
     //-----------------------------------------------------------------상품진열관리 추천상품 조회------------------------------------------------------
     @GetMapping("/productRc")
@@ -128,8 +95,6 @@ public class AdminProductController {
         return service.getSearchProduct(dto);
     }
 
-
-
     //-----------------------------------------------------------------리뷰검색------------------------------------------------------
     @GetMapping("/AdminSearchReview")
     @Operation(summary = "리뷰 검색")
@@ -168,7 +133,6 @@ public class AdminProductController {
         return service.getReviewMeMo(ireview);
     }
 
-
     //-----------------------------------------------------------------배너조회------------------------------------------------------
     @GetMapping("/banner")
     @Operation(summary = "배너조회")
@@ -184,8 +148,8 @@ public class AdminProductController {
     //-----------------------------------------------------------------배너수정------------------------------------------------------
     @PatchMapping("/banner")
     @Operation(summary = "배너수정")
-    public ResVo updateBanner(@RequestParam Long id, @RequestPart(required = false) MultipartFile pic, @RequestPart BannerInsDto dto) {
-        return service.updateBanner(id, pic, dto);
+    public ResVo updateBanner(@RequestParam Long ibanner, @RequestPart(required = false) MultipartFile pic, @RequestPart BannerInsDto dto) {
+        return service.updateBanner(ibanner, pic, dto);
     }
     //-----------------------------------------------------------------배너삭제------------------------------------------------------
     @DeleteMapping("/banner")
@@ -193,7 +157,6 @@ public class AdminProductController {
     public ResVo delbanner(@RequestBody Long ibanner) {
         return service.delBanner(ibanner);
     }
-    //-----------------------------------------------------------------배너토글처리----------------------
 
 
 

@@ -13,7 +13,7 @@ public class AdminProductSearchDto {
 
     private Long imiddle;
 
-    private int newFl;
-    private int popFl;
-    private int rcFl;
+//    private int newFl;
+//    private int popFl;
+//    private int rcFl;
 }
