@@ -3,7 +3,6 @@ package com.baby.babycareproductsshop.mail;
 import com.baby.babycareproductsshop.exception.CommonErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
 import com.baby.babycareproductsshop.mail.model.EmailMessageDto;
-import com.baby.babycareproductsshop.mail.model.MailSender;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

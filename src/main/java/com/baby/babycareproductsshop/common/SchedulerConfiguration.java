@@ -21,9 +21,9 @@ public class SchedulerConfiguration {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
-
+    //매일 새벽 4시에 탈퇴한 지 30일 지난 회원 정보 삭제
     @Transactional
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "${schedule.cron}")
     public void delUnregisteredUser() {
         List<UserEntity> userEntityList = userRepository.findAllByUnregisterFlAndUpdatedAtLessThan(1L, LocalDateTime.now().minusDays(30));
         List<OrderEntity> orderEntityList = orderRepository.findAllByUserEntityIn(userEntityList);
