@@ -7,7 +7,6 @@ import com.baby.babycareproductsshop.admin.order.model.OrderSmallFilterDto;
 import com.baby.babycareproductsshop.common.ProcessState;
 import com.baby.babycareproductsshop.entity.order.OrderEntity;
 import com.baby.babycareproductsshop.entity.refund.RefundEntity;
-import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -108,7 +107,17 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
     @Override
     public List<OrderEntity> orderDeleteList(OrderSmallFilterDto dto, Pageable pageable) {
         dto.setProcessState(ProcessState.ORDER_CANCEL.getProcessStateNum());
-        return commonListTasks(dto, pageable);
+        OrderCommonSearchFilterDto filter = commonDtoTasks(dto, pageable);
+        int sort = dto.getSort();
+
+        return jpaQueryFactory
+                .select(orderEntity)
+                .from(orderEntity)
+                .leftJoin(orderEntity)
+                .on(refundEntity.orderDetailsEntity.orderEntity.iorder.eq(orderDetailsEntity.orderEntity.iorder))
+                .where(commonSearchFilter(filter))
+                .orderBy(orderListSort(sort))
+                .fetch();
     }
 
     @Override

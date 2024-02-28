@@ -1,14 +1,12 @@
 package com.baby.babycareproductsshop.admin.order.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
+@ToString
 public class OrderCommonSearchFilterDto {
     private int searchCategory;
     private String keyword;

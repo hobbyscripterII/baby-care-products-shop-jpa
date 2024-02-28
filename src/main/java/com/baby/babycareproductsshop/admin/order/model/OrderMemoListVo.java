@@ -9,6 +9,8 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class OrderMemoListVo {
+    @Schema(title = "번호", description = "")
+    private int idx;
     @Schema(title = "주문번호", description = "")
     private int iorder;
     @Schema(title = "주문일시", description = "")
@@ -19,6 +21,4 @@ public class OrderMemoListVo {
     private int processState;
     @Schema(title = "메모", description = "")
     private String memo;
-    @Schema(title = "번호", description = "")
-    private int idx;
 }

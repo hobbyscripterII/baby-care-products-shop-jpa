@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -84,7 +85,8 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderListVo> orderList(@RequestBody OrderFilterDto dto, @PageableDefault(page = 1) Pageable pageable) {
+    public List<OrderListVo> orderList(OrderFilterDto dto, @PageableDefault(page = 1, size = 10) Pageable pageable) {
+        log.info("pageable = {}", pageable);
         return service.orderList(dto, pageable);
     }
 
@@ -119,23 +121,22 @@ public class AdminOrderController {
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
     @Parameters(value = {@Parameter(name = "process_state", description = "주문 처리 상태<br>전체 - 0<br>입금 대기 - 1<br>배송 준비중 - 2<br>배송중 - 3<br>배송완료 - 4<br>")})
-    public List<OrderDetailsListVo> orderDetailsList(@RequestParam(name = "process_state") int processState, @RequestBody OrderSmallFilterDto dto, @PageableDefault(page = 1) Pageable pageable) {
-        if (processState >= 0 && processState <= 6) {
-            dto.setProcessState(processState);
+    public List<OrderDetailsListVo> orderDetailsList(@RequestParam(name = "process_state") int processState, OrderSmallFilterDto dto, @PageableDefault(page = 1) Pageable pageable) {
+        dto.setProcessState(processState);
+        log.info("dto = {}", dto);
 
-            if (dto.getSearchCategory() == 0) {
-                dto.setKeyword(null);
-                return service.orderDetailsList(dto, pageable);
-            } else {
-                // 검색어 타입 체크
-                if (searchDataTypeCheck(dto.getSearchCategory(), dto.getKeyword())) {
-                    // 휴대폰 번호로 검색 시 휴대폰 번호 유효성 체크
-                    if (dto.getSearchCategory() == 6) {
-                        String formatPhoneNumber = phoneNumberFormatConverter(dto.getKeyword());
-                        dto.setKeyword(formatPhoneNumber);
-                    }
-                    return service.orderDetailsList(dto, pageable);
+        if (dto.getSearchCategory() == 0) {
+            dto.setKeyword(null);
+            return service.orderDetailsList(dto, pageable);
+        } else {
+            // 검색어 타입 체크
+            if (searchDataTypeCheck(dto.getSearchCategory(), dto.getKeyword())) {
+                // 휴대폰 번호로 검색 시 휴대폰 번호 유효성 체크
+                if (dto.getSearchCategory() == 6) {
+                    String formatPhoneNumber = phoneNumberFormatConverter(dto.getKeyword());
+                    dto.setKeyword(formatPhoneNumber);
                 }
+                return service.orderDetailsList(dto, pageable);
             }
         }
         throw new RestApiException(AuthErrorCode.PROCESS_STATE_CODE_NOT_FOUND);
@@ -172,7 +173,7 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderDeleteVo> orderDeleteList(@RequestBody OrderSmallFilterDto dto, @PageableDefault(page = 1) Pageable pageable) {
+    public List<OrderDeleteVo> orderDeleteList(OrderSmallFilterDto dto, @PageableDefault(page = 1) Pageable pageable) {
         return service.orderDeleteList(dto, pageable);
     }
 
@@ -207,7 +208,7 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderRefundListVo> orderRefundList(@RequestBody OrderSmallFilterDto dto, @PageableDefault(page = 1) Pageable pageable) {
+    public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto, @PageableDefault(page = 1) Pageable pageable) {
         return service.orderRefundList(dto, pageable);
     }
 
@@ -238,7 +239,7 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderMemoListVo> adminMemoList(@RequestBody OrderMemoListDto dto, @PageableDefault(page = 1) Pageable pageable) {
+    public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto, @PageableDefault(page = 1) Pageable pageable) {
         return service.adminMemoList(dto, pageable);
     }
 
