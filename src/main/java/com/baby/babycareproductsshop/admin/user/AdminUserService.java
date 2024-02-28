@@ -1,15 +1,14 @@
 package com.baby.babycareproductsshop.admin.user;
 
-import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderSalesVo;
-import com.baby.babycareproductsshop.admin.order.model.AdminSelTotalOrderCntVo;
 import com.baby.babycareproductsshop.admin.user.model.*;
 import com.baby.babycareproductsshop.common.*;
+import com.baby.babycareproductsshop.entity.order.OrderEntity;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
 import com.baby.babycareproductsshop.exception.AuthErrorCode;
 import com.baby.babycareproductsshop.exception.CommonErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
+import com.baby.babycareproductsshop.order.OrderRepository;
 import com.baby.babycareproductsshop.response.ApiResponse;
-import com.baby.babycareproductsshop.security.AuthenticationFacade;
 import com.baby.babycareproductsshop.security.JwtTokenProvider;
 import com.baby.babycareproductsshop.security.MyPrincipal;
 import com.baby.babycareproductsshop.user.UserRepository;
@@ -22,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +29,6 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static com.baby.babycareproductsshop.common.Const.rtName;
 
@@ -43,10 +40,10 @@ public class AdminUserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AppProperties appProperties;
     private final MyCookieUtils myCookieUtils;
-    private final AuthenticationFacade authenticationFacade;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserRepository userRepository;
     private final AdminUserRepository adminUserRepository;
+    private final OrderRepository orderRepository;
 
     @Transactional
     public ApiResponse<UserSignInVo> postSigninAdmin(HttpServletResponse res, UserSignInDto dto) {
@@ -174,8 +171,15 @@ public class AdminUserService {
         return new ApiResponse<>(result);
     }
 
+    @Transactional
     public ApiResponse<?> unregisterUser(long iuser) {
-
+        UserEntity userEntity = new UserEntity();
+        userEntity.setIuser(iuser);
+        List<OrderEntity> list = orderRepository.findAllByUserEntity(userEntity);
+        for (OrderEntity orderEntity : list) {
+            orderEntity.setUserEntity(null);
+            orderEntity.setUserAddressEntity(null);
+        }
         userRepository.delete(userRepository.getReferenceById(iuser));
         return new ApiResponse<>(null);
     }
