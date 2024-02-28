@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 public class AdminOrderController {
     private final AdminOrderService service;
 
+//    @PageableDefault(page = 1, size = 20) Pageable pageable
+
     @Operation(summary = "관리자 메모 수정", description = "<ul><strong>iorders - 주문 번호(PK)</strong></ul> <ul><strong>adminMemo - 관리자 메모</strong><br></ul>")
     @PatchMapping("/memo")
     public ResVo updateAdminMemo(@RequestBody OrderMemoUpdDto dto) {
@@ -85,8 +87,8 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderListVo> orderList(OrderFilterDto dto, @PageableDefault(page = 1, size = 10) Pageable pageable) {
-        log.info("pageable = {}", pageable);
+    public List<OrderListVo> orderList(OrderFilterDto dto, @Parameter(hidden = true) @PageableDefault(page = 1, size = 20) Pageable pageable) {
+        stringIsNullCheck(dto);
         return service.orderList(dto, pageable);
     }
 
@@ -121,9 +123,9 @@ public class AdminOrderController {
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
     @Parameters(value = {@Parameter(name = "process_state", description = "주문 처리 상태<br>전체 - 0<br>입금 대기 - 1<br>배송 준비중 - 2<br>배송중 - 3<br>배송완료 - 4<br>")})
-    public List<OrderDetailsListVo> orderDetailsList(@RequestParam(name = "process_state") int processState, OrderSmallFilterDto dto, @PageableDefault(page = 1) Pageable pageable) {
+    public List<OrderDetailsListVo> orderDetailsList(@RequestParam(name = "process_state") int processState, OrderSmallFilterDto dto, @PageableDefault(page = 1, size = 20) Pageable pageable) {
+        stringIsNullCheck(dto);
         dto.setProcessState(processState);
-        log.info("dto = {}", dto);
 
         if (dto.getSearchCategory() == 0) {
             dto.setKeyword(null);
@@ -173,7 +175,8 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderDeleteVo> orderDeleteList(OrderSmallFilterDto dto, @PageableDefault(page = 1) Pageable pageable) {
+    public List<OrderDeleteVo> orderDeleteList(OrderSmallFilterDto dto, @PageableDefault(page = 1, size = 20) Pageable pageable) {
+        stringIsNullCheck(dto);
         return service.orderDeleteList(dto, pageable);
     }
 
@@ -208,7 +211,8 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto, @PageableDefault(page = 1) Pageable pageable) {
+    public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto, @PageableDefault(page = 1, size = 20) Pageable pageable) {
+        stringIsNullCheck(dto);
         return service.orderRefundList(dto, pageable);
     }
 
@@ -239,7 +243,8 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto, @PageableDefault(page = 1) Pageable pageable) {
+    public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto, @PageableDefault(page = 1, size = 20) Pageable pageable) {
+        stringIsNullCheck(dto);
         return service.adminMemoList(dto, pageable);
     }
 
@@ -291,5 +296,27 @@ public class AdminOrderController {
             throw new RestApiException(AuthErrorCode.SEARCH_FAILED_ERROR);
         }
         return result;
+    }
+
+    private String stringIsNull(String str) {
+        return str.equals("string") ? "" : str;
+    }
+
+    private void stringIsNullCheck(OrderFilterDto dto) {
+        dto.setKeyword(stringIsNull(dto.getKeyword()));
+        dto.setStartDate(stringIsNull(dto.getStartDate()));
+        dto.setEndDate(stringIsNull(dto.getEndDate()));
+    }
+
+    private void stringIsNullCheck(OrderSmallFilterDto dto) {
+        dto.setKeyword(stringIsNull(dto.getKeyword()));
+        dto.setStartDate(stringIsNull(dto.getStartDate()));
+        dto.setEndDate(stringIsNull(dto.getEndDate()));
+    }
+
+    private void stringIsNullCheck(OrderMemoListDto dto) {
+        dto.setKeyword(stringIsNull(dto.getKeyword()));
+        dto.setStartDate(stringIsNull(dto.getStartDate()));
+        dto.setEndDate(stringIsNull(dto.getEndDate()));
     }
 }
