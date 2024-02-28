@@ -2,6 +2,8 @@ package com.baby.babycareproductsshop.admin.product.model;
 
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 public class ProductGetSearchDto {
     private String keyword;
@@ -14,7 +16,9 @@ public class ProductGetSearchDto {
     private int minPrice;
     private int maxPrice;
     private int dateFl;
-//    private int startDate;
-//    private int endDate;
+    private LocalDate searchStartDate;
+    private LocalDate searchEndDate;
+
+
 
 }

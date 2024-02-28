@@ -1,10 +1,7 @@
 package com.baby.babycareproductsshop.admin.product;
 import com.baby.babycareproductsshop.admin.product.model.*;
-import com.baby.babycareproductsshop.common.Const;
 import com.baby.babycareproductsshop.common.ResVo;
 
-import com.baby.babycareproductsshop.entity.product.ProductEntity;
-import com.baby.babycareproductsshop.entity.review.ReviewEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -57,7 +53,7 @@ public class AdminProductController {
 
 
     //-----------------------------------------------------------------상품 등록------------------------------------------------------
-    @PostMapping("/Product")
+    @PostMapping("/AdminProduct")
     @Operation(summary = "상품등록 ")
     public ResVo postProduct(@RequestPart(name = "pics") List<MultipartFile> pics,
                              @RequestPart(name = "productDetails") MultipartFile productDetails,
@@ -66,7 +62,7 @@ public class AdminProductController {
         return service.postProduct(pics, productDetails, dto);
     }
     //-----------------------------------------------------------------상품 수정------------------------------------------------------
-    @PatchMapping("putput")
+    @PatchMapping("/AdminProductUpt")
     @Operation(summary = "상품 수정 ")
     public ResVo uptProduct (@RequestPart(name = "pics") List<MultipartFile> pics,
                              @RequestPart(name = "productDetails") MultipartFile productDetails,
@@ -75,13 +71,13 @@ public class AdminProductController {
     }
 
     //-----------------------------------------------------------------상품 삭제------------------------------------------------------
-    @DeleteMapping("deldel")
+    @DeleteMapping("/AdminProductDel")
     @Operation(summary = "상품삭제 ")
     public ResVo delProduct( @RequestParam Long iproduct) {
         return service.delProduct(iproduct);
     }
 
-    @GetMapping("/getget")
+    @GetMapping("/AdminProductSearch")
     @Operation(summary = "상품검색 ")
     public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto) {
         return service.getSearchProductSelVo(dto);
@@ -92,19 +88,19 @@ public class AdminProductController {
     //-----------------------------------------------------------------상품진열관리 추천상품 조회------------------------------------------------------
     @GetMapping("/productRc")
     @Operation(summary = "진열관리 추천상품 조회")
-    public List<Product2141234Vo> getProductRc() {
+    public List<ProductManagementSelVo> getProductRc() {
         return service.getProductRc();
     }
     //-----------------------------------------------------------------상품진열관리 신상품 조회------------------------------------------------------
     @GetMapping("/productNew")
     @Operation(summary = "진열관리 신상품 조회")
-    public List<Product2141234Vo> getProductNew() {
+    public List<ProductManagementSelVo> getProductNew() {
         return service.getProductNew();
     }
     //-----------------------------------------------------------------상품진열관리 인기상품 조회------------------------------------------------------
     @GetMapping("/productPop")
     @Operation(summary = "진열관리 인기상품 조회")
-    public List<Product2141234Vo> getProductPop() {
+    public List<ProductManagementSelVo> getProductPop() {
         return service.getProductPop();
     }
     //------------------------------------------상품진열관리 신상품 토글---------------------------------------------
@@ -126,7 +122,7 @@ public class AdminProductController {
         return service.putProductRc(iproduct);
     }
     //-----------------------진열관리 상품검색---------------
-    @GetMapping("/ssssss")
+    @GetMapping("/ProductManagementSearch")
     @Operation(summary = "진열관리 상품검색")
     public List<AdminProductSearchSelVo> getSearchProduct(AdminProductSearchDto dto ) {
         return service.getSearchProduct(dto);
@@ -135,38 +131,38 @@ public class AdminProductController {
 
 
     //-----------------------------------------------------------------리뷰검색------------------------------------------------------
-    @GetMapping("/dddd")
+    @GetMapping("/AdminSearchReview")
     @Operation(summary = "리뷰 검색")
     public List<SearchReviewSelVo> getSearchReview( ReviewSearchDto dto) {
         return service.getSearchReview(dto);
     }
     //-------------------------------------------------------------숨김리뷰검색------------------------------------------------------
-    @GetMapping("/reviewwww")
+    @GetMapping("/AdminSearchHiddenReview")
     @Operation(summary = "숨김리뷰조회")
     public List<SearchReviewSelVo> getHiddenReviewSelVo(ReviewSearchDto dto) {
         return service.getHiddenReview(dto);
     }
     //-------------------------------------------------------------리뷰 관리자 메모 ------------------------------------------------------
-    @PatchMapping("/review")
+    @PatchMapping("/AdminInsReviewMemo")
     @Operation(summary = "관리자 메모 작성이랑 수정 둘다댐")
     public ResVo patchReviewAdminMemo(@RequestBody ReviewMemoInsDto dto) {
         return service.postReviewAdminMemo(dto);
     }
 
     //----------------------------------------------------------리뷰 숨김 복구 토글*-------------------------------------------------
-    @PutMapping("/review")
+    @PutMapping("/AdminReviewTogle")
     @Operation(summary = "리뷰 숨김&복구 토글")
     public ResVo putReviewTogle(Long ireview) {
         return service.putReviewTogle(ireview);
     }
     //-----------------------------------관리자 리뷰 관리 클릭할때-------------------------
-    @GetMapping("/hick")
+    @GetMapping("/AdminHiCkReview")
     @Operation(summary = "리뷰 숨김클릭시")
     public List<ReviewHideClickSelVo> getHiCkSelVo (Long ireview) {
         return service.getHiCkSelVo(ireview);
     }
     //-----------------------------------------------------------------------------
-    @GetMapping("/momo")
+    @GetMapping("/AdminReviewMemo")
     @Operation(summary = "리뷰관리자메모")
     public String getReviewMemo(Long ireview) {
         return service.getReviewMeMo(ireview);
@@ -197,12 +193,7 @@ public class AdminProductController {
     public ResVo delbanner(@RequestBody Long ibanner) {
         return service.delBanner(ibanner);
     }
-    //-----------------------------------------------------------------배너토글처리------------------------------------------------------
-    @PatchMapping("/bannerrr")
-    @Operation(summary = "배너토글")
-    public ResVo putBanner(@RequestBody Long ibanner) {
-        return service.putBanner(ibanner);
-    }
+    //-----------------------------------------------------------------배너토글처리----------------------
 
 
 

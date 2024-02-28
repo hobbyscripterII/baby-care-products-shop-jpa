@@ -31,10 +31,7 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
     private final JPAQueryFactory jpaQueryFactory;
     @Override
     @Transactional
-    public List<ReviewEntity> selReview(ReviewSearchDto dto) { // 리뷰검색기본그거
-
-
-
+    public List<SearchReviewSelVo> selReview(ReviewSearchDto dto) { // 리뷰검색기본그거
 //        JPAQuery<SearchReviewSelVo> query = jpaQueryFactory.select(Projections.fields(SearchReviewSelVo.class,
 //                        reviewEntity.userEntity.nm,
 //                        reviewEntity.productEntity.repPic,
@@ -57,7 +54,17 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
 //                .orderBy(sortBy(dto.getSortBy()));
 //        List<SearchReviewSelVo> fetch2 = query.fetch();
 
-        List<ReviewEntity> result = jpaQueryFactory.select(reviewEntity)
+        List<SearchReviewSelVo> result = jpaQueryFactory.select(Projections.constructor(SearchReviewSelVo.class,
+                        reviewEntity.userEntity.nm,
+                        reviewEntity.productEntity.repPic,
+                        reviewEntity.productEntity.iproduct,
+                        reviewEntity.productEntity.productNm,
+                        reviewEntity.contents,
+                        reviewEntity.productScore,
+                        reviewEntity.delFl
+
+                        )
+                )
                 .from(reviewEntity)
                 .join(reviewEntity.userEntity)
                 .join(reviewEntity.productEntity)
@@ -71,13 +78,13 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
                 .orderBy(sortBy(dto.getSortBy()))
                 .fetch();
 
-        log.info("user {}", result.get(0).getUserEntity().getNm());
-        log.info("product {}", result.get(0).getProductEntity().getProductNm());
-        log.info("midCate {}", result.get(0).getProductEntity().getMiddleCategoryEntity());
-        log.info("mainCate {}", result.get(0).getProductEntity().getMiddleCategoryEntity().getProductMainCategory());
-
-
-        System.out.println();
+//        log.info("user {}", result.get(0).getUserEntity().getNm());
+//        log.info("product {}", result.get(0).getProductEntity().getProductNm());
+//        log.info("midCate {}", result.get(0).getProductEntity().getMiddleCategoryEntity());
+//        log.info("mainCate {}", result.get(0).getProductEntity().getMiddleCategoryEntity().getProductMainCategory());
+//
+//
+//        System.out.println();
         return result;
     }
 
@@ -93,8 +100,10 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
                         reviewEntity.delFl)
                 )
                 .from(reviewEntity)
-                .rightJoin(reviewEntity.userEntity)
-                .leftJoin(reviewEntity.productEntity)
+                .join(reviewEntity.userEntity)
+                .join(reviewEntity.productEntity)
+                .join(productMiddleCategoryEntity).on(productMiddleCategoryEntity.eq(productEntity.middleCategoryEntity))
+                .join(productMiddleCategoryEntity.productMainCategory)
                 .where(ProductNm(dto.getKeyword()),
                         iproduct(dto.getIproduct()),
                         Category(dto.getImain(), dto.getImiddle()),
@@ -132,13 +141,14 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
 
     private BooleanExpression Category(Long imain, Long imiddle) {
         if(imain != 0 && imiddle != 0) {
-            return reviewEntity.productEntity.middleCategoryEntity.productMainCategory.imain.eq(imain)
+            return productEntity.middleCategoryEntity.productMainCategory.imain.eq(imain)
+
                     .and(reviewEntity.productEntity.middleCategoryEntity.imiddle.eq( imiddle));
         } else if(imain != 0) {
-            log.info("reviewEntity : {}", reviewEntity);
-            log.info("productEntity : {}", reviewEntity.productEntity);
-            log.info("middleCategoryEntity : {}", reviewEntity.productEntity.middleCategoryEntity);
-            log.info("productMainCategory : {}", reviewEntity.productEntity.middleCategoryEntity.productMainCategory);
+//            log.info("reviewEntity : {}", reviewEntity);
+//            log.info("productEntity : {}", reviewEntity.productEntity);
+//            log.info("middleCategoryEntity : {}", reviewEntity.productEntity.middleCategoryEntity);
+//            log.info("productMainCategory : {}", reviewEntity.productEntity.middleCategoryEntity.productMainCategory);
 //            QReviewEntity reviewEntity1 = reviewEntity;
 //            QProductEntity productEntity1 = reviewEntity1.productEntity;
 //            QProductMiddleCategoryEntity middleCategoryEntity = productEntity1.middleCategoryEntity;
