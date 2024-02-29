@@ -3,6 +3,7 @@ package com.baby.babycareproductsshop.user;
 import com.baby.babycareproductsshop.common.*;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
 import com.baby.babycareproductsshop.exception.AuthErrorCode;
+import com.baby.babycareproductsshop.exception.CommonErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
 import com.baby.babycareproductsshop.product.ProductWishListMapper;
 import com.baby.babycareproductsshop.product.model.ProductSelWishListVo;
@@ -126,11 +127,15 @@ public class UserService {
     //마이 페이지 회원 정보 조회
     public UserSelMyInfoVo getMyInfo() {
         int iuser = authenticationFacade.getLoginUserPk();
-        UserEntity userEntity = userRepository.findById((long)iuser).orElse(null);
-        UserSelMyInfoVo myInfoVo = userMapper.selMyInfo(iuser);
-        List<ProductSelWishListVo> wishList = wishListMapper.selWishList(iuser);
-        myInfoVo.setMyWishList(wishList);
-        return myInfoVo;
+        Optional<UserEntity> optUserEntity = userRepository.findById((long) iuser);
+        if (optUserEntity.isPresent()) {
+            UserEntity userEntity = optUserEntity.get();
+            UserSelMyInfoVo myInfoVo = userMapper.selMyInfo(iuser);
+            List<ProductSelWishListVo> wishList = wishListMapper.selWishList(iuser);
+            myInfoVo.setMyWishList(wishList);
+            return myInfoVo;
+        }
+        throw new RestApiException(CommonErrorCode.INTERNAL_SERVER_ERROR);
     }
 
     //회원 정보 수정 전 비밀번호 체크
