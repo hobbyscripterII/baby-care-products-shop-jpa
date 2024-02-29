@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +24,7 @@ public class AdminProductController {
 
 
     //-----------------------------------------------------------------상품 등록------------------------------------------------------
-    @PostMapping("/AdminProduct")
+    @PostMapping("/product")
     @Operation(summary = "상품등록 ")
     public ResVo postProduct(@RequestPart(name = "pics") List<MultipartFile> pics,
                              @RequestPart(name = "productDetails") MultipartFile productDetails,
@@ -31,26 +33,26 @@ public class AdminProductController {
         return service.postProduct(pics, productDetails, dto);
     }
     //-----------------------------------------------------------------상품 수정------------------------------------------------------
-    @PatchMapping("/AdminProductUpt")
+    @PatchMapping("/product")
     @Operation(summary = "상품 수정 ")
     public ResVo uptProduct (@RequestPart(name = "pics") List<MultipartFile> pics,
                              @RequestPart(name = "productDetails") MultipartFile productDetails,
                              @RequestPart @Valid AdminProductInsDto dto,@RequestParam Long iproduct) {
         return service.putProduct(pics,productDetails,dto,iproduct);
     }
-
     //-----------------------------------------------------------------상품 삭제------------------------------------------------------
-    @DeleteMapping("/AdminProductDel")
+    @DeleteMapping("/product")
     @Operation(summary = "상품삭제 ")
-    public ResVo delProduct( @RequestParam Long iproduct) {
+    public ResVo delProduct(@RequestParam List<Long> iproduct) {
         return service.delProduct(iproduct);
     }
 
-    @GetMapping("/AdminProductSearch")
+    @GetMapping("/productSearch")
     @Operation(summary = "상품검색 ")
-    public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto) {
-        return service.getSearchProductSelVo(dto);
+    public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto,@PageableDefault(page = 1, size = 20)Pageable pageable) {
+        return service.getSearchProductSelVo(dto,pageable);
     }
+
 
     //-----------------------------------------------------------------상품진열관리 추천상품 조회------------------------------------------------------
     @GetMapping("/productRc")
@@ -71,68 +73,75 @@ public class AdminProductController {
         return service.getProductPop();
     }
     //------------------------------------------상품진열관리 신상품 토글---------------------------------------------
-    @PutMapping("/productNewDel")
+    @PutMapping("/toggleNewProduct")
     @Operation(summary = "진열관리 신상품 토글")
     public ResVo putProductNew(@RequestParam Long iproduct) {
         return service.putProductNew(iproduct);
     }
     //------------------------------------------상품진열관리 인기상품 토글---------------------------------------------
-    @PutMapping("/productPopDel")
+    @PutMapping("/togglePopProduct")
     @Operation(summary = "진열관리 인기상품 토글")
     public ResVo putProductPop(@RequestParam Long iproduct) {
         return service.putProductPop(iproduct);
     }
     //------------------------------------------상품진열관리 추천상품 토글---------------------------------------------
-    @PutMapping("/productRcDel")
+    @PutMapping("/toggleRcProduct")
     @Operation(summary = "진열관리 추천상품 토글")
     public ResVo putProductRc(@RequestParam Long iproduct) {
         return service.putProductRc(iproduct);
     }
     //-----------------------진열관리 상품검색---------------
-    @GetMapping("/ProductManagementSearch")
-    @Operation(summary = "진열관리 상품검색")
-    public List<AdminProductSearchSelVo> getSearchProduct(AdminProductSearchDto dto ) {
-        return service.getSearchProduct(dto);
+    @GetMapping("/searchRcProduct")
+    @Operation(summary = "진열관리 추천 상품검색")
+    public List<AdminProductSearchSelVo> getSearchProductSelVo(AdminProductSearchDto dto ,@PageableDefault(page = 1, size = 20)Pageable pageable) {
+        return service.getSearchProductSelVo(dto,pageable);
     }
-
+    @GetMapping("/searchPopProduct")
+    @Operation(summary = "진열관리 인기 상품검색")
+    public List<AdminProductSearchSelVo> getSearchPopProductSelVo(AdminProductSearchDto dto ,@PageableDefault(page = 1, size = 20)Pageable pageable) {
+        return service.getSearchPopProductSelVo(dto,pageable);
+    }
+    @GetMapping("/searchNewProduct")
+    @Operation(summary = "진열관리 신상품검색")
+    public List<AdminProductSearchSelVo> getSearchNewProductSelVo(AdminProductSearchDto dto ,@PageableDefault(page = 1, size = 20)Pageable pageable) {
+        return service.getSearchNewProductSelVo(dto,pageable);
+    }
     //-----------------------------------------------------------------리뷰검색------------------------------------------------------
-    @GetMapping("/AdminSearchReview")
+    @GetMapping("/searchReview")
     @Operation(summary = "리뷰 검색")
-    public List<SearchReviewSelVo> getSearchReview( ReviewSearchDto dto) {
-        return service.getSearchReview(dto);
+    public List<SearchReviewSelVo> getSearchReview( ReviewSearchDto dto,@PageableDefault(page = 1, size = 20)Pageable pageable) {
+        return service.getSearchReview(dto,pageable);
     }
     //-------------------------------------------------------------숨김리뷰검색------------------------------------------------------
-    @GetMapping("/AdminSearchHiddenReview")
+    @GetMapping("/searchHiddenReview")
     @Operation(summary = "숨김리뷰조회")
-    public List<SearchReviewSelVo> getHiddenReviewSelVo(ReviewSearchDto dto) {
-        return service.getHiddenReview(dto);
+    public List<SearchReviewSelVo> getHiddenReviewSelVo(ReviewSearchDto dto,@PageableDefault(page = 1, size = 20)Pageable pageable) {
+        return service.getHiddenReview(dto,pageable);
     }
     //-------------------------------------------------------------리뷰 관리자 메모 ------------------------------------------------------
-    @PatchMapping("/AdminInsReviewMemo")
-    @Operation(summary = "관리자 메모 작성이랑 수정 둘다댐")
+    @PatchMapping("/reviewMemo")
+    @Operation(summary = "관리자 메모 작성 & 수정 둘다댐")
     public ResVo patchReviewAdminMemo(@RequestBody ReviewMemoInsDto dto) {
         return service.postReviewAdminMemo(dto);
     }
-
     //----------------------------------------------------------리뷰 숨김 복구 토글*-------------------------------------------------
-    @PutMapping("/AdminReviewTogle")
-    @Operation(summary = "리뷰 숨김&복구 토글")
+    @PutMapping("/reviewTogle")
+    @Operation(summary = "리뷰 숨김 & 해제")
     public ResVo putReviewTogle(Long ireview) {
         return service.putReviewTogle(ireview);
     }
     //-----------------------------------관리자 리뷰 관리 클릭할때-------------------------
-    @GetMapping("/AdminHiCkReview")
+    @GetMapping("/reviewHiCk")
     @Operation(summary = "리뷰 숨김클릭시")
     public List<ReviewHideClickSelVo> getHiCkSelVo (Long ireview) {
         return service.getHiCkSelVo(ireview);
     }
-    //-----------------------------------------------------------------------------
-    @GetMapping("/AdminReviewMemo")
+    //--------------------------------------관리자 메모만 ---------------------------------------
+    @GetMapping("/reviewMemo")
     @Operation(summary = "리뷰관리자메모")
     public String getReviewMemo(Long ireview) {
         return service.getReviewMeMo(ireview);
     }
-
     //-----------------------------------------------------------------배너조회------------------------------------------------------
     @GetMapping("/banner")
     @Operation(summary = "배너조회")
@@ -142,8 +151,8 @@ public class AdminProductController {
     //-----------------------------------------------------------------배너등록------------------------------------------------------
     @PostMapping("/banner")
     @Operation(summary = "배너등록")
-    public ResVo postBanner(@RequestPart MultipartFile pics, @RequestPart BannerInsDto dto) {
-        return service.postBanner(pics, dto);
+    public ResVo postBanner(@RequestPart MultipartFile pic, @RequestPart BannerInsDto dto) {
+        return service.postBanner(pic, dto);
     }
     //-----------------------------------------------------------------배너수정------------------------------------------------------
     @PatchMapping("/banner")
@@ -157,9 +166,16 @@ public class AdminProductController {
     public ResVo delbanner(@RequestBody Long ibanner) {
         return service.delBanner(ibanner);
     }
-
-
-
+    @GetMapping("/cancel")
+    @Operation(summary = "주문취소통계")
+    public List<AdminRefundReturnSelVo> OrderCancelSelVo(AdminRefundReturnDto dto) {
+        return service.OrderCancelSelVo(dto);
+    }
+    @GetMapping("/return")
+    @Operation(summary = "주문반품통계")
+    public List<AdminRefundReturnSelVo> OrderReturnSelVo(AdminRefundReturnDto dto) {
+        return service.OrderReturnSelVo(dto);
+    }
 }
 
 

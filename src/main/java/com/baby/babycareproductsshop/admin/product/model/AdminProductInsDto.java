@@ -22,13 +22,12 @@ public class AdminProductInsDto {
 
     private int recommendedAge; //나이
 
-
     private String adminMemo;
 
     private int price; // 가격
 
     @JsonIgnore
-    private MultipartFile repPic; // 상품대표사진
+    private String repPic; // 상품대표사진
 
     private int remainedCount; //재고
     private int newFl;

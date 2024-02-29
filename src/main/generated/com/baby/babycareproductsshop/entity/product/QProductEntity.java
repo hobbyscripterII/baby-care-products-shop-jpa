@@ -53,6 +53,8 @@ public class QProductEntity extends EntityPathBase<ProductEntity> {
 
     public final StringPath repPic = createString("repPic");
 
+    public final NumberPath<Integer> status = createNumber("status", Integer.class);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 

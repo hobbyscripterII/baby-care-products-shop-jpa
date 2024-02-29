@@ -8,6 +8,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
@@ -24,29 +25,84 @@ import static com.baby.babycareproductsshop.entity.review.QReviewEntity.reviewEn
 @RequiredArgsConstructor
 public class ProductRepositoryImpl implements ProductQdslRepository{
     private final JPAQueryFactory jpaQueryFactory;
-    //진열관리 태그없음
-    @Override
-    public List<AdminProductSearchSelVo> selProductAll(AdminProductSearchDto dto) {
+
+    @Override// 진열관리 추천상품
+    public List<AdminProductSearchSelVo> selProductAll(AdminProductSearchDto dto, Pageable pageable) {
         JPAQuery<AdminProductSearchSelVo> query = jpaQueryFactory.select(Projections.fields(AdminProductSearchSelVo.class,
-                         productEntity.productNm
+                        productEntity.productNm
                         ,productEntity.iproduct
                         ,productEntity.price
-                        ,productEntity.middleCategoryEntity.productMainCategory.imain
-                        ,productEntity.middleCategoryEntity.imiddle
-                        ,productEntity.repPic))
+//                        ,productEntity.middleCategoryEntity.productMainCategory.imain
+//                        ,productEntity.middleCategoryEntity.imiddle
+                        ,productEntity.repPic
+                        ,productEntity.status
+                        )
+                )
                 .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
-                       // ,tage(dto.getNewFl(),dto.getPopFl(),dto.getRcFl())
+                        //,tage(dto.getNewFl(),dto.getPopFl(),dto.getRcFl())
                 )
-                .from(productEntity);
+                .from(productEntity)
+                .limit(pageable.getPageSize());
+
         return query.fetch();
+    }
+
+    @Override //진열관리 인기
+    public List<AdminProductSearchSelVo> selPopProduct(AdminProductSearchDto dto, Pageable pageable) {
+        JPAQuery<AdminProductSearchSelVo> query = jpaQueryFactory.select(Projections.fields(AdminProductSearchSelVo.class,
+                        productEntity.productNm
+                        ,productEntity.iproduct
+                        ,productEntity.price
+//                        ,productEntity.middleCategoryEntity.productMainCategory.imain
+//                        ,productEntity.middleCategoryEntity.imiddle
+                        ,productEntity.repPic
+                                ,productEntity.status
+                        )
+                )
+                .where(productNm(dto.getKeyword())
+                        ,iproduct(dto.getIproduct())
+                        ,category(dto.getImain(),dto.getImiddle())
+                        ,productEntity.status.eq(0)
+                        ,productEntity.popFl.eq(1)
+                )
+                .from(productEntity)
+                .limit(pageable.getPageSize());
+
+        return query.fetch();
+    }
+
+    @Override//진열관리 신상품
+    public List<AdminProductSearchSelVo> selNewProduct(AdminProductSearchDto dto, Pageable pageable) {
+        JPAQuery<AdminProductSearchSelVo> query = jpaQueryFactory.select(Projections.fields(AdminProductSearchSelVo.class,
+                        productEntity.productNm
+                        ,productEntity.iproduct
+                        ,productEntity.price
+//                        ,productEntity.middleCategoryEntity.productMainCategory.imain
+//                        ,productEntity.middleCategoryEntity.imiddle
+                        ,productEntity.repPic
+                                ,productEntity.status
+                        )
+                )
+                .where(productNm(dto.getKeyword())
+                        ,iproduct(dto.getIproduct())
+                        ,category(dto.getImain(),dto.getImiddle())
+                        ,productEntity.status.eq(0)
+                        ,productEntity.newFl.eq(1)
+
+                )
+                .from(productEntity)
+                .limit(pageable.getPageSize());
+
+        return query.fetch();
+
     }
 //--------------------------------------------------------------------------------------------------------
 
     //상품검색
     @Override
-    public List<ProductGetSearchSelVo> findProduct(ProductGetSearchDto dto) {
+    public List<ProductGetSearchSelVo> findProduct(ProductGetSearchDto dto,Pageable pageable) {
         JPAQuery<ProductGetSearchSelVo> query = jpaQueryFactory.select(Projections.fields(ProductGetSearchSelVo.class,
                         productEntity.productNm
                         ,productEntity.iproduct
@@ -61,7 +117,8 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         ,price(dto.getMinPrice(),dto.getMaxPrice())
                         ,searchDateFilter(dto.getSearchStartDate(),dto.getSearchEndDate())
                 )
-                .from(productEntity);
+                .from(productEntity)
+                .limit(pageable.getPageSize());
 
         return query.fetch();
     }
@@ -116,7 +173,7 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
         }
     }
 
-//    private BooleanExpression tage(int newFl, int popFl, int rcFl) {
+    //    private BooleanExpression tage(int newFl, int popFl, int rcFl) {
 //        if (newFl != 0 && popFl != 0 && rcFl != 0) {
 //            // 모두 선택한 경우
 //            return productEntity.newFl.eq(newFl)
