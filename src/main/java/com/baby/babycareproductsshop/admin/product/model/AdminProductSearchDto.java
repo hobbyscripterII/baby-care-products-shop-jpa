@@ -12,6 +12,7 @@ public class AdminProductSearchDto {
     private Long imain;
 
     private Long imiddle;
+    private int page;
 
 //    private int newFl;
 //    private int popFl;

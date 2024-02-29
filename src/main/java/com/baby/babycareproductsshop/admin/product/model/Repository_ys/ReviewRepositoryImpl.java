@@ -76,8 +76,9 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
                         Category(dto.getImain(), dto.getImiddle()),
                         reviewEntity.delFl.eq(0)
                 )
-                .orderBy(sortBy(dto.getSortBy()))
+                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(sortBy(dto.getSortBy()))
                 .fetch();
 
 //        log.info("user {}", result.get(0).getUserEntity().getNm());
@@ -111,8 +112,10 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
                         Category(dto.getImain(),dto.getImiddle()),
                         reviewEntity.delFl.eq(1)
                 )
-                .orderBy(sortBy(dto.getSortBy()))
-                .limit(pageable.getPageSize());
+                .offset(pageable.getOffset())
+                //.size(pageable.getPageSize())
+                .limit(pageable.getPageSize())
+                .orderBy(sortBy(dto.getSortBy()));
         return query.fetch();
 
     }

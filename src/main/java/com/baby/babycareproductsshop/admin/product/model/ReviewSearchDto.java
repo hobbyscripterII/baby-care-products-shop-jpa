@@ -12,7 +12,7 @@ public class ReviewSearchDto {
 
     private Long imiddle;
 
-
     private int sortBy;
+    private int page;
 
 }

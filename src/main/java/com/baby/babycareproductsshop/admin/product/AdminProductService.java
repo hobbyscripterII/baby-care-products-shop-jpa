@@ -259,6 +259,8 @@ public class AdminProductService {
     //-------배너삭제
     @Transactional
     public ResVo delBanner(Long ibanner) {
+        String target = "/banner/" + ibanner;
+        myFileUtils.delDirTrigger(target);
         int result = bannerRepository.deleteAllByIbanner(ibanner);
         if (result == 1) {
             return new ResVo(result);

@@ -7,12 +7,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static com.baby.babycareproductsshop.common.Const.PAGE_SIZE;
 
 @Slf4j
 @RestController
@@ -21,6 +24,10 @@ import java.util.List;
 @Tag(name = "관리자 기능 - 상품 관련 API")
 public class AdminProductController {
     private final AdminProductService service;
+
+    public Pageable pageable(int page) {
+        return PageRequest.of(page, PAGE_SIZE);
+    }
 
 
     //-----------------------------------------------------------------상품 등록------------------------------------------------------
@@ -49,8 +56,8 @@ public class AdminProductController {
 
     @GetMapping("/productSearch")
     @Operation(summary = "상품검색 ")
-    public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto,@PageableDefault(page = 1, size = 20)Pageable pageable) {
-        return service.getSearchProductSelVo(dto,pageable);
+    public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto) {
+        return service.getSearchProductSelVo(dto,pageable(dto.getPage()));
     }
 
 
@@ -93,30 +100,32 @@ public class AdminProductController {
     //-----------------------진열관리 상품검색---------------
     @GetMapping("/searchRcProduct")
     @Operation(summary = "진열관리 추천 상품검색")
-    public List<AdminProductSearchSelVo> getSearchProductSelVo(AdminProductSearchDto dto ,@PageableDefault(page = 1, size = 20)Pageable pageable) {
-        return service.getSearchProductSelVo(dto,pageable);
+    public List<AdminProductSearchSelVo> getSearchProductSelVo(AdminProductSearchDto dto ) {
+        return service.getSearchProductSelVo(dto,pageable(dto.getPage()));
     }
     @GetMapping("/searchPopProduct")
     @Operation(summary = "진열관리 인기 상품검색")
-    public List<AdminProductSearchSelVo> getSearchPopProductSelVo(AdminProductSearchDto dto ,@PageableDefault(page = 1, size = 20)Pageable pageable) {
-        return service.getSearchPopProductSelVo(dto,pageable);
+    public List<AdminProductSearchSelVo> getSearchPopProductSelVo(AdminProductSearchDto dto ) {
+        return service.getSearchPopProductSelVo(dto,pageable(dto.getPage()));
     }
+
     @GetMapping("/searchNewProduct")
     @Operation(summary = "진열관리 신상품검색")
-    public List<AdminProductSearchSelVo> getSearchNewProductSelVo(AdminProductSearchDto dto ,@PageableDefault(page = 1, size = 20)Pageable pageable) {
-        return service.getSearchNewProductSelVo(dto,pageable);
+    public List<AdminProductSearchSelVo> getSearchNewProductSelVo(AdminProductSearchDto dto) {
+        return service.getSearchNewProductSelVo(dto, pageable(dto.getPage()));
     }
     //-----------------------------------------------------------------리뷰검색------------------------------------------------------
     @GetMapping("/searchReview")
     @Operation(summary = "리뷰 검색")
-    public List<SearchReviewSelVo> getSearchReview( ReviewSearchDto dto,@PageableDefault(page = 1, size = 20)Pageable pageable) {
-        return service.getSearchReview(dto,pageable);
+    public List<SearchReviewSelVo> getSearchReview( ReviewSearchDto dto) {
+        log.info("pageable(dto.getPage()) = {}", pageable(dto.getPage()));
+        return service.getSearchReview(dto,pageable(dto.getPage()));
     }
     //-------------------------------------------------------------숨김리뷰검색------------------------------------------------------
     @GetMapping("/searchHiddenReview")
     @Operation(summary = "숨김리뷰조회")
-    public List<SearchReviewSelVo> getHiddenReviewSelVo(ReviewSearchDto dto,@PageableDefault(page = 1, size = 20)Pageable pageable) {
-        return service.getHiddenReview(dto,pageable);
+    public List<SearchReviewSelVo> getHiddenReviewSelVo(ReviewSearchDto dto) {
+        return service.getHiddenReview(dto,pageable(dto.getPage()));
     }
     //-------------------------------------------------------------리뷰 관리자 메모 ------------------------------------------------------
     @PatchMapping("/reviewMemo")

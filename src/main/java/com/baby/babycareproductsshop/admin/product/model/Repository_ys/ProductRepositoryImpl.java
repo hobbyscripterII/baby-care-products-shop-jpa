@@ -44,6 +44,8 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         //,tage(dto.getNewFl(),dto.getPopFl(),dto.getRcFl())
                 )
                 .from(productEntity)
+                .offset(pageable.getOffset())
+//                .size(pageable.getPageSize())
                 .limit(pageable.getPageSize());
 
         return query.fetch();
@@ -68,7 +70,9 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         ,productEntity.popFl.eq(1)
                 )
                 .from(productEntity)
+                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
+
 
         return query.fetch();
     }
@@ -93,6 +97,7 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
 
                 )
                 .from(productEntity)
+                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
         return query.fetch();
@@ -118,7 +123,9 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         ,searchDateFilter(dto.getSearchStartDate(),dto.getSearchEndDate())
                 )
                 .from(productEntity)
+                .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
+
 
         return query.fetch();
     }
