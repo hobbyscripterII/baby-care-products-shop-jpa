@@ -14,8 +14,6 @@ import java.util.List;
 public class OrderListVo {
     @JsonIgnore
     private int processState;
-    @Schema(title = "번호", description = "")
-    private long idx;
     @Schema(title = "주문번호", description = "")
     private int iorder;
     @Schema(title = "주문일시", description = "")

@@ -90,7 +90,7 @@ public class AdminOrderController {
             <li>처리일 순 - 3</li></ul>""")
     public List<OrderListVo> orderList(OrderFilterDto dto) {
         OrderFilterDto orderFilterDto = valid.commonValid(dto);
-        return service.orderList(orderFilterDto, pageable(orderFilterDto.getPage()));
+        return service.orderList(orderFilterDto, pageable(dto.getPage()));
     }
 
     @GetMapping("/details")
@@ -127,7 +127,7 @@ public class AdminOrderController {
     public List<OrderDetailsListVo> orderDetailsList(@RequestParam(name = "process_state") int processState, OrderSmallFilterDto dto) {
         dto.setProcessState(processState);
         OrderSmallFilterDto orderSmallFilterDto = valid.commonValid(dto);
-        return service.orderDetailsList(orderSmallFilterDto, pageable(orderSmallFilterDto.getPage()));
+        return service.orderDetailsList(orderSmallFilterDto, pageable(dto.getPage()));
     }
 
     @GetMapping("/delete")
@@ -163,7 +163,7 @@ public class AdminOrderController {
             <li>처리일 순 - 3</li></ul>""")
     public List<OrderDeleteVo> orderDeleteList(OrderSmallFilterDto dto) {
         OrderSmallFilterDto orderSmallFilterDto = valid.commonValid(dto);
-        return service.orderDeleteList(orderSmallFilterDto, pageable(orderSmallFilterDto.getPage()));
+        return service.orderDeleteList(orderSmallFilterDto, pageable(dto.getPage()));
     }
 
     @GetMapping("/refund")
@@ -199,7 +199,7 @@ public class AdminOrderController {
             <li>처리일 순 - 3</li></ul>""")
     public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto) {
         OrderSmallFilterDto orderSmallFilterDto = valid.commonValid(dto);
-        return service.orderRefundList(orderSmallFilterDto, pageable(orderSmallFilterDto.getPage()));
+        return service.orderRefundList(orderSmallFilterDto, pageable(dto.getPage()));
     }
 
     @GetMapping("/memo")
@@ -231,7 +231,7 @@ public class AdminOrderController {
             <li>처리일 순 - 3</li></ul>""")
     public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto) {
         OrderMemoListDto orderMemoListDto = valid.commonValid(dto);
-        return service.adminMemoList(orderMemoListDto, pageable(orderMemoListDto.getPage()));
+        return service.adminMemoList(orderMemoListDto, pageable(dto.getPage()));
     }
 
     @Operation(summary = "주문 상세 페이지 출력")
