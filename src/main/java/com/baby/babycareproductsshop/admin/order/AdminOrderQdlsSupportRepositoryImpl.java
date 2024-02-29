@@ -139,8 +139,8 @@ public class AdminOrderQdlsSupportRepositoryImpl {
         OrderSpecifier orderSpecifier = null;
 
         switch (sort) {
-            case 0 -> orderSpecifier = orderEntity.createdAt.desc(); // default
-            case 1 -> orderSpecifier = orderEntity.createdAt.asc();
+            case 0 -> orderSpecifier = orderEntity.iorder.desc(); // default
+            case 1 -> orderSpecifier = orderEntity.iorder.asc();
             case 2 -> orderSpecifier = orderEntity.depositedAt.desc();
             case 3 -> orderSpecifier = orderEntity.depositedAt.asc();
             default -> {
