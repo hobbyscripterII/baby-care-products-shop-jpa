@@ -22,15 +22,19 @@ public class QBoardCommentEntity extends EntityPathBase<BoardCommentEntity> {
 
     public static final QBoardCommentEntity boardCommentEntity = new QBoardCommentEntity("boardCommentEntity");
 
+    public final com.baby.babycareproductsshop.entity.QBaseEntity _super = new com.baby.babycareproductsshop.entity.QBaseEntity(this);
+
     public final QBoardEntity boardEntity;
 
     public final StringPath comment = createString("comment");
 
-    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final NumberPath<Long> icomment = createNumber("icomment", Long.class);
 
-    public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final com.baby.babycareproductsshop.entity.user.QUserEntity userEntity;
 

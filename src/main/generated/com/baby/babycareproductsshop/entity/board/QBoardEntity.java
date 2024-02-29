@@ -22,17 +22,23 @@ public class QBoardEntity extends EntityPathBase<BoardEntity> {
 
     public static final QBoardEntity boardEntity = new QBoardEntity("boardEntity");
 
+    public final com.baby.babycareproductsshop.entity.QBaseEntity _super = new com.baby.babycareproductsshop.entity.QBaseEntity(this);
+
     public final NumberPath<Integer> boardCode = createNumber("boardCode", Integer.class);
+
+    public final ListPath<BoardCommentEntity, QBoardCommentEntity> boardCommentEntityList = this.<BoardCommentEntity, QBoardCommentEntity>createList("boardCommentEntityList", BoardCommentEntity.class, QBoardCommentEntity.class, PathInits.DIRECT2);
 
     public final StringPath contents = createString("contents");
 
-    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
+    public final NumberPath<Long> iboard = createNumber("iboard", Long.class);
 
     public final StringPath title = createString("title");
 
-    public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final com.baby.babycareproductsshop.entity.user.QUserEntity userEntity;
 

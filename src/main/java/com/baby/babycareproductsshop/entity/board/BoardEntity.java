@@ -1,36 +1,41 @@
 package com.baby.babycareproductsshop.entity.board;
 
+import com.baby.babycareproductsshop.entity.BaseEntity;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
+@OnDelete(action = OnDeleteAction.CASCADE)
 @Table(name = "t_board")
-public class BoardEntity {
+public class BoardEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iboard")
-    private Long id;
+    @Column(columnDefinition = "BIGINT UNSIGNED")
+    private Long iboard;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "iuser", nullable = false)
     private UserEntity userEntity;
 
-    @Column(name = "board_code", nullable = false)
+    @Column(nullable = false)
     private Integer boardCode;
 
-    @Column(name = "title", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(name = "contents", nullable = false, length = 2500)
+    @Column(nullable = false, length = 2500)
     private String contents;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @ToString.Exclude
+    @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    private List<BoardCommentEntity> boardCommentEntityList = new ArrayList<>();
 }

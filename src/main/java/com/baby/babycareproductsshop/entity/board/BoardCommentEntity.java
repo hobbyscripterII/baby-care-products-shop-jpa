@@ -1,34 +1,29 @@
 package com.baby.babycareproductsshop.entity.board;
 
+import com.baby.babycareproductsshop.entity.BaseEntity;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "t_board_comment")
-@Data
-public class BoardCommentEntity {
+public class BoardCommentEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "icomment")
-    private Long id;
+    @Column(columnDefinition = "BIGINT UNSIGNED")
+    private Long icomment;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "iboard", nullable = false)
     private BoardEntity boardEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "iuser", nullable = false)
     private UserEntity userEntity;
 
-    @Column(name = "comment", nullable = false, length = 1000)
+    @Column(nullable = false, length = 1000)
     private String comment;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }
