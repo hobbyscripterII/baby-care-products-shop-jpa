@@ -54,6 +54,10 @@ public class ProductEntity extends BaseEntity {
     @ColumnDefault("'0'")
     private int delFl;
 
+    @Column(name = "status", columnDefinition = "INT UNSIGNED")
+    @ColumnDefault("'0'")
+    private int status;
+
     @Column(name = "admin_memo")
     private String adminMemo;
 }

@@ -13,6 +13,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -31,7 +32,7 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
     private final JPAQueryFactory jpaQueryFactory;
     @Override
     @Transactional
-    public List<SearchReviewSelVo> selReview(ReviewSearchDto dto) { // 리뷰검색기본그거
+    public List<SearchReviewSelVo> selReview(ReviewSearchDto dto, Pageable pageable) { // 리뷰검색기본그거
 //        JPAQuery<SearchReviewSelVo> query = jpaQueryFactory.select(Projections.fields(SearchReviewSelVo.class,
 //                        reviewEntity.userEntity.nm,
 //                        reviewEntity.productEntity.repPic,
@@ -55,13 +56,13 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
 //        List<SearchReviewSelVo> fetch2 = query.fetch();
 
         List<SearchReviewSelVo> result = jpaQueryFactory.select(Projections.constructor(SearchReviewSelVo.class,
-                        reviewEntity.userEntity.nm,
-                        reviewEntity.productEntity.repPic,
-                        reviewEntity.productEntity.iproduct,
-                        reviewEntity.productEntity.productNm,
-                        reviewEntity.contents,
-                        reviewEntity.productScore,
-                        reviewEntity.delFl
+                                reviewEntity.userEntity.nm,
+                                reviewEntity.productEntity.repPic,
+                                reviewEntity.productEntity.iproduct,
+                                reviewEntity.productEntity.productNm,
+                                reviewEntity.contents,
+                                reviewEntity.productScore,
+                                reviewEntity.delFl
 
                         )
                 )
@@ -76,6 +77,7 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
                         reviewEntity.delFl.eq(0)
                 )
                 .orderBy(sortBy(dto.getSortBy()))
+                .limit(pageable.getPageSize())
                 .fetch();
 
 //        log.info("user {}", result.get(0).getUserEntity().getNm());
@@ -89,7 +91,7 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
     }
 
     @Override
-    public List<SearchReviewSelVo> selReviewDel(ReviewSearchDto dto) { //숨김리뷰
+    public List<SearchReviewSelVo> selReviewDel(ReviewSearchDto dto,Pageable pageable) { //숨김리뷰
         JPAQuery<SearchReviewSelVo> query = jpaQueryFactory.select(Projections.constructor(SearchReviewSelVo.class,
                         reviewEntity.userEntity.nm,
                         reviewEntity.productEntity.repPic,
@@ -109,7 +111,8 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
                         Category(dto.getImain(),dto.getImiddle()),
                         reviewEntity.delFl.eq(1)
                 )
-                .orderBy(sortBy(dto.getSortBy()));
+                .orderBy(sortBy(dto.getSortBy()))
+                .limit(pageable.getPageSize());
         return query.fetch();
 
     }

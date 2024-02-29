@@ -12,8 +12,9 @@ public class AdminProductSearchSelVo {
     private Long iproduct;
     private int price;
     private String repPic;
-    private Long imain;
-    private Long imiddle;
+    private int status;
+//    private Long imain;
+//    private Long imiddle;
 
 
 }

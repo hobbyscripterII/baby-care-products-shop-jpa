@@ -3,16 +3,23 @@ package com.baby.babycareproductsshop.admin.product;
 
 import com.baby.babycareproductsshop.admin.product.model.*;
 import com.baby.babycareproductsshop.admin.product.model.Repository_ys.*;
+import com.baby.babycareproductsshop.admin.user.model.AdminSelUserSignupVo;
 import com.baby.babycareproductsshop.common.Const;
 import com.baby.babycareproductsshop.common.MyFileUtils;
 import com.baby.babycareproductsshop.common.ResVo;
+import com.baby.babycareproductsshop.common.Utils;
+import com.baby.babycareproductsshop.entity.order.OrderDetailsEntity;
+import com.baby.babycareproductsshop.entity.order.OrderEntity;
 import com.baby.babycareproductsshop.entity.product.*;
 
 import com.baby.babycareproductsshop.entity.review.ReviewEntity;
+import com.baby.babycareproductsshop.entity.user.UserEntity;
+import com.baby.babycareproductsshop.response.ApiResponse;
 import com.baby.babycareproductsshop.security.AuthenticationFacade;
 ;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,10 +47,19 @@ public class AdminProductService {
     private final ReviewRepository reviewRepository;
 
 
-
     //상품진열관리 검색
-    public List<AdminProductSearchSelVo> getSearchProduct(AdminProductSearchDto dto) {
-        List<AdminProductSearchSelVo> vo = productRepository.selProductAll(dto);
+    public List<AdminProductSearchSelVo> getSearchProductSelVo(AdminProductSearchDto dto, Pageable pageable) {
+        List<AdminProductSearchSelVo> vo = productRepository.selProductAll(dto, pageable);
+        return vo;
+    }
+
+    public List<AdminProductSearchSelVo> getSearchPopProductSelVo(AdminProductSearchDto dto, Pageable pageable) {
+        List<AdminProductSearchSelVo> vo = productRepository.selPopProduct(dto, pageable);
+        return vo;
+    }
+
+    public List<AdminProductSearchSelVo> getSearchNewProductSelVo(AdminProductSearchDto dto, Pageable pageable) {
+        List<AdminProductSearchSelVo> vo = productRepository.selNewProduct(dto, pageable);
         return vo;
     }
 
@@ -65,23 +81,21 @@ public class AdminProductService {
     //------------상품진열관리 신상품 토글
     public ResVo putProductNew(Long iproduct) {
         Optional<ProductEntity> productEntityOptional = productRepository.findById(iproduct);
-        if (productEntityOptional.isPresent()) {
-            ProductEntity entity = productEntityOptional.get();
-            entity.setNewFl(entity.getNewFl() == 0 ? 1 : 0);
-            productRepository.save(entity);
-            return new ResVo(entity.getNewFl() == 0 ? Const.SUCCESS : Const.FAIL);
-        } else {
-            return new ResVo(Const.FAIL);  // 상품이 없는 경우
-        }
+        ProductEntity entity = productEntityOptional.get();
+        entity.setStatus(entity.getStatus() == 0 ? 1 : 0);
+        productRepository.save(entity);
+        return new ResVo(entity.getStatus() == 0 ? Const.SUCCESS : Const.FAIL);
     }
+
     //------------상품진열관리 인기상품 토글
     public ResVo putProductPop(Long iproduct) {
         Optional<ProductEntity> productEntityOptional = productRepository.findById(iproduct);
         ProductEntity entity = productEntityOptional.get();
-        entity.setPopFl(entity.getPopFl() == 0 ? 1 : 0);
+        entity.setStatus(entity.getStatus() == 0 ? 1 : 0);
         productRepository.save(entity);
-        return new ResVo(entity.getPopFl() == 0 ? Const.SUCCESS : Const.FAIL);
+        return new ResVo(entity.getStatus() == 0 ? Const.SUCCESS : Const.FAIL);
     }
+
     //------------상품진열관리 추천상품 토글
     public ResVo putProductRc(Long iproduct) {
         Optional<ProductEntity> productEntityOptional = productRepository.findById(iproduct);
@@ -112,16 +126,20 @@ public class AdminProductService {
             entity.setNewFl(dto.getNewFl());
             entity.setPopFl(dto.getPopFl());
 
+
             ProductEntity savedEntity = productRepository.save(entity);
             for (MultipartFile pic : pics) {
                 String fileNm = myFileUtils.transferTo(pic, target);
                 ProductPicEntity productPicEntity = new ProductPicEntity();
                 productPicEntity.setProductPic(fileNm);
                 productPicEntity.setProductEntity(savedEntity);
+                if (entity.getRepPic() == null) {
+                    entity.setRepPic(fileNm);
+                }
                 productPicRepository.save(productPicEntity);
             }
             return new ResVo(Const.SUCCESS);
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ResVo(Const.FAIL);
         }
     }
@@ -131,7 +149,7 @@ public class AdminProductService {
         try {
             ProductEntity entity = productRepository.findById(iproduct).get();
             ProductMainCategoryEntity MainCategoryEntity = mainCategoryRepository.findById(dto.getImain()).get();
-            ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findById( dto.getImiddle()).get();
+            ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findById(dto.getImiddle()).get();
 
             middleCategoryEntity.setProductMainCategory(MainCategoryEntity);
             middleCategoryEntity.setImiddle(dto.getImiddle());
@@ -161,25 +179,27 @@ public class AdminProductService {
                 productPicRepository.save(productPicEntity);
             }
             return new ResVo(Const.SUCCESS);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return new ResVo(Const.FAIL);
         }
     }
 
     //------------------------------------------------------- 상품삭제
     @Transactional
-    public ResVo delProduct(Long iproduct) {
-        Optional<ProductEntity> productOptional = productRepository.findById(iproduct);
-        if (productOptional.isPresent()) {
-            ProductEntity product = productOptional.get();
-            product.setDelFl(1);
-            productRepository.save(product);
+    public ResVo delProduct(List<Long> iproduct) {
+        List<ProductEntity> products = productRepository.findAllById(iproduct);
+        if (!products.isEmpty()) {
+            for (ProductEntity product : products) {
+                product.setDelFl(1);
+            }
+            productRepository.saveAll(products);
             return new ResVo(Const.SUCCESS);
         }
         return new ResVo(Const.FAIL);
     }
+
     //상품검색
-    public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto) {
+    public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto, Pageable pageable) {
 //        List<ProductEntity> entity = productRepository.findProduct(dto);
 //        List<ProductGetSearchSelVo> vo = entity.stream().map(item -> ProductGetSearchSelVo
 //                .builder()
@@ -189,7 +209,7 @@ public class AdminProductService {
 //                .imiddle(item.getMiddleCategoryEntity().getImiddle())
 //                .repPic(item.getRepPic())
 //                .build()).collect(Collectors.toList());
-        List<ProductGetSearchSelVo> vo = productRepository.findProduct(dto);
+        List<ProductGetSearchSelVo> vo = productRepository.findProduct(dto, pageable);
         return vo;
     }
 
@@ -203,15 +223,15 @@ public class AdminProductService {
     public ResVo updateBanner(Long ibanner, MultipartFile pic, BannerInsDto dto) {
         try {
             BannerEntity banner = bannerRepository.findById(ibanner).get();
-            banner.setBannerUrl(dto.getBannerUrl());
-            banner.setTarget(dto.getTarget());
-            bannerRepository.save(banner);
-//            myFileUtils.delDirTrigger("/banner/" + banner.getBannerPic());
             String target = "/banner/" + banner.getIbanner();
             myFileUtils.delDirTrigger(target);
-            String picName = myFileUtils.transferTo(pic, "/banner/" + ibanner);
-            banner.setBannerPic(picName);
-            bannerRepository.save(banner);
+            BannerEntity entity = new BannerEntity();
+            entity.setBannerUrl(dto.getBannerUrl());
+            entity.setTarget(dto.getTarget());
+            bannerRepository.save(entity);
+            String savedPic = myFileUtils.transferTo(pic, target);
+            entity.setBannerPic(savedPic);
+            bannerRepository.save(entity);
             return new ResVo(Const.SUCCESS);
         } catch (Exception e) {
             return new ResVo(Const.FAIL);
@@ -235,6 +255,7 @@ public class AdminProductService {
             return new ResVo(Const.FAIL);
         }
     }
+
     //-------배너삭제
     @Transactional
     public ResVo delBanner(Long ibanner) {
@@ -246,16 +267,16 @@ public class AdminProductService {
     }
 
     //------리뷰 검색
-    public List<SearchReviewSelVo> getSearchReview(ReviewSearchDto dto) {
+    public List<SearchReviewSelVo> getSearchReview(ReviewSearchDto dto, Pageable pageable) {
 //        List<ReviewEntity> result = reviewRepository.selReview(dto);
 //        List<SearchReviewSelVo> vo = new ArrayList<>();
-        List<SearchReviewSelVo> vo = reviewRepository.selReview(dto);
+        List<SearchReviewSelVo> vo = reviewRepository.selReview(dto, pageable);
         return vo;
     }
 
     // 숨겼던 리뷰 검색
-    public List<SearchReviewSelVo> getHiddenReview(ReviewSearchDto dto) {
-        List<SearchReviewSelVo> vo = reviewRepository.selReviewDel(dto);
+    public List<SearchReviewSelVo> getHiddenReview(ReviewSearchDto dto, Pageable pageable) {
+        List<SearchReviewSelVo> vo = reviewRepository.selReviewDel(dto, pageable);
         return vo;
     }
 
@@ -269,6 +290,7 @@ public class AdminProductService {
         }
         return new ResVo(Const.FAIL);
     }
+
     //숨김리뷰 토글처ㅣㄹ
     public ResVo putReviewTogle(Long ireview) {
         Optional<ReviewEntity> optionalReview = reviewRepository.findById(ireview);
@@ -289,83 +311,78 @@ public class AdminProductService {
         return vo;
     }
 
+    // 취소수
+    public List<AdminRefundReturnSelVo> OrderCancelSelVo(AdminRefundReturnDto dto) {
+        List<OrderEntity> entityList = orderTotalRepository.refundReturnSelVo(dto);
+        Map<String, AdminRefundReturnSelVo> map = new HashMap<>();
+        int totalRegisterCnt = 0;
 
+        for (OrderEntity entity : entityList) {
+            totalRegisterCnt += entity.getDeleteFl();
+            //totalRegisterCnt ++;
+        }
+        List<AdminRefundReturnSelVo> result = new ArrayList<>();
+        for (OrderEntity entity : entityList) {
 
+                AdminRefundReturnSelVo vo = new AdminRefundReturnSelVo();
+                vo.setRegisterCnt(entity.getDeleteFl());
+                vo.setUpdatedAt(entity.getUpdatedAt());
+                vo.setDate(Utils.getDate(dto.getYear(), dto.getMonth(), vo));
+                vo.setTotalRegisterCnt(totalRegisterCnt);
+                vo.setRegisterRate(String.format("%.2f", (double) vo.getRegisterCnt() / totalRegisterCnt));
+                map.put(Utils.getDate(dto.getYear(), dto.getMonth(), vo), vo);
+                result.add(vo);
+        }
+        if (dto.getYear() == 0 && dto.getMonth() == 0) {
+            return result;
+        }
 
+        int date = Utils.getDaysOrMonths(dto.getYear(), dto.getMonth());
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    // 배너토글
-//    public ResVo putBanner(Long ibanner) {
-//        Optional<BannerEntity> bannerOptional = bannerRepository.findById(ibanner);
-//        BannerEntity banner = bannerOptional.get();
-//        banner.setStatus(banner.getStatus() == 0 ? 1 : 0);
-//        bannerRepository.save(banner);
-//        return new ResVo(banner.getStatus() == 0 ? Const.SUCCESS : Const.FAIL);
-//    }
-    //    // 숨기지 않는 리뷰
-//    public List<SearchReviewSelVo> getReviewSelVo() {
-//        List<SearchReviewSelVo> vo = reviewRepository.findAllByNotDelFl();
-//        return vo;
-//    }
-    //    // ------------------------------------------------총 주문가격 &수
-//    public OrderTotalSelVo getTotalPriceAndCount() {
-//        return orderTotalRepository.getTotalPriceAndCount();
-//    }
-//
-//    // ------------------------------------------------------최근주문
-//    public List<OrderRecentSelVo> getRecentOrders() {
-//        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
-//        List<OrderRecentSelVo> recentOrders = orderTotalRepository.findRecentOrders(pageable);
-//
-//        return recentOrders;
-//    }
-//    // ------------------------------------------------------최근가입
-//
-//    public List<ddddMapping> getRecentUser() {
-//        return userRepository2.findAllBy();
-//
-//    }
-//
-//    // *-------------------------------------------주문상태현황
-//    public List<OrderStatusCountVo> getOrderStatusCount() {
-//        List<OrderStatusCountVo> result = new ArrayList<>();
-//
-//        result.add(new OrderStatusCountVo("입금전", orderTotalRepository.countByProcessState(0)));
-//        result.add(new OrderStatusCountVo("입금완료", orderTotalRepository.countByProcessState(1)));
-//        result.add(new OrderStatusCountVo("배송준비중", orderTotalRepository.countByProcessState(2)));
-//        result.add(new OrderStatusCountVo("배송중", orderTotalRepository.countByProcessState(3)));
-//        result.add(new OrderStatusCountVo("배송완료", orderTotalRepository.countByProcessState(4)));
-//
-//        return result;
-//    }
-//    //-----------------------------qksvn반품취소
-//    public OrderRefundAndCancelCountSelVo getCountRefundAndCancel() {
-//        OrderRefundAndCancelCountSelVo vo = new OrderRefundAndCancelCountSelVo();
-//        vo.setRefundFl(orderDetailsRepository.countByRefundFl(1));
-//        vo.setDeleteFl(orderTotalRepository.countByDeleteFl(1));
-//        return vo;
-//
-//    }
-
-
+        for (int i = 1; i <= date; i++) {
+            String key = Utils.getKey(dto.getYear(), dto.getMonth(), i);
+            AdminRefundReturnSelVo vo = map.get(key);
+            if (vo == null) {
+                map.put(key, new AdminRefundReturnSelVo(key));
+            }
+        }
+        result = map.values().stream().sorted().toList();
+        return result;
+    }
+    // 반품
+    public List<AdminRefundReturnSelVo> OrderReturnSelVo(AdminRefundReturnDto dto) {
+        List<OrderDetailsEntity> entityList = orderDetailsRepository.refundReturnSelVo(dto);
+        Map<String, AdminRefundReturnSelVo> map = new HashMap<>();
+        int totalRegisterCnt = 0;
+        for (OrderDetailsEntity entity : entityList) {
+            totalRegisterCnt += entity.getRefundFl();
+            //totalRegisterCnt ++;
+        }
+        List<AdminRefundReturnSelVo> result = new ArrayList<>();
+        for (OrderDetailsEntity entity : entityList) {
+            AdminRefundReturnSelVo vo = new AdminRefundReturnSelVo();
+            vo.setRegisterCnt(entity.getRefundFl());
+            vo.setUpdatedAt(entity.getUpdatedAt());
+            vo.setDate(Utils.getDate(dto.getYear(), dto.getMonth(), vo));
+            vo.setTotalRegisterCnt(totalRegisterCnt);
+            vo.setRegisterRate(String.format("%.2f", (double) vo.getRegisterCnt() / totalRegisterCnt));
+            map.put(Utils.getDate(dto.getYear(), dto.getMonth(), vo), vo);
+            result.add(vo);
+        }
+        if (dto.getYear() == 0 && dto.getMonth() == 0) {
+            return result;
+        }
+        int date = Utils.getDaysOrMonths(dto.getYear(), dto.getMonth());
+        for (int i = 1; i <= date; i++) {
+            String key = Utils.getKey(dto.getYear(), dto.getMonth(), i);
+            AdminRefundReturnSelVo vo = map.get(key);
+            if (vo == null) {
+                map.put(key, new AdminRefundReturnSelVo(key));
+            }
+        }
+        result = map.values().stream().sorted().toList();
+        return result;
+    }
 }
 
 

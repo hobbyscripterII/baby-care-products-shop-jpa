@@ -2,6 +2,7 @@ package com.baby.babycareproductsshop.common;
 
 import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderStatisticsDto;
 import com.baby.babycareproductsshop.admin.order.model.StatisticsVo;
+import com.baby.babycareproductsshop.admin.product.model.Statist;
 
 import java.time.LocalDate;
 
@@ -29,6 +30,15 @@ public class Utils {
                 : year != 0 ?
                 sb.append(vo.getCreatedAt().getYear()).append("-").append(vo.getCreatedAt().getMonthValue()).toString()
                 : sb.append(vo.getCreatedAt().getYear()).toString();
+    }
+
+    public static String getDate(int year, int month, Statist vo) {
+        StringBuilder sb = new StringBuilder();
+        return month != 0 ?
+                sb.append(vo.getUpdatedAt().getYear()).append("-").append(vo.getUpdatedAt().getMonthValue()).append("-").append(vo.getUpdatedAt().getDayOfMonth()).toString()
+                : year != 0 ?
+                sb.append(vo.getUpdatedAt().getYear()).append("-").append(vo.getUpdatedAt().getMonthValue()).toString()
+                : sb.append(vo.getUpdatedAt().getYear()).toString();
     }
 
     public static int getDaysOrMonths(int year, int month) {
