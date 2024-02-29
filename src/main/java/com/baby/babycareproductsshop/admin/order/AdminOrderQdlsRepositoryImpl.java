@@ -35,7 +35,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
         return jpaQueryFactory
                 .select(orderEntity)
                 .from(orderEntity)
-                .leftJoin(orderDetailsEntity)
+                .join(orderDetailsEntity)
                 .on(orderEntity.iorder.eq(orderDetailsEntity.orderEntity.iorder))
                 .leftJoin(productEntity)
                 .on(orderDetailsEntity.productEntity.iproduct.eq(productEntity.iproduct))
@@ -44,6 +44,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .where(commonSearchFilter(dto))
                 .offset(dto.getOffSet())
                 .limit(dto.getSize())
+                .groupBy(orderEntity.iorder)
                 .orderBy(orderListSort(dto.getSort()))
                 .fetch();
     }

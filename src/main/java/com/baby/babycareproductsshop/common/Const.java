@@ -1,7 +1,7 @@
 package com.baby.babycareproductsshop.common;
 
 public class Const {
-    public static final int PAGE_SIZE = 20; // 추후 수정
+    public static final int PAGE_SIZE = 10;
 
     public static final int SUCCESS = 1;
     public static final int FAIL = 0;

@@ -28,7 +28,6 @@ public class AdminOrderService {
     }
 
     @Scheduled(cron = "0 0 0 * * *")
-//    @Scheduled(cron = "0/5 * * * * ?") // 5초 주기 / 테스트용
     void orderCancelAutoChange() {
         adminOrderRepository.orderCancelAutoChange();
     }
@@ -46,13 +45,13 @@ public class AdminOrderService {
         }
     }
 
-    @Transactional // 주문 일괄 처리
+    @Transactional
     public ResVo orderBatchProcess(OrderBatchProcessDto dto) {
         int beforeProcessState = dto.getProcessState();
         int afterProcessState = changeProcessState(dto.getProcessState());
         LocalDateTime now = LocalDateTime.now();
 
-        // >>>>> 정상적인 주문 처리 상태 코드가 맞는지 확인
+        // 정상적인 주문 처리 상태 코드가 맞는지 확인
         List<Integer> list = dto.getIorders()
                 .stream()
                 .peek(iorder -> {
@@ -95,6 +94,7 @@ public class AdminOrderService {
                                     .amount(productItem.getProductEntity().getPrice())
                                     .build())
                             .toList();
+
                     return OrderListVo
                             .builder()
                             .processState(orderItem.getProcessState())
@@ -275,7 +275,8 @@ public class AdminOrderService {
             case 1 -> result = processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
             case 2 -> result = processState == ProcessState.ON_DELIVERY.getProcessStateNum();
             case 3 -> result = processState == ProcessState.DELIVER_SUCCESS.getProcessStateNum();
-            case 5 -> result = processState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
+            case 5 ->
+                    result = processState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
         }
         return result;
     }

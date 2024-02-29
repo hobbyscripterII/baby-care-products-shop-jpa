@@ -29,6 +29,4 @@ public class OrderRefundListVo {
     private String ordered;
     @Schema(title = "결제수단", description = "")
     private String paymentOption;
-    @Schema(title = "번호", description = "")
-    private int idx;
 }

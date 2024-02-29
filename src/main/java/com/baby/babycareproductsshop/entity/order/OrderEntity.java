@@ -59,7 +59,4 @@ public class OrderEntity extends BaseEntity {
     private LocalDateTime deletedAt; // 주문 취소 일자
 
     private String adminMemo;
-
-    @Transient // 테이블 컬럼 생성 x 단순 index 출력 용도
-    private int index;
 }
