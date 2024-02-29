@@ -1,3 +1,4 @@
+/*
 package com.baby.babycareproductsshop.admin.order;
 
 import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderStatisticsDto;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RestController
+//@RestController
 @RequestMapping("/api_v2/admin/order")
 @RequiredArgsConstructor
 @Tag(name = "(임시)관리자 기능 - 주문 관리 API")
@@ -38,4 +39,4 @@ public class AdminOrderController2 {
             default ->  throw new RestApiException(CommonErrorCode.INVALID_PARAMETER);
         };
     }
-}
+}*/

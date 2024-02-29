@@ -20,7 +20,7 @@ import java.time.YearMonth;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AdminOrderQdlsSupportRepositoryImpl {
+public class AdminOrderQdlsSupportRepositoryImpl extends AdminOrderSearchCondition {
     protected final JPAQueryFactory jpaQueryFactory;
     protected final QOrderEntity orderEntity = new QOrderEntity("orderEntity");
     protected final QOrderDetailsEntity orderDetailsEntity = new QOrderDetailsEntity("orderDetailsEntity");

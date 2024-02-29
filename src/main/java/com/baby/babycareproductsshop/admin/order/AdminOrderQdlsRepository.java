@@ -1,8 +1,6 @@
 package com.baby.babycareproductsshop.admin.order;
 
-import com.baby.babycareproductsshop.admin.order.model.OrderFilterDto;
-import com.baby.babycareproductsshop.admin.order.model.OrderMemoListDto;
-import com.baby.babycareproductsshop.admin.order.model.OrderSmallFilterDto;
+import com.baby.babycareproductsshop.admin.order.model.*;
 import com.baby.babycareproductsshop.entity.order.OrderEntity;
 import com.baby.babycareproductsshop.entity.refund.RefundEntity;
 import org.springframework.data.domain.Page;
@@ -17,4 +15,8 @@ public interface AdminOrderQdlsRepository {
     List<RefundEntity> orderRefundList(OrderSmallFilterDto dto, Pageable pageable);
     List<OrderEntity> adminMemoList(OrderMemoListDto dto, Pageable pageable);
     List<OrderEntity> orderDetails(int iorder);
+
+    //------------------------------------------th
+    List<AdminSelOrderSalesVo> selOrderSales(AdminSelOrderStatisticsDto dto);
+    List<AdminSelTotalOrderCntVo> selTotalOrderCnt(AdminSelOrderStatisticsDto dto);
 }
