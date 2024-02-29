@@ -2,6 +2,9 @@ package com.baby.babycareproductsshop.admin.order;
 
 import com.baby.babycareproductsshop.admin.order.model.*;
 import com.baby.babycareproductsshop.common.ResVo;
+import com.baby.babycareproductsshop.exception.CommonErrorCode;
+import com.baby.babycareproductsshop.exception.RestApiException;
+import com.baby.babycareproductsshop.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -239,5 +242,24 @@ public class AdminOrderController {
     @GetMapping("/details/{iorder}")
     public List<OrderDetailsVo> orderDetails(@PathVariable(name = "iorder") int iorder) {
         return service.orderDetails(iorder);
+    }
+
+    //------------------------------------------th
+    @Operation(summary = "매출 및 주문 통계 조회", description = """
+            type = sales : 매출 통계<br>
+            type = orderCnt : 주문 통계<br>
+            <br>
+            year & month = 0 : 연도별<br>
+            year != 0 & month = 0 : 월별<br>
+            year & month  != 0: 일별
+            """)
+    @GetMapping("/{type}")
+    public ApiResponse<?> getOrderStatistics(@PathVariable String type, AdminSelOrderStatisticsDto dto) {
+        log.info(type);
+        return switch (type) {
+            case "sales" -> service.getSalesStatistics(dto);
+            case "orderCnt" -> service.getOrderCntStatistics(dto);
+            default ->  throw new RestApiException(CommonErrorCode.INVALID_PARAMETER);
+        };
     }
 }

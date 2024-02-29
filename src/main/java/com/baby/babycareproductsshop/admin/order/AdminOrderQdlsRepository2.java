@@ -1,3 +1,4 @@
+/*
 package com.baby.babycareproductsshop.admin.order;
 
 import com.baby.babycareproductsshop.admin.order.model.AdminSelOrderStatisticsDto;
@@ -10,3 +11,4 @@ public interface AdminOrderQdlsRepository2 {
     List<AdminSelOrderSalesVo> selOrderSales(AdminSelOrderStatisticsDto dto);
     List<AdminSelTotalOrderCntVo> selTotalOrderCnt(AdminSelOrderStatisticsDto dto);
 }
+*/
