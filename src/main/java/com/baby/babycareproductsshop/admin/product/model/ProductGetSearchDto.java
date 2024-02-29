@@ -18,6 +18,7 @@ public class ProductGetSearchDto {
     private int dateFl;
     private LocalDate searchStartDate;
     private LocalDate searchEndDate;
+    private int page;
 
 
 
