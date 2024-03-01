@@ -1,6 +1,7 @@
 package com.baby.babycareproductsshop.admin.category;
 
 import com.baby.babycareproductsshop.admin.category.model.CategoryVo;
+import com.baby.babycareproductsshop.admin.category.model.MiddleCategoryInsDto;
 import com.baby.babycareproductsshop.common.ResVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,6 +23,20 @@ public class AdminCategoryController {
     @GetMapping
     public List<CategoryVo> orderCategoryList() {
         return service.categoryList();
+    }
+
+    @Operation(summary = "1차 카테고리 등록")
+    @PostMapping("/main")
+    @Parameters(value = {@Parameter(name = "imain", description = "1차 카테고리 PK")})
+    public ResVo insMainCategory(@RequestParam(name = "main_category") String mainCategory) {
+        return service.insMainCategory(mainCategory);
+    }
+
+    @Operation(summary = "2차 카테고리 등록")
+    @PostMapping("/middle")
+//    @Parameters(value = {@Parameter(name = "candidateKey", description = "2차 카테고리 PK")})
+    public ResVo insMiddleCategory(@RequestBody MiddleCategoryInsDto dto) {
+        return service.insMiddleCategory(dto);
     }
 
     @Operation(summary = "1차 카테고리 삭제")

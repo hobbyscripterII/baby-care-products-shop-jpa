@@ -1,6 +1,7 @@
 package com.baby.babycareproductsshop.admin.category;
 
 import com.baby.babycareproductsshop.admin.category.model.CategoryVo;
+import com.baby.babycareproductsshop.admin.category.model.MiddleCategoryInsDto;
 import com.baby.babycareproductsshop.common.Const;
 import com.baby.babycareproductsshop.common.ResVo;
 import com.baby.babycareproductsshop.common.Utils;
@@ -10,6 +11,7 @@ import com.baby.babycareproductsshop.exception.AuthErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +20,18 @@ import java.util.List;
 public class AdminCategoryService {
     private final AdminMainCategoryRepository mainRepository;
     private final AdminMiddleCategoryRepository middleRepository;
+
+    @Transactional
+    public ResVo insMainCategory(String mainCategory) {
+        try {
+            ProductMainCategoryEntity mainCategoryEntity = new ProductMainCategoryEntity();
+            mainCategoryEntity.setMainCategory(mainCategory);
+            mainRepository.save(mainCategoryEntity);
+            return new ResVo(Const.SUCCESS);
+        } catch (Exception e) {
+            throw new RestApiException(AuthErrorCode.CATEGORY_INSERT_FAIL);
+        }
+    }
 
     public ResVo delMainCategory(long imain) {
         try {
@@ -30,6 +44,20 @@ public class AdminCategoryService {
             }
         } catch (Exception e) {
             throw new RestApiException(AuthErrorCode.CATEGORY_DELETE_FAIL);
+        }
+    }
+
+    @Transactional
+    public ResVo insMiddleCategory(MiddleCategoryInsDto dto) {
+        try {
+            ProductMiddleCategoryEntity middleCategoryEntity = new ProductMiddleCategoryEntity();
+//            middleCategoryEntity.getProductMainCategory().setImain(dto.getImain()); // 수정 필요
+            middleCategoryEntity.setImiddle(dto.getImain());
+            middleCategoryEntity.setMiddleCategory(dto.getMiddleCategory());
+            middleRepository.save(middleCategoryEntity);
+            return new ResVo(Const.SUCCESS);
+        } catch (Exception e) {
+            throw new RestApiException(AuthErrorCode.CATEGORY_INSERT_FAIL);
         }
     }
 
