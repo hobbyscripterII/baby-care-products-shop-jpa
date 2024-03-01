@@ -3,6 +3,7 @@ package com.baby.babycareproductsshop.admin.order;
 import com.baby.babycareproductsshop.admin.order.model.OrderFilterDto;
 import com.baby.babycareproductsshop.admin.order.model.OrderMemoListDto;
 import com.baby.babycareproductsshop.admin.order.model.OrderSmallFilterDto;
+import com.baby.babycareproductsshop.admin.order.model.OrderUserFilterDto;
 import com.baby.babycareproductsshop.exception.AuthErrorCode;
 import com.baby.babycareproductsshop.exception.RestApiException;
 import org.springframework.stereotype.Component;
@@ -68,7 +69,6 @@ public class AdminOrderCommonValid {
         return result;
     }
 
-    // 추후 수정
     protected OrderFilterDto commonValid(OrderFilterDto dto) {
         if (dto.getSearchCategory() == PHONE_NUMBER_SEARCH_CATEGORY) {
             dto.setKeyword(phoneNumberCheck(dto.getSearchCategory(), dto.getKeyword()));
@@ -101,6 +101,13 @@ public class AdminOrderCommonValid {
         }
         dto.setStartDate(stringIsNull(dto.getStartDate()));
         dto.setEndDate(stringIsNull(dto.getEndDate()));
+        return dto;
+    }
+
+    protected OrderUserFilterDto commonValid(OrderUserFilterDto dto) {
+        dto.setStartDate(stringIsNull(dto.getStartDate()));
+        dto.setEndDate(stringIsNull(dto.getEndDate()));
+
         return dto;
     }
 }

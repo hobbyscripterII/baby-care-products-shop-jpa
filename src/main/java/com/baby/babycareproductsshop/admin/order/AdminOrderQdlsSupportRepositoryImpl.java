@@ -34,11 +34,19 @@ public class AdminOrderQdlsSupportRepositoryImpl extends AdminOrderSearchConditi
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         return booleanBuilder
+                .and(targetIuser(dto.getIuser())) // 특정 회원 검색
                 .and(targetKeyword(dto.getSearchCategory(), dto.getKeyword())) // 검색 카테고리 + 검색어
                 .and(dateSelectSearch(dto.getDateFl())) // 기간 선택
                 .and(dateRangeSearch(dto.getDateCategory(), dto.getStartDate(), dto.getEndDate())) // 기간 검색
                 .and(ipaymentOptionEq(dto.getPayCategory())) // 결제 방법
                 .and(processStateEq(dto.getProcessState())); // 주문 처리 상태
+    }
+
+    /**
+     * @param iuser - 회원 PK
+     */
+    private BooleanExpression targetIuser(int iuser) {
+        return !Utils.isNotNull(iuser) ? null : orderEntity.userEntity.iuser.eq((long) iuser);
     }
 
     /**
@@ -92,7 +100,8 @@ public class AdminOrderQdlsSupportRepositoryImpl extends AdminOrderSearchConditi
             case 2 -> booleanExpression = orderEntity.createdAt.between(yesterdayStartTime(), yesterdayEndTime());
             case 3 -> booleanExpression = orderEntity.createdAt.between(todayStartTime().minusDays(7), todayEndTime());
             case 4, 5 -> booleanExpression = orderEntity.createdAt.between(monthStartDay(), monthEndDay());
-            case 6 -> booleanExpression = orderEntity.createdAt.between(monthStartDay().minusMonths(3), monthEndDay().minusMonths(3));
+            case 6 ->
+                    booleanExpression = orderEntity.createdAt.between(monthStartDay().minusMonths(3), monthEndDay().minusMonths(3));
             default -> {
                 return null;
             }

@@ -36,7 +36,7 @@ public class AdminOrderService {
     }
 
     @Transactional
-    public ResVo updateAdminMemo(OrderMemoUpdDto dto) {
+    public ResVo updAdminMemo(OrderMemoUpdDto dto) {
         try {
             OrderEntity orderEntity = adminOrderRepository.getReferenceById(dto.getIorder());
             orderEntity.setIorder(dto.getIorder());
@@ -49,7 +49,7 @@ public class AdminOrderService {
     }
 
     @Transactional
-    public ResVo orderBatchProcess(OrderBatchProcessDto dto) {
+    public ResVo updOrderStateProcess(OrderBatchProcessDto dto) {
         int beforeProcessState = dto.getProcessState();
         int afterProcessState = changeProcessState(dto.getProcessState());
         LocalDateTime now = LocalDateTime.now();
@@ -83,8 +83,39 @@ public class AdminOrderService {
         }
     }
 
-    public List<OrderListVo> orderList(OrderFilterDto dto, Pageable pageable) {
-        return adminOrderRepository.orderList(dto, pageable)
+    public List<OrderListVo> getOrderList(OrderFilterDto dto, Pageable pageable) {
+        return adminOrderRepository.getOrderList(dto, pageable)
+                .stream()
+                .map(orderItem -> {
+                    List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
+                            .map(productItem -> OrderProductVo
+                                    .builder()
+                                    .repPic(productItem.getProductEntity().getRepPic())
+                                    .productNm(productItem.getProductEntity().getProductNm())
+                                    .cnt(productItem.getProductCnt())
+                                    .processState(productItem.getOrderEntity().getProcessState())
+                                    .amount(productItem.getProductEntity().getPrice())
+                                    .build())
+                            .toList();
+
+                    return OrderListVo
+                            .builder()
+                            .processState(orderItem.getProcessState())
+                            .iorder(orderItem.getIorder().intValue())
+                            .orderedAt(orderItem.getCreatedAt().toString())
+                            .products(orderProductVoList)
+                            .ordered(orderItem.getUserEntity().getNm())
+                            .recipient(orderItem.getUserEntity().getNm())
+                            .totalAmount(orderItem.getTotalPrice())
+                            .payCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
+                            .refundFl(orderItem.getProcessState() == ProcessState.DELIVER_SUCCESS.getProcessStateNum() ? 1 : 0)
+                            .build();
+                })
+                .toList();
+    }
+
+    public List<OrderListVo> getUserOrderList(OrderUserFilterDto dto, Pageable pageable) {
+        return adminOrderRepository.getUserOrderList(dto, pageable)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -121,8 +152,8 @@ public class AdminOrderService {
      * iorder에 종속된 idetails : N
      * idetails가 갖고있는 iproduct : 1
      */
-    public List<OrderDetailsListVo> orderDetailsList(OrderSmallFilterDto dto, Pageable pageable) {
-        return adminOrderRepository.orderDetailsList(dto, pageable)
+    public List<OrderDetailsListVo> getOrderDetailsList(OrderSmallFilterDto dto, Pageable pageable) {
+        return adminOrderRepository.getOrderDetailsList(dto, pageable)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -153,8 +184,8 @@ public class AdminOrderService {
                 .toList();
     }
 
-    public List<OrderDeleteVo> orderDeleteList(OrderSmallFilterDto dto, Pageable pageable) {
-        return adminOrderRepository.orderDeleteList(dto, pageable)
+    public List<OrderDeleteVo> getOrderDeleteList(OrderSmallFilterDto dto, Pageable pageable) {
+        return adminOrderRepository.getOrderDeleteList(dto, pageable)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -182,8 +213,8 @@ public class AdminOrderService {
                 .toList();
     }
 
-    public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto, Pageable pageable) {
-        return adminOrderRepository.orderRefundList(dto, pageable)
+    public List<OrderRefundListVo> getOrderRefundList(OrderSmallFilterDto dto, Pageable pageable) {
+        return adminOrderRepository.getOrderRefundList(dto, pageable)
                 .stream()
                 .map(item -> OrderRefundListVo
                         .builder()
@@ -200,8 +231,8 @@ public class AdminOrderService {
                 .toList();
     }
 
-    public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto, Pageable pageable) {
-        return adminOrderRepository.adminMemoList(dto, pageable)
+    public List<OrderMemoListVo> getOrderAdminMemoList(OrderMemoListDto dto, Pageable pageable) {
+        return adminOrderRepository.getOrderAdminMemoList(dto, pageable)
                 .stream()
                 .map(item ->
                         OrderMemoListVo
@@ -216,8 +247,8 @@ public class AdminOrderService {
                 .toList();
     }
 
-    public List<OrderDetailsVo> orderDetails(int iorder) {
-        return adminOrderRepository.orderDetails(iorder)
+    public List<OrderDetailsVo> getOrderDetails(int iorder) {
+        return adminOrderRepository.getOrderDetails(iorder)
                 .stream()
                 .map(item -> {
                     List<OrderProductVo> products = adminOrderDetailsRepository.findAll(iorder).stream()

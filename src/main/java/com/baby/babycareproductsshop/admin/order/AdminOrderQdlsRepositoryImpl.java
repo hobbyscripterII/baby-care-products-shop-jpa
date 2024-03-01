@@ -24,18 +24,6 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
         super(jpaQueryFactory);
     }
 
-    public List<OrderEntity> commonListTasks(OrderFilterDto dto, Pageable pageable) {
-        return commonJpaQuery(commonDtoTasks(dto, pageable));
-    }
-
-    public List<OrderEntity> commonListTasks(OrderSmallFilterDto dto, Pageable pageable) {
-        return commonJpaQuery(commonDtoTasks(dto, pageable));
-    }
-
-    public List<OrderEntity> commonListTasks(OrderMemoListDto dto, Pageable pageable) {
-        return commonJpaQuery(commonDtoTasks(dto, pageable));
-    }
-
     private List<OrderEntity> commonJpaQuery(OrderCommonSearchFilterDto dto) {
         return jpaQueryFactory
                 .select(orderEntity)
@@ -54,6 +42,22 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .fetch();
     }
 
+    public List<OrderEntity> commonListTasks(OrderFilterDto dto, Pageable pageable) {
+        return commonJpaQuery(commonDtoTasks(dto, pageable));
+    }
+
+    public List<OrderEntity> commonListTasks(OrderUserFilterDto dto, Pageable pageable) {
+        return commonJpaQuery(commonDtoTasks(dto, pageable));
+    }
+
+    public List<OrderEntity> commonListTasks(OrderSmallFilterDto dto, Pageable pageable) {
+        return commonJpaQuery(commonDtoTasks(dto, pageable));
+    }
+
+    public List<OrderEntity> commonListTasks(OrderMemoListDto dto, Pageable pageable) {
+        return commonJpaQuery(commonDtoTasks(dto, pageable));
+    }
+
     private OrderCommonSearchFilterDto commonDtoTasks(OrderFilterDto dto, Pageable pageable) {
         return OrderCommonSearchFilterDto
                 .builder()
@@ -63,6 +67,20 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
                 .payCategory(dto.getPayCategory())
+                .processState(dto.getProcessState())
+                .offSet(pageable.getOffset())
+                .size(pageable.getPageSize())
+                .sort(dto.getSort())
+                .build();
+    }
+
+    private OrderCommonSearchFilterDto commonDtoTasks(OrderUserFilterDto dto, Pageable pageable) {
+        return OrderCommonSearchFilterDto
+                .builder()
+                .iuser(dto.getIuser())
+                .dateFl(dto.getDateFl())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
                 .processState(dto.getProcessState())
                 .offSet(pageable.getOffset())
                 .size(pageable.getPageSize())
@@ -101,17 +119,23 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
     }
 
     @Override
-    public List<OrderEntity> orderList(OrderFilterDto dto, Pageable pageable) {
+    public List<OrderEntity> getOrderList(OrderFilterDto dto, Pageable pageable) {
+        return commonListTasks(dto, pageable);
+    }
+
+
+    @Override
+    public List<OrderEntity> getUserOrderList(OrderUserFilterDto dto, Pageable pageable) {
         return commonListTasks(dto, pageable);
     }
 
     @Override
-    public List<OrderEntity> orderDetailsList(OrderSmallFilterDto dto, Pageable pageable) {
+    public List<OrderEntity> getOrderDetailsList(OrderSmallFilterDto dto, Pageable pageable) {
         return commonListTasks(dto, pageable);
     }
 
     @Override
-    public List<OrderEntity> orderDeleteList(OrderSmallFilterDto dto, Pageable pageable) {
+    public List<OrderEntity> getOrderDeleteList(OrderSmallFilterDto dto, Pageable pageable) {
         dto.setProcessState(ProcessState.ORDER_CANCEL.getProcessStateNum());
         OrderCommonSearchFilterDto filter = commonDtoTasks(dto, pageable);
         int sort = dto.getSort();
@@ -127,7 +151,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
     }
 
     @Override
-    public List<RefundEntity> orderRefundList(OrderSmallFilterDto dto, Pageable pageable) {
+    public List<RefundEntity> getOrderRefundList(OrderSmallFilterDto dto, Pageable pageable) {
         dto.setProcessState(ProcessState.REFUND.getProcessStateNum());
         OrderCommonSearchFilterDto filter = commonDtoTasks(dto, pageable);
         int sort = dto.getSort();
@@ -143,12 +167,12 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
     }
 
     @Override
-    public List<OrderEntity> adminMemoList(OrderMemoListDto dto, Pageable pageable) {
+    public List<OrderEntity> getOrderAdminMemoList(OrderMemoListDto dto, Pageable pageable) {
         return commonListTasks(dto, pageable);
     }
 
     @Override
-    public List<OrderEntity> orderDetails(int iorder) {
+    public List<OrderEntity> getOrderDetails(int iorder) {
         return jpaQueryFactory
                 .select(orderEntity)
                 .from(orderEntity)
