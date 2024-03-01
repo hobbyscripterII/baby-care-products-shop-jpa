@@ -9,12 +9,13 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface AdminOrderQdlsRepository {
-    List<OrderEntity> orderList(OrderFilterDto dto, Pageable pageable);
-    List<OrderEntity> orderDetailsList(OrderSmallFilterDto dto, Pageable pageable);
-    List<OrderEntity> orderDeleteList(OrderSmallFilterDto dto, Pageable pageable);
-    List<RefundEntity> orderRefundList(OrderSmallFilterDto dto, Pageable pageable);
-    List<OrderEntity> adminMemoList(OrderMemoListDto dto, Pageable pageable);
-    List<OrderEntity> orderDetails(int iorder);
+    List<OrderEntity> getOrderList(OrderFilterDto dto, Pageable pageable);
+    List<OrderEntity> getUserOrderList(OrderUserFilterDto dto, Pageable pageable);
+    List<OrderEntity> getOrderDetailsList(OrderSmallFilterDto dto, Pageable pageable);
+    List<OrderEntity> getOrderDeleteList(OrderSmallFilterDto dto, Pageable pageable);
+    List<RefundEntity> getOrderRefundList(OrderSmallFilterDto dto, Pageable pageable);
+    List<OrderEntity> getOrderAdminMemoList(OrderMemoListDto dto, Pageable pageable);
+    List<OrderEntity> getOrderDetails(int iorder);
 
     //------------------------------------------th
     List<AdminSelOrderSalesVo> selOrderSales(AdminSelOrderStatisticsDto dto);

@@ -32,10 +32,10 @@ public class AdminOrderController {
         return PageRequest.of(page, PAGE_SIZE);
     }
 
-    @Operation(summary = "관리자 메모 수정", description = "<ul><strong>iorders - 주문 번호(PK)</strong></ul> <ul><strong>adminMemo - 관리자 메모</strong><br></ul>")
+    @Operation(summary = "관리자 메모 수정", description = "<ul><strong>iorder - 주문 번호(PK)</strong></ul> <ul><strong>adminMemo - 관리자 메모</strong><br></ul>")
     @PatchMapping("/memo")
-    public ResVo updateAdminMemo(@RequestBody OrderMemoUpdDto dto) {
-        return service.updateAdminMemo(dto);
+    public ResVo updAdminMemo(@RequestBody OrderMemoUpdDto dto) {
+        return service.updAdminMemo(dto);
     }
 
     @PutMapping
@@ -50,8 +50,8 @@ public class AdminOrderController {
                     <li>배송완료 - 4</li>
                     <li>취소 - 5</li>
                     <li>반품 - 6</li></ul>""")
-    public ResVo orderBatchProcess(@RequestBody OrderBatchProcessDto dto) {
-        return service.orderBatchProcess(dto);
+    public ResVo updOrderStateProcess(@RequestBody OrderBatchProcessDto dto) {
+        return service.updOrderStateProcess(dto);
     }
 
     @GetMapping
@@ -68,7 +68,7 @@ public class AdminOrderController {
             <ul><strong>keyword - 검색 키워드</strong></ul>
             <ul><strong>startDate - (예) 2024-02-22</strong><br></ul>
             <ul><strong>endDate - (예) 2024-02-22</strong><br></ul>
-            <ul><strong>dateFl</strong><br>
+            <ul><strong>dateFl - 기간 검색</strong><br>
             <li>오늘 - 0</li>
             <li>어제 - 1</li>
             <li>일주일 - 2</li>
@@ -91,9 +91,41 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderListVo> orderList(OrderFilterDto dto) {
+    public List<OrderListVo> getOrderList(OrderFilterDto dto) {
         OrderFilterDto orderFilterDto = valid.commonValid(dto);
-        return service.orderList(orderFilterDto, pageable(dto.getPage()));
+        return service.getOrderList(orderFilterDto, pageable(dto.getPage()));
+    }
+
+    @GetMapping("/user")
+    @Operation(summary = "회원 주문 리스트 출력", description = """
+            <ul><strong><font color="#D1180B">2024-03-01 추가</font><br></ul>
+            <ul><strong>iuser - 회원 PK</strong><br></ul>
+            <ul><strong>dateFl - 기간 검색</strong><br>
+            <li>오늘 - 0</li>
+            <li>어제 - 1</li>
+            <li>일주일 - 2</li>
+            <li>지난 달 - 3</li>
+            <li>1개월 - 4</li>
+            <li>3개월 - 5</li>
+            <li>전체 - 6</li></ul>
+            <ul><strong>startDate - (예) 2024-02-22</strong><br></ul>
+            <ul><strong>endDate - (예) 2024-02-22</strong><br></ul>
+            <ul><strong>processState</strong><br>
+            <li>전체 - 0</li>
+            <li>입금 대기 - 1</li>
+            <li>배송 준비중 - 2</li>
+            <li>배송중 - 3</li>
+            <li>배송완료 - 4</li>
+            <li>취소 - 5</li>
+            <li>반품 - 6</li></ul>
+            <ul><strong>sort</strong><br>
+            <li>주문일 역순 - 0(default)</li>
+            <li>주문일 순 - 1</li>
+            <li>처리일 역순 - 2</li>
+            <li>처리일 순 - 3</li></ul>""")
+    public List<OrderListVo> getUserOrderList(OrderUserFilterDto dto) {
+        OrderUserFilterDto orderUserFilterDto = valid.commonValid(dto);
+        return service.getUserOrderList(orderUserFilterDto, pageable(dto.getPage()));
     }
 
     @GetMapping("/details")
@@ -110,7 +142,7 @@ public class AdminOrderController {
             <ul><strong>keyword - 검색 키워드</strong></ul>
             <ul><strong>startDate - (예) 2024-02-22</strong><br></ul>
             <ul><strong>endDate - (예) 2024-02-22</strong><br></ul>
-            <ul><strong>dateFl - 기간 선택</strong><br>
+            <ul><strong>dateFl - 기간 검색</strong><br>
             <li>전체 - 0</li>
             <li>오늘 - 1</li>
             <li>어제 - 2</li>
@@ -127,10 +159,10 @@ public class AdminOrderController {
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
     @Parameters(value = {@Parameter(name = "process_state", description = "주문 처리 상태<br>전체 - 0<br>입금 대기 - 1<br>배송 준비중 - 2<br>배송중 - 3<br>배송완료 - 4<br>")})
-    public List<OrderDetailsListVo> orderDetailsList(@RequestParam(name = "process_state") int processState, OrderSmallFilterDto dto) {
+    public List<OrderDetailsListVo> getOrderDetailsList(@RequestParam(name = "process_state") int processState, OrderSmallFilterDto dto) {
         dto.setProcessState(processState);
         OrderSmallFilterDto orderSmallFilterDto = valid.commonValid(dto);
-        return service.orderDetailsList(orderSmallFilterDto, pageable(dto.getPage()));
+        return service.getOrderDetailsList(orderSmallFilterDto, pageable(dto.getPage()));
     }
 
     @GetMapping("/delete")
@@ -147,7 +179,7 @@ public class AdminOrderController {
             <ul><strong>keyword - 검색 키워드</strong></ul>
             <ul><strong>startDate - (예) 2024-02-22</strong><br></ul>
             <ul><strong>endDate - (예) 2024-02-22</strong><br></ul>
-            <ul><strong>dateFl</strong><br>
+            <ul><strong>dateFl - 기간 검색</strong><br>
             <li>오늘 - 0</li>
             <li>어제 - 1</li>
             <li>일주일 - 2</li>
@@ -164,9 +196,9 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderDeleteVo> orderDeleteList(OrderSmallFilterDto dto) {
+    public List<OrderDeleteVo> getOrderDeleteList(OrderSmallFilterDto dto) {
         OrderSmallFilterDto orderSmallFilterDto = valid.commonValid(dto);
-        return service.orderDeleteList(orderSmallFilterDto, pageable(dto.getPage()));
+        return service.getOrderDeleteList(orderSmallFilterDto, pageable(dto.getPage()));
     }
 
     @GetMapping("/refund")
@@ -183,7 +215,7 @@ public class AdminOrderController {
             <ul><strong>keyword - 검색 키워드</strong></ul>
             <ul><strong>startDate - (예) 2024-02-22</strong><br></ul>
             <ul><strong>endDate - (예) 2024-02-22</strong><br></ul>
-            <ul><strong>dateFl</strong><br>
+            <ul><strong>dateFl - 기간 검색</strong><br>
             <li>오늘 - 0</li>
             <li>어제 - 1</li>
             <li>일주일 - 2</li>
@@ -200,9 +232,9 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderRefundListVo> orderRefundList(OrderSmallFilterDto dto) {
+    public List<OrderRefundListVo> getOrderRefundList(OrderSmallFilterDto dto) {
         OrderSmallFilterDto orderSmallFilterDto = valid.commonValid(dto);
-        return service.orderRefundList(orderSmallFilterDto, pageable(dto.getPage()));
+        return service.getOrderRefundList(orderSmallFilterDto, pageable(dto.getPage()));
     }
 
     @GetMapping("/memo")
@@ -219,7 +251,7 @@ public class AdminOrderController {
             <ul><strong>keyword - 검색 키워드</strong></ul>
             <ul><strong>startDate - (예) 2024-02-22</strong><br></ul>
             <ul><strong>endDate - (예) 2024-02-22</strong><br></ul>
-            <ul><strong>dateFl</strong><br>
+            <ul><strong>dateFl - 기간 검색</strong><br>
             <li>오늘 - 0</li>
             <li>어제 - 1</li>
             <li>일주일 - 2</li>
@@ -232,16 +264,16 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderMemoListVo> adminMemoList(OrderMemoListDto dto) {
+    public List<OrderMemoListVo> getOrderAdminMemoList(OrderMemoListDto dto) {
         OrderMemoListDto orderMemoListDto = valid.commonValid(dto);
-        return service.adminMemoList(orderMemoListDto, pageable(dto.getPage()));
+        return service.getOrderAdminMemoList(orderMemoListDto, pageable(dto.getPage()));
     }
 
     @Operation(summary = "주문 상세 페이지 출력")
     @Parameters(value = {@Parameter(name = "iorder", description = "주문 PK")})
     @GetMapping("/details/{iorder}")
-    public List<OrderDetailsVo> orderDetails(@PathVariable(name = "iorder") int iorder) {
-        return service.orderDetails(iorder);
+    public List<OrderDetailsVo> getOrderDetails(@PathVariable(name = "iorder") int iorder) {
+        return service.getOrderDetails(iorder);
     }
 
     //------------------------------------------th
