@@ -48,6 +48,7 @@ public enum AuthErrorCode implements ErrorCode {
     ORDER_BATCH_PROCESS_FAIL(HttpStatus.NOT_FOUND, "주문 일괄 처리에 실패했습니다."),
 
     CATEGORY_INSERT_FAIL(HttpStatus.NOT_FOUND, "카테고리 등록에 실패했습니다."),
+    CATEGORY_UPDATE_FAIL(HttpStatus.NOT_FOUND, "카테고리 수정에 실패했습니다."),
     CATEGORY_DELETE_FAIL(HttpStatus.NOT_FOUND, "카테고리 삭제에 실패했습니다.");
 
     private final HttpStatus httpStatus;
