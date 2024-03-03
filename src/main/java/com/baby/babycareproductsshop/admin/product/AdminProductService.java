@@ -110,7 +110,6 @@ public class AdminProductService {
     public ResVo postProduct(List<MultipartFile> pics, MultipartFile productDetails, AdminProductInsDto dto) {
         try {
             ProductEntity entity = new ProductEntity();
-
             ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findByImiddleAndProductMainCategory_Imain(dto.getImiddle(), dto.getImain());
             entity.setMiddleCategoryEntity(middleCategoryEntity);
             entity.setProductNm(dto.getProductNm());
@@ -123,9 +122,6 @@ public class AdminProductService {
 
             String detailsFileNm = myFileUtils.transferTo(productDetails, target);
             entity.setProductDetails(detailsFileNm);
-            entity.setNewFl(dto.getNewFl());
-            entity.setPopFl(dto.getPopFl());
-
 
             ProductEntity savedEntity = productRepository.save(entity);
             for (MultipartFile pic : pics) {
@@ -145,7 +141,7 @@ public class AdminProductService {
     }
 
     // 상품 수정
-    public ResVo putProduct(List<MultipartFile> pics, MultipartFile productDetails, AdminProductInsDto dto, Long iproduct) {
+    public ResVo putProduct(List<MultipartFile> pics, MultipartFile productDetails, AdminProductUptDto dto, Long iproduct) {
         try {
             ProductEntity entity = productRepository.findById(iproduct).get();
             ProductMainCategoryEntity MainCategoryEntity = mainCategoryRepository.findById(dto.getImain()).get();
@@ -223,15 +219,15 @@ public class AdminProductService {
     public ResVo updateBanner(Long ibanner, MultipartFile pic, BannerInsDto dto) {
         try {
             BannerEntity banner = bannerRepository.findById(ibanner).get();
-            String target = "/banner/" + banner.getIbanner();
-            myFileUtils.delDirTrigger(target);
-            BannerEntity entity = new BannerEntity();
-            entity.setBannerUrl(dto.getBannerUrl());
-            entity.setTarget(dto.getTarget());
-            bannerRepository.save(entity);
-            String savedPic = myFileUtils.transferTo(pic, target);
-            entity.setBannerPic(savedPic);
-            bannerRepository.save(entity);
+            banner.setBannerUrl(dto.getBannerUrl());
+            banner.setTarget(dto.getTarget());
+            if (pic != null) {
+                String target = "/banner/" + banner.getIbanner();
+                myFileUtils.delDirTrigger(target);
+                String savedPic = myFileUtils.transferTo(pic, target);
+                banner.setBannerPic(savedPic);
+            }
+            bannerRepository.save(banner);
             return new ResVo(Const.SUCCESS);
         } catch (Exception e) {
             return new ResVo(Const.FAIL);
@@ -332,6 +328,7 @@ public class AdminProductService {
                 vo.setDate(Utils.getDate(dto.getYear(), dto.getMonth(), vo));
                 vo.setTotalRegisterCnt(totalRegisterCnt);
                 vo.setRegisterRate(String.format("%.2f", (double) vo.getRegisterCnt() / totalRegisterCnt));
+
                 map.put(Utils.getDate(dto.getYear(), dto.getMonth(), vo), vo);
                 result.add(vo);
         }
@@ -367,10 +364,15 @@ public class AdminProductService {
             vo.setUpdatedAt(entity.getUpdatedAt());
             vo.setDate(Utils.getDate(dto.getYear(), dto.getMonth(), vo));
             vo.setTotalRegisterCnt(totalRegisterCnt);
+//            if (vo.getRegisterCnt() == 0 ) {
+//                vo.setRegisterRate(String.valueOf(0));
+//            }
             vo.setRegisterRate(String.format("%.2f", (double) vo.getRegisterCnt() / totalRegisterCnt));
+
             map.put(Utils.getDate(dto.getYear(), dto.getMonth(), vo), vo);
             result.add(vo);
         }
+
         if (dto.getYear() == 0 && dto.getMonth() == 0) {
             return result;
         }
