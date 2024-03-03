@@ -21,9 +21,9 @@ public class AdminRefundReturnSelVo implements Statist , Comparable<AdminRefundR
     private String date;
     @Schema(title = "취소 수")
     private int registerCnt;
-    @Schema(title = "취소 비율")
+    @Schema(title = " 비율")
     private String registerRate;
-    @Schema(title = "총 회원가입 수")
+    @Schema(title = "전체 수")
     private int totalRegisterCnt;
     @JsonIgnore
     private LocalDateTime updatedAt;

@@ -44,7 +44,7 @@ public class AdminProductController {
     @Operation(summary = "상품 수정 ")
     public ResVo uptProduct (@RequestPart(name = "pics") List<MultipartFile> pics,
                              @RequestPart(name = "productDetails") MultipartFile productDetails,
-                             @RequestPart @Valid AdminProductInsDto dto,@RequestParam Long iproduct) {
+                             @RequestPart @Valid AdminProductUptDto dto,@RequestParam Long iproduct) {
         return service.putProduct(pics,productDetails,dto,iproduct);
     }
     //-----------------------------------------------------------------상품 삭제------------------------------------------------------

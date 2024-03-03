@@ -112,6 +112,7 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         productEntity.productNm
                         ,productEntity.iproduct
                         ,productEntity.price
+                        ,productEntity.remainedCnt
                         ,productEntity.middleCategoryEntity.productMainCategory.imain
                         ,productEntity.middleCategoryEntity.imiddle
                         ,productEntity.repPic))
@@ -125,8 +126,6 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                 .from(productEntity)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
-
-
         return query.fetch();
     }
 
