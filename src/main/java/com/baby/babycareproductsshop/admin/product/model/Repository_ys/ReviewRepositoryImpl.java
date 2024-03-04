@@ -56,14 +56,14 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
 //        List<SearchReviewSelVo> fetch2 = query.fetch();
 
         List<SearchReviewSelVo> result = jpaQueryFactory.select(Projections.constructor(SearchReviewSelVo.class,
+                                 reviewEntity.ireview,
                                 reviewEntity.userEntity.nm,
-                                reviewEntity.productEntity.repPic,
+                                reviewEntity.reqReviewPic,
                                 reviewEntity.productEntity.iproduct,
                                 reviewEntity.productEntity.productNm,
                                 reviewEntity.contents,
                                 reviewEntity.productScore,
                                 reviewEntity.delFl
-
                         )
                 )
                 .from(reviewEntity)
@@ -94,6 +94,7 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
     @Override
     public List<SearchReviewSelVo> selReviewDel(ReviewSearchDto dto,Pageable pageable) { //숨김리뷰
         JPAQuery<SearchReviewSelVo> query = jpaQueryFactory.select(Projections.constructor(SearchReviewSelVo.class,
+                        reviewEntity.ireview,
                         reviewEntity.userEntity.nm,
                         reviewEntity.productEntity.repPic,
                         reviewEntity.productEntity.iproduct,

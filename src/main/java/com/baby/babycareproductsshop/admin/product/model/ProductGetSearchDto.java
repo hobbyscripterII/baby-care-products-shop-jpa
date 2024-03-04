@@ -1,5 +1,6 @@
 package com.baby.babycareproductsshop.admin.product.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -15,7 +16,8 @@ public class ProductGetSearchDto {
     private Long imiddle;
     private int minPrice;
     private int maxPrice;
-    private int dateFl;
+//    @JsonIgnore
+//    private int dateFl;
     private LocalDate searchStartDate;
     private LocalDate searchEndDate;
     private int page;

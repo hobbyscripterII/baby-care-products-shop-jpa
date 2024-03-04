@@ -65,17 +65,17 @@ public class AdminProductService {
 
     //------------상품진열관리 추천상품 조회
     public List<ProductManagementSelVo> getProductRc() {
-        return productRepository.findAllByRcFl(1);
+        return productRepository.findAllByStatusAndRcFl(1,1);
     }
 
     //------------상품진열관리 신상품 조회
     public List<ProductManagementSelVo> getProductNew() {
-        return productRepository.findAllByNewFl(1);
+        return productRepository.findAllByStatusAndNewFl(1,1);
     }
 
     //------------상품진열관리 인기상품 조회
     public List<ProductManagementSelVo> getProductPop() {
-        return productRepository.findAllByPopFl(1);
+        return productRepository.findAllByStatusAndPopFl(1,1);
     }
 
     //------------상품진열관리 신상품 토글
@@ -84,7 +84,7 @@ public class AdminProductService {
         ProductEntity entity = productEntityOptional.get();
         entity.setStatus(entity.getStatus() == 0 ? 1 : 0);
         productRepository.save(entity);
-        return new ResVo(entity.getStatus() == 0 ? Const.SUCCESS : Const.FAIL);
+        return new ResVo(entity.getStatus() == 0 ? Const.FAIL : Const.SUCCESS);
     }
 
     //------------상품진열관리 인기상품 토글
@@ -93,7 +93,7 @@ public class AdminProductService {
         ProductEntity entity = productEntityOptional.get();
         entity.setStatus(entity.getStatus() == 0 ? 1 : 0);
         productRepository.save(entity);
-        return new ResVo(entity.getStatus() == 0 ? Const.SUCCESS : Const.FAIL);
+        return new ResVo(entity.getStatus() == 0 ? Const.FAIL : Const.SUCCESS);
     }
 
     //------------상품진열관리 추천상품 토글
@@ -101,8 +101,9 @@ public class AdminProductService {
         Optional<ProductEntity> productEntityOptional = productRepository.findById(iproduct);
         ProductEntity entity = productEntityOptional.get();
         entity.setRcFl(entity.getRcFl() == 0 ? 1 : 0);
+        entity.setStatus(entity.getStatus() == 0 ? 1 : 0);
         productRepository.save(entity);
-        return new ResVo(entity.getRcFl() == 0 ? Const.SUCCESS : Const.FAIL);
+        return new ResVo(entity.getStatus() == 0 ? Const.FAIL : Const.SUCCESS);
     }
 
     // -------------- 상품등록
@@ -116,7 +117,8 @@ public class AdminProductService {
             entity.setRecommandAge(dto.getRecommendedAge());
             entity.setPrice(dto.getPrice());
             entity.setAdminMemo(dto.getAdminMemo());
-            entity.setRecommandAge(dto.getRemainedCount());
+            entity.setRecommandAge(dto.getRemainedCnt());
+            entity.setNewFl(1);
             productRepository.save(entity);
             String target = "/product/" + entity.getIproduct();
 
@@ -154,7 +156,7 @@ public class AdminProductService {
             entity.setRecommandAge(dto.getRecommendedAge());
             entity.setPrice(dto.getPrice());
             entity.setAdminMemo(dto.getAdminMemo());
-            entity.setRecommandAge(dto.getRemainedCount());
+            entity.setRemainedCnt(dto.getRemainedCnt());
             entity.setNewFl(dto.getNewFl());
             entity.setPopFl(dto.getPopFl());
             productRepository.save(entity);
@@ -386,6 +388,14 @@ public class AdminProductService {
         }
         result = map.values().stream().sorted().toList();
         return result;
+    }
+
+    public List<AdminProductUptSelVo> getProduct(Long iproduct) {
+        return productRepository.selProductUptSelVo(iproduct);
+    }
+
+    public List<AdminProductPicUptSelVo> getProductPic(Long iproduct) {
+        return productRepository.selProductPicUptSelVo(iproduct);
     }
 }
 
