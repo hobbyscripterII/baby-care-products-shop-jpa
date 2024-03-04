@@ -45,8 +45,8 @@ public class AdminOrderQdlsSupportRepositoryImpl extends AdminOrderSearchConditi
     /**
      * @param iuser - 회원 PK
      */
-    private BooleanExpression targetIuser(int iuser) {
-        return !Utils.isNotNull(iuser) ? null : orderEntity.userEntity.iuser.eq((long) iuser);
+    private BooleanExpression targetIuser(long iuser) {
+        return !Utils.isNotNull(iuser) ? null : orderEntity.userEntity.iuser.eq(iuser);
     }
 
     /**

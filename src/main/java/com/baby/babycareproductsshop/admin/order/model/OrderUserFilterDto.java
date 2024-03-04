@@ -1,10 +1,12 @@
 package com.baby.babycareproductsshop.admin.order.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
 public class OrderUserFilterDto {
-    private int iuser;
+    @JsonIgnore
+    private long iuser;
     private int dateFl;
     private String startDate;
     private String endDate;
