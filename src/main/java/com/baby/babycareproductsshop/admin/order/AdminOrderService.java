@@ -90,6 +90,7 @@ public class AdminOrderService {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
                             .map(productItem -> OrderProductVo
                                     .builder()
+                                    .iproduct(productItem.getProductEntity().getIproduct())
                                     .repPic(productItem.getProductEntity().getRepPic())
                                     .productNm(productItem.getProductEntity().getProductNm())
                                     .cnt(productItem.getProductCnt())
@@ -121,6 +122,7 @@ public class AdminOrderService {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
                             .map(productItem -> OrderProductVo
                                     .builder()
+                                    .iproduct(productItem.getProductEntity().getIproduct())
                                     .repPic(productItem.getProductEntity().getRepPic())
                                     .productNm(productItem.getProductEntity().getProductNm())
                                     .cnt(productItem.getProductCnt())
@@ -159,6 +161,7 @@ public class AdminOrderService {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
                             .map(productItem -> OrderProductVo
                                     .builder()
+                                    .iproduct(productItem.getProductEntity().getIproduct())
                                     .repPic(productItem.getProductEntity().getRepPic())
                                     .productNm(productItem.getProductEntity().getProductNm())
                                     .cnt(productItem.getProductCnt())

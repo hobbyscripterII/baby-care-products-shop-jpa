@@ -10,6 +10,9 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class OrderProductVo {
+    @Schema(title = "상품 PK", description = "이미지 경로 호출 시 사용")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private long iproduct;
     @Schema(title = "이미지", description = "")
     private String repPic;
     @Schema(title = "주문 상품", description = "")
