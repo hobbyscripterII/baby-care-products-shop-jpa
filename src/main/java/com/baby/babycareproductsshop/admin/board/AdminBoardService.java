@@ -86,6 +86,7 @@ public class AdminBoardService {
         return new ApiResponse<>(null);
     }
 
+    @Transactional
     public ApiResponse<?> delBoardComment(long iboard, long icomment) {
         boardCommentRepository.deleteById(icomment);
         return new ApiResponse<>(null);

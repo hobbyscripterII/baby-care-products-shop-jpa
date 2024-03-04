@@ -1,11 +1,11 @@
 package com.baby.babycareproductsshop.board.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
 public class AdminInsBoardCommentDto {
-    @JsonInclude
+    @JsonIgnore
     private long iboard;
     private String comment;
 }
