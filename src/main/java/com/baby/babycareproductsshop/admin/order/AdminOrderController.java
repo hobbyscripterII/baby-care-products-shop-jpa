@@ -124,7 +124,7 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderListVo> getUserOrderList(@PathVariable(name = "iuser") long iuser, OrderUserFilterDto dto, @Parameter(hidden = true) @PageableDefault(size = 3) Pageable pageable) {
+    public List<OrderListVo> getUserOrderList(@PathVariable(name = "iuser") long iuser, OrderUserFilterDto dto, @Parameter(hidden = true) @PageableDefault(size = 2) Pageable pageable) {
         dto.setIuser(iuser);
         OrderUserFilterDto orderUserFilterDto = valid.commonValid(dto);
         return service.getUserOrderList(orderUserFilterDto, pageable);
