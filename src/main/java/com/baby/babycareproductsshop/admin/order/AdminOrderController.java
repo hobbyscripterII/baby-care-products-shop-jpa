@@ -96,7 +96,7 @@ public class AdminOrderController {
         return service.getOrderList(orderFilterDto, pageable(dto.getPage()));
     }
 
-    @GetMapping("/user")
+    @GetMapping("/user/{iuser}")
     @Operation(summary = "회원 주문 리스트 출력", description = """
             <ul><strong><font color="#D1180B">2024-03-01 추가</font><br></ul>
             <ul><strong>iuser - 회원 PK</strong><br></ul>
@@ -123,7 +123,8 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    public List<OrderListVo> getUserOrderList(OrderUserFilterDto dto) {
+    public List<OrderListVo> getUserOrderList(@PathVariable(name = "iuser") long iuser, OrderUserFilterDto dto) {
+        dto.setIuser(iuser);
         OrderUserFilterDto orderUserFilterDto = valid.commonValid(dto);
         return service.getUserOrderList(orderUserFilterDto, pageable(dto.getPage()));
     }
