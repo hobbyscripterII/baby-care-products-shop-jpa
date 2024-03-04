@@ -62,7 +62,7 @@ public class ProductEntity extends BaseEntity {
     private String adminMemo;
 
     @Column
-    private long imiddle;
+    private Long imiddle;
     @Column
-    private long imain;
+    private Long imain;
 }

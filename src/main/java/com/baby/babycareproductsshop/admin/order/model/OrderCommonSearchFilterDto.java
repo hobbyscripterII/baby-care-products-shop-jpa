@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class OrderCommonSearchFilterDto {
-    private int iuser;
+    private long iuser;
     private int searchCategory;
     private String keyword;
     private int dateFl;
