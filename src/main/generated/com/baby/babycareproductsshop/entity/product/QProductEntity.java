@@ -31,6 +31,10 @@ public class QProductEntity extends EntityPathBase<ProductEntity> {
 
     public final NumberPath<Integer> delFl = createNumber("delFl", Integer.class);
 
+    public final NumberPath<Long> imain = createNumber("imain", Long.class);
+
+    public final NumberPath<Long> imiddle = createNumber("imiddle", Long.class);
+
     public final NumberPath<Long> iproduct = createNumber("iproduct", Long.class);
 
     public final QProductMiddleCategoryEntity middleCategoryEntity;

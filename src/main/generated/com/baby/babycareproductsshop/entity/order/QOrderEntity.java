@@ -43,6 +43,8 @@ public class QOrderEntity extends EntityPathBase<OrderEntity> {
 
     public final StringPath email = createString("email");
 
+    public final StringPath fullAddress = createString("fullAddress");
+
     public final NumberPath<Long> iorder = createNumber("iorder", Long.class);
 
     public final QOrderPaymentOptionEntity orderPaymentOptionEntity;

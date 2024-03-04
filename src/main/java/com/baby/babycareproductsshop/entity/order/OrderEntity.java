@@ -31,7 +31,7 @@ public class OrderEntity extends BaseEntity {
     @ColumnDefault("'1'")
     private OrderPaymentOptionEntity orderPaymentOptionEntity;
 
-    @Column(length = 20, name = "address_nm")
+    @Column(length = 20, name = "addressee_nm")
     private String addressNm;
 
     @Column(length = 13)
@@ -41,6 +41,7 @@ public class OrderEntity extends BaseEntity {
     private String email;
 
     @Column(columnDefinition = "TINYINT UNSIGNED", length = 20, nullable = false)
+    @ColumnDefault("0")
     private int processState;
 
     @Column(columnDefinition = "INT UNSIGNED")
@@ -59,4 +60,6 @@ public class OrderEntity extends BaseEntity {
     private LocalDateTime deletedAt; // 주문 취소 일자
 
     private String adminMemo;
+
+    private String fullAddress;
 }
