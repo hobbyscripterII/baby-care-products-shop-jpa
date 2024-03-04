@@ -1,5 +1,6 @@
 package com.baby.babycareproductsshop.board;
 
+import com.baby.babycareproductsshop.entity.board.BoardCommentEntity;
 import com.baby.babycareproductsshop.entity.board.BoardEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 

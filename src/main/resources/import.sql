@@ -559,3 +559,11 @@ INSERT INTO `t_board` (`iboard`, `iuser`, `board_code`, `title`, `contents`, `cr
 INSERT INTO `t_board` (`iboard`, `iuser`, `board_code`, `title`, `contents`, `created_at`, `updated_at`) VALUES (919, 55, 2, '저만 도색까짐 심하나요?', '아이가 갖고놀은지 얼마 안되었는데 도색이 벌써 벗겨지네요', '2024-02-05 14:58:27', '2024-02-06 11:19:25');
 INSERT INTO `t_board` (`iboard`, `iuser`, `board_code`, `title`, `contents`, `created_at`, `updated_at`) VALUES (918, 55, 2, '쉽게 파손되요', '', '2024-02-05 14:52:10', '2024-02-06 11:19:25');
 INSERT INTO `t_board` (`iboard`, `iuser`, `board_code`, `title`, `contents`, `created_at`, `updated_at`) VALUES (1034, 23, 2, '이거 재입고 안돼요?', '<p><img src="/pic/board/1035/b42a0887-b80e-4ba0-8cb3-23c3475d108f.jpg">이거 재입고 안돼요ㅕ ? 왜 ?</p>', '2024-02-06 13:07:58', '2024-02-06 13:08:37');
+
+-- t_board_comment
+INSERT INTO `t_board_comment` (`created_at`, `iboard`, `icomment`, `iuser`, `updated_at`, `comment`) VALUES ('2024-03-04 06:13:23.720666', 932, 1, 1, '2024-03-04 06:13:23.720666', 'asdasd');
+INSERT INTO `t_board_comment` (`created_at`, `iboard`, `icomment`, `iuser`, `updated_at`, `comment`) VALUES ('2024-03-04 06:27:27.999137', 932, 2, 1, '2024-03-04 06:27:27.999137', '드라마마마~~~');
+INSERT INTO `t_board_comment` (`created_at`, `iboard`, `icomment`, `iuser`, `updated_at`, `comment`) VALUES ('2024-03-04 06:37:56.220896', 932, 3, 1, '2024-03-04 06:37:56.220896', 'eta eta~~ 뿜쁌뿜');
+INSERT INTO `t_board_comment` (`created_at`, `iboard`, `icomment`, `iuser`, `updated_at`, `comment`) VALUES ('2024-03-04 06:39:04.846083', 932, 4, 1, '2024-03-04 06:39:04.846083', '슈퍼샤이 슈퍼샤이~~~~');
+INSERT INTO `t_board_comment` (`created_at`, `iboard`, `icomment`, `iuser`, `updated_at`, `comment`) VALUES ('2024-03-04 06:42:25.792711', 932, 5, 1, '2024-03-04 06:42:25.792711', '포스터 말론 노래 들어보세요');
+INSERT INTO `t_board_comment` (`created_at`, `iboard`, `icomment`, `iuser`, `updated_at`, `comment`) VALUES ('2024-03-04 06:42:48.495769', 932, 6, 1, '2024-03-04 06:42:48.495769', '주영님 비상 프론트로 와요...!!!!');

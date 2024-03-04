@@ -18,8 +18,9 @@ public class BoardCommentEntity extends BaseEntity {
     @Column(columnDefinition = "BIGINT UNSIGNED")
     private Long icomment;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "iboard", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private BoardEntity boardEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
