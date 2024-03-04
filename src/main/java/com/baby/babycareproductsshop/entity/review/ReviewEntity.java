@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.context.annotation.Bean;
 
 @Data
@@ -34,6 +36,7 @@ public class ReviewEntity extends CreatedAtEntity {
 
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     @JoinColumn(name = "iuser", columnDefinition = "BIGINT UNSIGNED", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity userEntity;
 
     @Column(length = 1000)

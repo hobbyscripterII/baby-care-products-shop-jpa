@@ -4,6 +4,8 @@ import com.baby.babycareproductsshop.entity.CreatedAtEntity;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Entity
@@ -16,6 +18,7 @@ public class WishEntity extends CreatedAtEntity {
     @ManyToOne
     @MapsId("iuser")
     @JoinColumn(name = "iuser", columnDefinition = "BIGINT UNSIGNED")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity entity;
 
     @ManyToOne

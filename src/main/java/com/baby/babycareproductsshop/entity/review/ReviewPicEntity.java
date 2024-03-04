@@ -2,6 +2,8 @@ package com.baby.babycareproductsshop.entity.review;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -17,6 +19,7 @@ public class ReviewPicEntity {
 
     @ManyToOne
     @JoinColumn(name = "ireview", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private ReviewEntity review;
 
     @Column(name = "review_pic", length = 2500, nullable = false)
