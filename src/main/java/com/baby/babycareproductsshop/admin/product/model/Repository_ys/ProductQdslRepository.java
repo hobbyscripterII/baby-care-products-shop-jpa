@@ -13,6 +13,10 @@ public interface ProductQdslRepository {
     List<AdminProductSearchSelVo> selPopProduct(AdminProductSearchDto dto,Pageable pageable);
     List<AdminProductSearchSelVo> selNewProduct(AdminProductSearchDto dto,Pageable pageable);
 
+    List<AdminProductUptSelVo> selProductUptSelVo (Long iproduct);
+
+    List<AdminProductPicUptSelVo> selProductPicUptSelVo (Long iproduct);
+
 
 
 

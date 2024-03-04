@@ -16,5 +16,6 @@ public class ProductGetSearchSelVo {
     private Long imain;
     private Long imiddle;
     private String repPic;
+    private String adminMemo;
 
 }

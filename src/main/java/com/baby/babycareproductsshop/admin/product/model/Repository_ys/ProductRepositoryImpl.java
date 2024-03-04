@@ -5,6 +5,8 @@ import com.baby.babycareproductsshop.entity.product.ProductEntity;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.time.YearMonth;
 import java.util.List;
 
 import static com.baby.babycareproductsshop.entity.product.QProductEntity.productEntity;
+import static com.baby.babycareproductsshop.entity.product.QProductPicEntity.productPicEntity;
 import static com.baby.babycareproductsshop.entity.review.QReviewEntity.reviewEntity;
 
 //import static com.baby.babycareproductsshop.entity.product.QProductEntity.productEntity;
@@ -42,6 +45,7 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
                         //,tage(dto.getNewFl(),dto.getPopFl(),dto.getRcFl())
+                        //,productEntity.status.eq(0)
                 )
                 .from(productEntity)
                 .offset(pageable.getOffset())
@@ -51,7 +55,7 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
         return query.fetch();
     }
 
-    @Override //진열관리 인기
+    @Override //진열관리 인기 검색
     public List<AdminProductSearchSelVo> selPopProduct(AdminProductSearchDto dto, Pageable pageable) {
         JPAQuery<AdminProductSearchSelVo> query = jpaQueryFactory.select(Projections.fields(AdminProductSearchSelVo.class,
                         productEntity.productNm
@@ -66,7 +70,7 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                 .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
-                        ,productEntity.status.eq(0)
+                       // ,productEntity.status.eq(0)
                         ,productEntity.popFl.eq(1)
                 )
                 .from(productEntity)
@@ -77,7 +81,7 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
         return query.fetch();
     }
 
-    @Override//진열관리 신상품
+    @Override//진열관리 신상품 검색
     public List<AdminProductSearchSelVo> selNewProduct(AdminProductSearchDto dto, Pageable pageable) {
         JPAQuery<AdminProductSearchSelVo> query = jpaQueryFactory.select(Projections.fields(AdminProductSearchSelVo.class,
                         productEntity.productNm
@@ -92,7 +96,7 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                 .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
-                        ,productEntity.status.eq(0)
+                        //,productEntity.status.eq(0)
                         ,productEntity.newFl.eq(1)
 
                 )
@@ -103,6 +107,40 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
         return query.fetch();
 
     }
+    // 상품 수정시 필요한 데이터 불러오는거
+    @Override
+    public List<AdminProductUptSelVo> selProductUptSelVo(Long iproduct) {
+        JPAQuery<AdminProductUptSelVo> query = jpaQueryFactory.select(Projections.fields(AdminProductUptSelVo.class
+                                ,productEntity.middleCategoryEntity.productMainCategory.imain
+                                ,productEntity.middleCategoryEntity.imiddle
+                                ,productEntity.productNm
+                                ,productEntity.productDetails
+                                ,productEntity.recommandAge
+                                ,productEntity.adminMemo
+                                ,productEntity.price
+                                ,productEntity.repPic
+                                ,productEntity.remainedCnt
+                                //,productPicEntity.productPic
+                        )
+                )
+                .from(productEntity)
+                .leftJoin(productPicEntity).on(productEntity.iproduct.eq(productPicEntity.iproduct))
+                .where(productEntity.iproduct.eq(iproduct));
+        return query.fetch();
+    }
+
+    @Override
+    public List<AdminProductPicUptSelVo> selProductPicUptSelVo(Long iproduct) {
+        JPAQuery<AdminProductPicUptSelVo> query = jpaQueryFactory.select(Projections.fields(AdminProductPicUptSelVo.class
+                                ,productPicEntity.productPic
+                        )
+                )
+                .from(productPicEntity)
+                .where(productEntity.iproduct.eq(iproduct));
+        return query.fetch();
+    }
+
+
 //--------------------------------------------------------------------------------------------------------
 
     //상품검색
@@ -115,11 +153,14 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         ,productEntity.remainedCnt
                         ,productEntity.middleCategoryEntity.productMainCategory.imain
                         ,productEntity.middleCategoryEntity.imiddle
-                        ,productEntity.repPic))
+                        ,productEntity.repPic
+                        ,productEntity.adminMemo )
+                )
                 .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
-                        ,dateSelectSearch(dto.getDateFl())
+                       // ,dateSelectSearch(dto.getDateFl())
+                        ,productEntity.delFl.eq(0)
                         ,price(dto.getMinPrice(),dto.getMaxPrice())
                         ,searchDateFilter(dto.getSearchStartDate(),dto.getSearchEndDate())
                 )
@@ -137,7 +178,7 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
     }
 
     private BooleanExpression iproduct(Long iproduct) { //상품코드
-        return iproduct != 0 ? reviewEntity.productEntity.iproduct.eq(iproduct) : null;
+        return iproduct != 0 ? productEntity.iproduct.eq(iproduct) : null;
     }
     private BooleanExpression category(Long imain, Long imiddle) { //카테고리
         if(imain != 0 && imiddle != 0) {

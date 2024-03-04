@@ -53,12 +53,24 @@ public class AdminProductController {
     public ResVo delProduct(@RequestParam List<Long> iproduct) {
         return service.delProduct(iproduct);
     }
+    //-----------------------------------------------------------------상품 검색------------------------------------------------------
 
     @GetMapping("/productSearch")
     @Operation(summary = "상품검색 ")
     public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto) {
         return service.getSearchProductSelVo(dto,pageable(dto.getPage()));
     }
+    @GetMapping("/productUptDate")
+    @Operation(summary = "상품 수정 시 필요한 데이터 ")
+    public List<AdminProductUptSelVo> getProduct(Long iproduct) {
+        return service.getProduct(iproduct);
+    }
+    @GetMapping("/productUptPicDate")
+    @Operation(summary = "상품 수정 시 사진 불러옴 ")
+    public List<AdminProductPicUptSelVo> getProductPic(Long iproduct) {
+        return service.getProductPic(iproduct);
+    }
+
 
 
     //-----------------------------------------------------------------상품진열관리 추천상품 조회------------------------------------------------------
@@ -100,7 +112,7 @@ public class AdminProductController {
     //-----------------------진열관리 상품검색---------------
     @GetMapping("/searchRcProduct")
     @Operation(summary = "진열관리 추천 상품검색")
-    public List<AdminProductSearchSelVo> getSearchProductSelVo(AdminProductSearchDto dto ) {
+    public List<AdminProductSearchSelVo> getSearchRcProductSelVo(AdminProductSearchDto dto ) {
         return service.getSearchProductSelVo(dto,pageable(dto.getPage()));
     }
     @GetMapping("/searchPopProduct")
@@ -172,7 +184,7 @@ public class AdminProductController {
     //-----------------------------------------------------------------배너삭제------------------------------------------------------
     @DeleteMapping("/banner")
     @Operation(summary = "배너삭제")
-    public ResVo delbanner(@RequestBody Long ibanner) {
+    public ResVo delBanner(@RequestBody Long ibanner) {
         return service.delBanner(ibanner);
     }
     @GetMapping("/cancel")
