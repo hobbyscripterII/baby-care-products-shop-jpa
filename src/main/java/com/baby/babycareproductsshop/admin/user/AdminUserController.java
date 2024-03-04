@@ -1,6 +1,7 @@
 package com.baby.babycareproductsshop.admin.user;
 
 import com.baby.babycareproductsshop.admin.user.model.*;
+import com.baby.babycareproductsshop.common.ResVo;
 import com.baby.babycareproductsshop.response.ApiResponse;
 import com.baby.babycareproductsshop.user.model.UserSignInDto;
 import com.baby.babycareproductsshop.user.model.UserSignInVo;
@@ -65,15 +66,12 @@ public class AdminUserController {
         return service.getUserSignupStatistics(dto);
     }
 
-    @Operation(summary = "관리자에 의한 회원 탈퇴")
+    @Operation(summary = "관리자에 의한 회원 탈퇴 & 복구", description = """
+            result = 0 : 회원 탈퇴X<br>
+            result = 1 : 회원 탈퇴O
+            """)
     @DeleteMapping("/user/{iuser}")
-    public ApiResponse<?> unregisterUser(@PathVariable long iuser) {
-        return service.unregisterUser(iuser);
-    }
-
-    @Operation(summary = "스케줄에 의한 회원 탈퇴 테스트용")
-    @DeleteMapping("/user")
-    public ApiResponse<?> unregisterUsersTest() {
-        return service.unregisterUsersTest();
+    public ApiResponse<ResVo> changeRegistrationStatus(@PathVariable long iuser) {
+        return service.changeRegistrationStatus(iuser);
     }
 }

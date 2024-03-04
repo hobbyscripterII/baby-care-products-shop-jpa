@@ -29,7 +29,6 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.baby.babycareproductsshop.common.Const.rtName;
 
@@ -171,30 +170,9 @@ public class AdminUserService {
     }
 
     @Transactional
-    public ApiResponse<?> unregisterUser(long iuser) {
-        List<UserEntity> userEntityList = new ArrayList<>();
-        UserEntity userEntity = new UserEntity();
-        userEntity.setIuser(iuser);
-        userEntityList.add(userEntity);
-        List<OrderEntity> list = orderRepository.findAllByUserEntityIn(userEntityList);
-        for (OrderEntity orderEntity : list) {
-            orderEntity.setUserEntity(null);
-            orderEntity.setUserAddressEntity(null);
-        }
-        userRepository.deleteAll(userEntityList);
-        return new ApiResponse<>(null);
-    }
-
-    @Transactional
-    public ApiResponse<?> unregisterUsersTest() {
-        List<UserEntity> userEntityList = userRepository.findAllByUnregisterFlAndUpdatedAtLessThan(1L, LocalDateTime.now().minusDays(30));
-        List<OrderEntity> orderEntityList = orderRepository.findAllByUserEntityIn(userEntityList);
-        for (OrderEntity orderEntity : orderEntityList) {
-            orderEntity.setUserEntity(null);
-            orderEntity.setUserAddressEntity(null);
-        }
-        userRepository.deleteAll(userEntityList);
-        return new ApiResponse<>(null);
-
+    public ApiResponse<ResVo> changeRegistrationStatus(long iuser) {
+        UserEntity userEntity = userRepository.getReferenceById(iuser);
+        userEntity.setUnregisterFl(1 - userEntity.getUnregisterFl());
+        return new ApiResponse<>(new ResVo(userEntity.getUnregisterFl().intValue()));
     }
 }
