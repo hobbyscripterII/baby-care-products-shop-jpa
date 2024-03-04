@@ -60,4 +60,9 @@ public class ProductEntity extends BaseEntity {
 
     @Column(name = "admin_memo")
     private String adminMemo;
+
+    @Column
+    private long imiddle;
+    @Column
+    private long imain;
 }
