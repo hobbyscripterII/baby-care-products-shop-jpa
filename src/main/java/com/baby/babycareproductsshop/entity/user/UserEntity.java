@@ -17,7 +17,6 @@ import java.util.List;
 
 @Data
 @Entity
-@OnDelete(action = OnDeleteAction.CASCADE)
 @Table(name = "t_user", uniqueConstraints = {
         @UniqueConstraint(
                 columnNames = {"uid", "provider_type"}
