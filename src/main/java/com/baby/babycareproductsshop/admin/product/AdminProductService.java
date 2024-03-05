@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -390,12 +391,36 @@ public class AdminProductService {
         return result;
     }
 
-    public List<AdminProductUptSelVo> getProduct(Long iproduct) {
-        return productRepository.selProductUptSelVo(iproduct);
-    }
+//    public List<AdminProductUptSelVo> getProduct(Long iproduct) {
+//        return productRepository.selProductUptSelVo(iproduct);
+//    }
+//
+//    public List<AdminProductPicUptSelVo> getProductPic(Long iproduct) {
+//        return productRepository.selProductPicUptSelVo(iproduct);
+//    }
 
-    public List<AdminProductPicUptSelVo> getProductPic(Long iproduct) {
-        return productRepository.selProductPicUptSelVo(iproduct);
+    public List<AdminProductUptDate> getProductDate(Long iproduct) {
+        List<AdminProductUptSelVo> result = productRepository.selProductUptSelVo(iproduct);
+        List<AdminProductPicUptSelVo> result2 = productRepository.selProductPicUptSelVo(iproduct);
+        List<AdminProductUptDate> productUpdateList = result.stream().map(uptSelVo -> {
+            List<String> matchingPics = result2.stream()
+                    .filter(picUptSelVo -> picUptSelVo.getIproduct() == uptSelVo.getIproduct()) //
+                    .map(AdminProductPicUptSelVo::getProductPic)
+                    .collect(Collectors.toList());
+            return AdminProductUptDate.builder()
+                    .imain(uptSelVo.getImain())
+                    .imiddle(uptSelVo.getImiddle())
+                    .productNm(uptSelVo.getProductNm())
+                    .productDetails(uptSelVo.getProductDetails())
+                    .recommandAge(uptSelVo.getRecommendedAge())
+                    .adminMemo(uptSelVo.getAdminMemo())
+                    .price(uptSelVo.getPrice())
+                    .repPic(uptSelVo.getRepPic())
+                    .remainedCnt(uptSelVo.getRemainedCnt())
+                    .productPic(matchingPics)
+                    .build();
+        }).collect(Collectors.toList());
+        return productUpdateList;
     }
 }
 
