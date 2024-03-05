@@ -1,6 +1,7 @@
 package com.baby.babycareproductsshop.admin.user;
 
 import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserDto;
+import com.baby.babycareproductsshop.admin.user.model.AdminSelAllUserVo;
 import com.baby.babycareproductsshop.admin.user.model.AdminSelUserSignupDto;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
 import com.querydsl.core.types.Projections;
@@ -46,8 +47,6 @@ public class AdminUserQdslRepositoryImpl extends AdminUserSearchCondition implem
         if (StringUtils.hasText(dto.getPhoneNumber())) {
             query.where(likePhoneNumber(dto.getPhoneNumber()));
         }
-        log.info("query : {}", query);
-        log.info("userEntity : {}", query.fetch());
         return query.fetch();
     }
 
@@ -65,6 +64,28 @@ public class AdminUserQdslRepositoryImpl extends AdminUserSearchCondition implem
         }
         query.groupBy(userEntity.createdAt.year(), userEntity.createdAt.month());
         query.having(whereYear(dto.getYear()));
+        return query.fetch();
+    }
+
+    @Override
+    public List<AdminSelAllUserVo> selUserAllCount(AdminSelAllUserDto dto) {
+        JPAQuery<AdminSelAllUserVo> query = jpaQueryFactory.select(Projections.fields(AdminSelAllUserVo.class,
+                        userEntity.iuser.count().as("totalCnt")
+                ))
+                .from(userEntity)
+                .where(whereUnregisteredFl(dto.getUnregisteredFl()));
+
+        query.where(dto.getKeywordType() == 0 ? null :
+                dto.getKeywordType() == 1 ?
+                        likeEmail(dto.getKeyword()) : likeNm(dto.getKeyword()));
+
+        if (dto.getBefore() != null) {
+            query.where(dto.getAfter() == null ? betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN))
+                    : betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN), LocalDateTime.of(dto.getAfter(), LocalTime.MAX).withNano(0)));
+        }
+        if (StringUtils.hasText(dto.getPhoneNumber())) {
+            query.where(likePhoneNumber(dto.getPhoneNumber()));
+        }
         return query.fetch();
     }
 }
