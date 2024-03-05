@@ -29,4 +29,6 @@ public class OrderRefundListVo {
     private String ordered;
     @Schema(title = "결제수단", description = "")
     private String paymentOption;
+    @Schema(title = "리스트 총 개수", description = "")
+    private long totalCount;
 }

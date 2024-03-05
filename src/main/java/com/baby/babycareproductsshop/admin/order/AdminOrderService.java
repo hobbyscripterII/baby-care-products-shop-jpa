@@ -84,7 +84,21 @@ public class AdminOrderService {
     }
 
     public List<OrderListVo> getOrderList(OrderFilterDto dto, Pageable pageable) {
-        return adminOrderRepository.getOrderList(dto, pageable)
+        OrderCommonSearchFilterDto filterDto = OrderCommonSearchFilterDto
+                .builder()
+                .searchCategory(dto.getSearchCategory())
+                .keyword(dto.getKeyword())
+                .dateFl(dto.getDateFl())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .payCategory(dto.getPayCategory())
+                .processState(dto.getProcessState())
+                .offSet(pageable.getOffset())
+                .size(pageable.getPageSize())
+                .sort(dto.getSort())
+                .build();
+
+        return adminOrderRepository.getOrderList(filterDto)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -110,13 +124,26 @@ public class AdminOrderService {
                             .totalAmount(orderItem.getTotalPrice())
                             .payCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
                             .refundFl(orderItem.getProcessState() == ProcessState.DELIVER_SUCCESS.getProcessStateNum() ? 1 : 0)
+                            .totalCount(getCount(filterDto))
                             .build();
                 })
                 .toList();
     }
 
     public List<OrderListVo> getUserOrderList(OrderUserFilterDto dto, Pageable pageable) {
-        return adminOrderRepository.getUserOrderList(dto, pageable)
+        OrderCommonSearchFilterDto filterDto = OrderCommonSearchFilterDto
+                .builder()
+                .iuser(dto.getIuser())
+                .dateFl(dto.getDateFl())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .processState(dto.getProcessState())
+                .offSet(pageable.getOffset())
+                .size(pageable.getPageSize())
+                .sort(dto.getSort())
+                .build();
+
+        return adminOrderRepository.getUserOrderList(filterDto)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -142,6 +169,7 @@ public class AdminOrderService {
                             .totalAmount(orderItem.getTotalPrice())
                             .payCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
                             .refundFl(orderItem.getProcessState() == ProcessState.DELIVER_SUCCESS.getProcessStateNum() ? 1 : 0)
+                            .totalCount(getCount(filterDto))
                             .build();
                 })
                 .toList();
@@ -155,7 +183,21 @@ public class AdminOrderService {
      * idetails가 갖고있는 iproduct : 1
      */
     public List<OrderDetailsListVo> getOrderDetailsList(OrderSmallFilterDto dto, Pageable pageable) {
-        return adminOrderRepository.getOrderDetailsList(dto, pageable)
+        OrderCommonSearchFilterDto filterDto = OrderCommonSearchFilterDto
+                .builder()
+                .searchCategory(dto.getSearchCategory())
+                .keyword(dto.getKeyword())
+                .dateFl(dto.getDateFl())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .payCategory(dto.getPayCategory())
+                .processState(dto.getProcessState())
+                .offSet(pageable.getOffset())
+                .size(pageable.getPageSize())
+                .sort(dto.getSort())
+                .build();
+
+        return adminOrderRepository.getOrderDetailsList(filterDto)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -182,13 +224,29 @@ public class AdminOrderService {
                                     .sum())
                             .payCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
                             .buyComfirmFl(0) // 구매 확정 여부(자동화 추가)
+                            .totalCount(getCount(filterDto))
                             .build();
                 })
                 .toList();
     }
 
     public List<OrderDeleteVo> getOrderDeleteList(OrderSmallFilterDto dto, Pageable pageable) {
-        return adminOrderRepository.getOrderDeleteList(dto, pageable)
+        OrderCommonSearchFilterDto filterDto = OrderCommonSearchFilterDto
+                .builder()
+                .processState(ProcessState.ORDER_CANCEL.getProcessStateNum())
+                .searchCategory(dto.getSearchCategory())
+                .keyword(dto.getKeyword())
+                .dateFl(dto.getDateFl())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .payCategory(dto.getPayCategory())
+                .processState(dto.getProcessState())
+                .offSet(pageable.getOffset())
+                .size(pageable.getPageSize())
+                .sort(dto.getSort())
+                .build();
+
+        return adminOrderRepository.getOrderDeleteList(filterDto)
                 .stream()
                 .map(orderItem -> {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
@@ -211,13 +269,29 @@ public class AdminOrderService {
                             .ordered(orderItem.getUserEntity().getNm())
                             .totalAmount(orderItem.getTotalPrice())
                             .payCategory(orderItem.getOrderPaymentOptionEntity().getIpaymentOption().intValue())
+                            .totalCount(getCount(filterDto))
                             .build();
                 })
                 .toList();
     }
 
     public List<OrderRefundListVo> getOrderRefundList(OrderSmallFilterDto dto, Pageable pageable) {
-        return adminOrderRepository.getOrderRefundList(dto, pageable)
+        OrderCommonSearchFilterDto filterDto = OrderCommonSearchFilterDto
+                .builder()
+                .processState(ProcessState.REFUND.getProcessStateNum())
+                .searchCategory(dto.getSearchCategory())
+                .keyword(dto.getKeyword())
+                .dateFl(dto.getDateFl())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .payCategory(dto.getPayCategory())
+                .processState(dto.getProcessState())
+                .offSet(pageable.getOffset())
+                .size(pageable.getPageSize())
+                .sort(dto.getSort())
+                .build();
+
+        return adminOrderRepository.getOrderRefundList(filterDto)
                 .stream()
                 .map(item -> OrderRefundListVo
                         .builder()
@@ -230,12 +304,24 @@ public class AdminOrderService {
                         .processState(item.getOrderDetailsEntity().getOrderEntity().getProcessState())
                         .refundedAt(item.getCreatedAt().toString())
                         .ordered(item.getOrderDetailsEntity().getOrderEntity().getUserEntity().getNm())
+                        .totalCount(getCount(filterDto))
                         .build())
                 .toList();
     }
 
     public List<OrderMemoListVo> getOrderAdminMemoList(OrderMemoListDto dto, Pageable pageable) {
-        return adminOrderRepository.getOrderAdminMemoList(dto, pageable)
+        OrderCommonSearchFilterDto filterDto = OrderCommonSearchFilterDto
+                .builder()
+                .searchCategory(dto.getSearchCategory())
+                .keyword(dto.getKeyword())
+                .dateFl(dto.getDateFl())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .offSet(pageable.getOffset())
+                .size(pageable.getPageSize())
+                .sort(dto.getSort())
+                .build();
+        return adminOrderRepository.getOrderAdminMemoList(filterDto)
                 .stream()
                 .map(item ->
                         OrderMemoListVo
@@ -245,6 +331,7 @@ public class AdminOrderService {
                                 .ordered(item.getAddressNm())
                                 .processState(item.getProcessState())
                                 .memo(item.getAdminMemo())
+                                .totalCount(getCount(filterDto))
                                 .build()
                 )
                 .toList();
@@ -292,6 +379,10 @@ public class AdminOrderService {
                 .toList();
     }
 
+    public long getCount(OrderCommonSearchFilterDto dto) {
+        return adminOrderRepository.getCount(dto);
+    }
+
     private int getDeleteAmount(int deleteFl, int totalAmount) {
         return deleteFl == 1 ? totalAmount : 0;
     }
@@ -312,8 +403,7 @@ public class AdminOrderService {
             case 1 -> result = processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
             case 2 -> result = processState == ProcessState.ON_DELIVERY.getProcessStateNum();
             case 3 -> result = processState == ProcessState.DELIVER_SUCCESS.getProcessStateNum();
-            case 5 ->
-                    result = processState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
+            case 5 -> result = processState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
         }
         return result;
     }
@@ -326,7 +416,7 @@ public class AdminOrderService {
         }
         return processState;
     }
-    
+
     //------------------------------------------th
     public ApiResponse<?> getSalesStatistics(AdminSelOrderStatisticsDto dto) {
         List<AdminSelOrderSalesVo> result = adminOrderRepository.selOrderSales(dto);

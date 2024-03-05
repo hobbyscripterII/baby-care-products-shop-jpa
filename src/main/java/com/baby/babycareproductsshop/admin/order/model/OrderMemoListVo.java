@@ -19,4 +19,6 @@ public class OrderMemoListVo {
     private int processState;
     @Schema(title = "메모", description = "")
     private String memo;
+    @Schema(title = "리스트 총 개수", description = "")
+    private long totalCount;
 }
