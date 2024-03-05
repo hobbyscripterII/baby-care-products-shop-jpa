@@ -160,8 +160,8 @@ public class AdminOrderController {
             <li>주문일 순 - 1</li>
             <li>처리일 역순 - 2</li>
             <li>처리일 순 - 3</li></ul>""")
-    @Parameters(value = {@Parameter(name = "process_state", description = "주문 처리 상태<br>전체 - 0<br>입금 대기 - 1<br>배송 준비중 - 2<br>배송중 - 3<br>배송완료 - 4<br>")})
-    public List<OrderDetailsListVo> getOrderDetailsList(@RequestParam(name = "process_state") int processState, OrderSmallFilterDto dto) {
+    @Parameters(value = {@Parameter(name = "processState", description = "주문 처리 상태<br>전체 - 0<br>입금 대기 - 1<br>배송 준비중 - 2<br>배송중 - 3<br>배송완료 - 4<br>")})
+    public List<OrderDetailsListVo> getOrderDetailsList(@RequestParam(name = "processState") int processState, OrderSmallFilterDto dto) {
         dto.setProcessState(processState);
         OrderSmallFilterDto orderSmallFilterDto = valid.commonValid(dto);
         return service.getOrderDetailsList(orderSmallFilterDto, pageable(dto.getPage()));

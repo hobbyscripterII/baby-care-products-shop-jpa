@@ -30,4 +30,6 @@ public class OrderListVo {
     private int payCategory;
     @Schema(title = "반품 신청", description = "0 - '반품 신청' 버튼 출력 X<br>1 - '반품 신청' 버튼 출력 O")
     private int refundFl;
+    @Schema(title = "리스트 총 개수", description = "")
+    private long totalCount;
 }

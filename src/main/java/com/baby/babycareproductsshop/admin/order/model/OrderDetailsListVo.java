@@ -27,4 +27,6 @@ public class OrderDetailsListVo {
     private int payCategory;
     @Schema(title = "구매 확정 여부", description = "")
     private int buyComfirmFl;
+    @Schema(title = "리스트 총 개수", description = "")
+    private long totalCount;
 }
