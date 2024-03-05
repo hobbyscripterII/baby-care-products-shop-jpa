@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,17 +52,54 @@ public class AdminProductService {
     //상품진열관리 검색
     public List<AdminProductSearchSelVo> getSearchProductSelVo(AdminProductSearchDto dto, Pageable pageable) {
         List<AdminProductSearchSelVo> vo = productRepository.selProductAll(dto, pageable);
-        return vo;
+        long totalCount = productRepository.countRcProduct(dto);
+
+        List<AdminProductSearchSelVo> updatedVo = vo.stream().map(item ->
+                AdminProductSearchSelVo.builder()
+                        .productNm(item.getProductNm())
+                        .repPic(item.getRepPic())
+                        .status(item.getStatus())
+                        .price(item.getPrice())
+                        .iproduct(item.getIproduct())
+                        .totalCount(totalCount)
+                        .build()
+        ).collect(Collectors.toList());
+
+        return updatedVo;
     }
 
     public List<AdminProductSearchSelVo> getSearchPopProductSelVo(AdminProductSearchDto dto, Pageable pageable) {
         List<AdminProductSearchSelVo> vo = productRepository.selPopProduct(dto, pageable);
-        return vo;
+        long totalCount = productRepository.countPopProduct(dto);
+        List<AdminProductSearchSelVo> updatedVo = vo.stream().map(item ->
+                AdminProductSearchSelVo.builder()
+                        .productNm(item.getProductNm())
+                        .repPic(item.getRepPic())
+                        .status(item.getStatus())
+                        .price(item.getPrice())
+                        .iproduct(item.getIproduct())
+                        .totalCount(totalCount)
+                        .build()
+        ).collect(Collectors.toList());
+        return updatedVo;
     }
 
     public List<AdminProductSearchSelVo> getSearchNewProductSelVo(AdminProductSearchDto dto, Pageable pageable) {
         List<AdminProductSearchSelVo> vo = productRepository.selNewProduct(dto, pageable);
-        return vo;
+        long totalCount = productRepository.countNewProduct(dto);
+        List<AdminProductSearchSelVo> updatedVo = vo.stream().map(item ->
+                AdminProductSearchSelVo.builder()
+                        .productNm(item.getProductNm())
+                        .repPic(item.getRepPic())
+                        .status(item.getStatus())
+                        .price(item.getPrice())
+                        .iproduct(item.getIproduct())
+                        .totalCount(totalCount)
+                        .build()
+        ).collect(Collectors.toList());
+
+        return updatedVo;
+
     }
 
     //------------상품진열관리 추천상품 조회
@@ -162,13 +200,23 @@ public class AdminProductService {
             entity.setPopFl(dto.getPopFl());
             productRepository.save(entity);
 
+//            List<ProductPicEntity> productPics = productPicRepository.findByIproduct(iproduct);
+//            String target = "/product/" + entity.getIproduct();
+//            myFileUtils.delDirTrigger(target); // 기존 이미지 삭제
+//
+//            String detailsFileNm = myFileUtils.transferTo(productDetails, target);
+//            entity.setProductDetails(detailsFileNm);
+//            entity.setRepPic(pics.toString());
+            List<ProductPicEntity> productPics = productPicRepository.findByIproduct(iproduct);
             String target = "/product/" + entity.getIproduct();
-            myFileUtils.delDirTrigger(target);
-
-            String detailsFileNm = myFileUtils.transferTo(productDetails, target);
-            entity.setProductDetails(detailsFileNm);
-            entity.setRepPic(pics.toString());
-
+            for (ProductPicEntity pic : productPics) {
+                File oldFile = new File(target + "/" + pic.getProductPic());
+                if (oldFile.exists() && oldFile.delete()) {
+                    System.out.println(pic.getProductPic() + " 파일삭제 성공");
+                } else {
+                    System.out.println(pic.getProductPic() + " 파일삭제 실패 혹은 파일이 존재하지 않습니다.");
+                }
+            }
             ProductEntity savedEntity = productRepository.save(entity);
             for (MultipartFile file : pics) {
                 String fileNm = myFileUtils.transferTo(file, target);
@@ -182,7 +230,6 @@ public class AdminProductService {
             return new ResVo(Const.FAIL);
         }
     }
-
     //------------------------------------------------------- 상품삭제
     @Transactional
     public ResVo delProduct(List<Long> iproduct) {
@@ -199,17 +246,33 @@ public class AdminProductService {
 
     //상품검색
     public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto, Pageable pageable) {
-//        List<ProductEntity> entity = productRepository.findProduct(dto);
-//        List<ProductGetSearchSelVo> vo = entity.stream().map(item -> ProductGetSearchSelVo
-//                .builder()
-//                .productNm(item.getProductNm())
-//                .price(item.getPrice())
-//                .imain(item.getMiddleCategoryEntity().getProductMainCategory().getImain())
-//                .imiddle(item.getMiddleCategoryEntity().getImiddle())
-//                .repPic(item.getRepPic())
-//                .build()).collect(Collectors.toList());
-        List<ProductGetSearchSelVo> vo = productRepository.findProduct(dto, pageable);
-        return vo;
+        //List<ProductEntity> list = productRepository.selPicsAll(dto,pageable);
+        //List<ProductGetSearchSelVo> list = new ArrayList<>();
+        long totalCount = productRepository.countSearchProduct(dto);
+
+        List<AdminProductPicUptSelVo> picsList = productRepository.selProductPicUptSelVo();
+        List<ProductGetSearchSelVo> products = productRepository.findProduct(dto, pageable);
+        return products.stream().map(item -> {
+            List<String> pics = picsList.stream()
+                    .filter(pic -> pic.getIproduct().equals(item.getIproduct()))
+                    .map(AdminProductPicUptSelVo::getProductPic) // getProductPic() 메서드가 사진의 URL 혹은 경로를 반환한다고 가정합니다.
+                    .collect(Collectors.toList());
+
+                    return ProductGetSearchSelVo.builder()
+                            .productPic(pics)
+                            .price(item.getPrice())
+                            .adminMemo(item.getAdminMemo())
+                            .productNm(item.getProductNm())
+                            .imiddle(item.getImiddle())
+                            .imain(item.getImain())
+                            .productDetails(item.getProductDetails())
+                            .iproduct(item.getIproduct())
+                            .recommandAge(item.getRecommandAge())
+                            .remainedCnt(item.getRemainedCnt())
+                            .totalCount(totalCount)
+                            .build();
+                }
+        ).collect(Collectors.toList());
     }
 
     //------------배너출력-------------------------
@@ -269,16 +332,41 @@ public class AdminProductService {
 
     //------리뷰 검색
     public List<SearchReviewSelVo> getSearchReview(ReviewSearchDto dto, Pageable pageable) {
-//        List<ReviewEntity> result = reviewRepository.selReview(dto);
-//        List<SearchReviewSelVo> vo = new ArrayList<>();
-        List<SearchReviewSelVo> vo = reviewRepository.selReview(dto, pageable);
-        return vo;
+        List<SearchReviewSelVo> reviews = reviewRepository.selReview(dto, pageable);
+        long totalCount = reviewRepository.totalCountReview(dto);
+        return reviews.stream()
+                .map(review -> SearchReviewSelVo.builder()
+                        .ireview(review.getIreview())
+                        .nm(review.getNm())
+                        .reqReviewPic(review.getReqReviewPic())
+                        .iproduct(review.getIproduct())
+                        .productNm(review.getProductNm())
+                        .contents(review.getContents())
+                        .productScore(review.getProductScore())
+                        .delFl(review.getDelFl())
+                        .totalCount(totalCount)
+                        .build())
+                .collect(Collectors.toList());
     }
 
     // 숨겼던 리뷰 검색
     public List<SearchReviewSelVo> getHiddenReview(ReviewSearchDto dto, Pageable pageable) {
-        List<SearchReviewSelVo> vo = reviewRepository.selReviewDel(dto, pageable);
-        return vo;
+        List<SearchReviewSelVo> reviews = reviewRepository.selReviewDel(dto, pageable);
+        long totalCount = reviewRepository.countReview(dto);
+        return reviews.stream()
+                .map(review -> SearchReviewSelVo.builder()
+                        .ireview(review.getIreview())
+                        .nm(review.getNm())
+                        .reqReviewPic(review.getReqReviewPic())
+                        .iproduct(review.getIproduct())
+                        .productNm(review.getProductNm())
+                        .contents(review.getContents())
+                        .productScore(review.getProductScore())
+                        .delFl(review.getDelFl())
+                        .totalCount(totalCount)
+                        .build())
+                .collect(Collectors.toList());
+
     }
 
     //관리자 메모 작성&수정
@@ -298,7 +386,7 @@ public class AdminProductService {
         ReviewEntity entity = optionalReview.get();
         entity.setDelFl(optionalReview.get().getDelFl() == 0 ? 1 : 0);
         reviewRepository.save(entity);
-        return new ResVo(entity.getDelFl() == 0 ? Const.SUCCESS : Const.FAIL);
+        return new ResVo(entity.getDelFl() == 0 ? Const.FAIL : Const.SUCCESS);
     }
 
     // 리뷰클릭시 뜨는창
@@ -399,29 +487,29 @@ public class AdminProductService {
 //        return productRepository.selProductPicUptSelVo(iproduct);
 //    }
 
-    public List<AdminProductUptDate> getProductDate(Long iproduct) {
-        List<AdminProductUptSelVo> result = productRepository.selProductUptSelVo(iproduct);
-        List<AdminProductPicUptSelVo> result2 = productRepository.selProductPicUptSelVo(iproduct);
-        List<AdminProductUptDate> productUpdateList = result.stream().map(uptSelVo -> {
-            List<String> matchingPics = result2.stream()
-                    .filter(picUptSelVo -> picUptSelVo.getIproduct() == uptSelVo.getIproduct()) //
-                    .map(AdminProductPicUptSelVo::getProductPic)
-                    .collect(Collectors.toList());
-            return AdminProductUptDate.builder()
-                    .imain(uptSelVo.getImain())
-                    .imiddle(uptSelVo.getImiddle())
-                    .productNm(uptSelVo.getProductNm())
-                    .productDetails(uptSelVo.getProductDetails())
-                    .recommandAge(uptSelVo.getRecommendedAge())
-                    .adminMemo(uptSelVo.getAdminMemo())
-                    .price(uptSelVo.getPrice())
-                    .repPic(uptSelVo.getRepPic())
-                    .remainedCnt(uptSelVo.getRemainedCnt())
-                    .productPic(matchingPics)
-                    .build();
-        }).collect(Collectors.toList());
-        return productUpdateList;
-    }
+//    public List<AdminProductUptDate> getProductDate(Long iproduct) {
+//        List<AdminProductUptSelVo> result = productRepository.selProductUptSelVo(iproduct);
+//        List<AdminProductPicUptSelVo> result2 = productRepository.selProductPicUptSelVo(iproduct);
+//        List<AdminProductUptDate> productUpdateList = result.stream().map(uptSelVo -> {
+//            List<String> matchingPics = result2.stream()
+//                    .filter(picUptSelVo -> picUptSelVo.getIproduct() == uptSelVo.getIproduct()) //
+//                    .map(AdminProductPicUptSelVo::getProductPic)
+//                    .collect(Collectors.toList());
+//            return AdminProductUptDate.builder()
+//                    .imain(uptSelVo.getImain())
+//                    .imiddle(uptSelVo.getImiddle())
+//                    .productNm(uptSelVo.getProductNm())
+//                    .productDetails(uptSelVo.getProductDetails())
+//                    .recommandAge(uptSelVo.getRecommendedAge())
+//                    .adminMemo(uptSelVo.getAdminMemo())
+//                    .price(uptSelVo.getPrice())
+//                    //.repPic(uptSelVo.getRepPic())
+//                    .remainedCnt(uptSelVo.getRemainedCnt())
+//                    .productPic(matchingPics)
+//                    .build();
+//        }).collect(Collectors.toList());
+//        return productUpdateList;
+//    }
 }
 
 

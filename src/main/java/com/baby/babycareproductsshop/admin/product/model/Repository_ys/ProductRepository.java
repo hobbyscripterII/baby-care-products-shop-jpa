@@ -3,6 +3,7 @@ package com.baby.babycareproductsshop.admin.product.model.Repository_ys;
 
 import com.baby.babycareproductsshop.admin.product.model.AdminProductInsDto;
 import com.baby.babycareproductsshop.admin.product.model.AdminProductUptSelVo;
+import com.baby.babycareproductsshop.admin.product.model.ProductGetSearchDto;
 import com.baby.babycareproductsshop.admin.product.model.ProductManagementSelVo;
 import com.baby.babycareproductsshop.entity.product.ProductEntity;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity,Long>, ProductQdslRepository  {
+
 
     List<ProductManagementSelVo> findAllByStatusAndRcFl(int rcFl,int status);
 
@@ -29,5 +31,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity,Long>, Pr
 //            "LEFT JOIN r. p " +
 //            "WHERE r.iproduct = ?1")
 //    AdminProductUptSelVo findProductSelvo(Long iproduct);
+
+
 
 }

@@ -3,6 +3,8 @@ package com.baby.babycareproductsshop.admin.product.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class AdminProductUptDto {
     @JsonIgnore
@@ -25,6 +27,9 @@ public class AdminProductUptDto {
 
     @JsonIgnore
     private String repPic; // 상품대표사진
+
+    @JsonIgnore
+    private List<Integer> pics;
 
     private int remainedCnt; //재고
     private int newFl;

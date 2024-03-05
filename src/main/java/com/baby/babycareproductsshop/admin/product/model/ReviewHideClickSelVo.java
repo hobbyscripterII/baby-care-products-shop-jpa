@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class ReviewHideClickSelVo {
     private String nm; //작성자이름
-    private String repPic; // 대표사진
+    private String reqReviewPic; // 대표사진
     private String productNm; // 상품이름
     private String contents; // 리뷰내용
     private int productScore; // 별점
