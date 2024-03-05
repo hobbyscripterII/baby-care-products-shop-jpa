@@ -35,8 +35,6 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         productEntity.productNm
                         ,productEntity.iproduct
                         ,productEntity.price
-//                        ,productEntity.middleCategoryEntity.productMainCategory.imain
-//                        ,productEntity.middleCategoryEntity.imiddle
                         ,productEntity.repPic
                         ,productEntity.status
                         )
@@ -44,14 +42,11 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                 .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
-                        //,tage(dto.getNewFl(),dto.getPopFl(),dto.getRcFl())
-                        //,productEntity.status.eq(0)
+                        ,productEntity.status.eq(0)
                 )
                 .from(productEntity)
                 .offset(pageable.getOffset())
-//                .size(pageable.getPageSize())
                 .limit(pageable.getPageSize());
-
         return query.fetch();
     }
 
@@ -61,23 +56,19 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         productEntity.productNm
                         ,productEntity.iproduct
                         ,productEntity.price
-//                        ,productEntity.middleCategoryEntity.productMainCategory.imain
-//                        ,productEntity.middleCategoryEntity.imiddle
                         ,productEntity.repPic
-                                ,productEntity.status
+                        ,productEntity.status
                         )
                 )
                 .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
-                       // ,productEntity.status.eq(0)
+                        ,productEntity.status.eq(0)
                         ,productEntity.popFl.eq(1)
                 )
                 .from(productEntity)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
-
-
         return query.fetch();
     }
 
@@ -87,16 +78,14 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         productEntity.productNm
                         ,productEntity.iproduct
                         ,productEntity.price
-//                        ,productEntity.middleCategoryEntity.productMainCategory.imain
-//                        ,productEntity.middleCategoryEntity.imiddle
                         ,productEntity.repPic
-                                ,productEntity.status
+                        ,productEntity.status
                         )
                 )
                 .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
-                        //,productEntity.status.eq(0)
+                        ,productEntity.status.eq(0)
                         ,productEntity.newFl.eq(1)
 
                 )
@@ -130,14 +119,65 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
     }
 
     @Override
-    public List<AdminProductPicUptSelVo> selProductPicUptSelVo(Long iproduct) {
+    public List<AdminProductPicUptSelVo> selProductPicUptSelVo() {
         JPAQuery<AdminProductPicUptSelVo> query = jpaQueryFactory.select(Projections.fields(AdminProductPicUptSelVo.class
                                 ,productPicEntity.productPic
+                                ,productPicEntity.productEntity.iproduct
                         )
                 )
-                .from(productPicEntity)
-                .where(productEntity.iproduct.eq(iproduct));
+                .from(productPicEntity);
         return query.fetch();
+    }
+
+    @Override
+    public long countSearchProduct(ProductGetSearchDto dto) {
+        JPAQuery<Long> totalCountQuery = jpaQueryFactory.select(productEntity.count())
+                .where(productNm(dto.getKeyword()),
+                        iproduct(dto.getIproduct()),
+                        category(dto.getImain(),dto.getImiddle()),
+                        productEntity.delFl.eq(0),
+                        price(dto.getMinPrice(),dto.getMaxPrice()),
+                        searchDateFilter(dto.getSearchStartDate(),dto.getSearchEndDate())
+                )
+                .from(productEntity);
+        return totalCountQuery.fetchOne();
+    }
+
+    @Override
+    public long countRcProduct(AdminProductSearchDto dto) {
+        JPAQuery<Long> countQuery = jpaQueryFactory.select(productEntity.count())
+                .where(productNm(dto.getKeyword()),
+                        iproduct(dto.getIproduct()),
+                        category(dto.getImain(),dto.getImiddle())
+                )
+                .from(productEntity);
+
+        return countQuery.fetchOne();
+    }
+
+    @Override
+    public long countPopProduct(AdminProductSearchDto dto) {
+        JPAQuery<Long> countQuery = jpaQueryFactory.select(productEntity.count())
+                .where(productNm(dto.getKeyword()),
+                        iproduct(dto.getIproduct()),
+                        category(dto.getImain(),dto.getImiddle()),
+                        productEntity.popFl.eq(1)
+                )
+                .from(productEntity);
+
+        return countQuery.fetchOne();
+    }
+
+    @Override
+    public long countNewProduct(AdminProductSearchDto dto) {
+        JPAQuery<Long> countQuery = jpaQueryFactory.select(productEntity.count())
+                .where(productNm(dto.getKeyword()),
+                        iproduct(dto.getIproduct()),
+                        category(dto.getImain(),dto.getImiddle()),
+                        productEntity.newFl.eq(1)
+                )
+                .from(productEntity);
+        return countQuery.fetchOne();
     }
 
 
@@ -153,7 +193,9 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                         ,productEntity.remainedCnt
                         ,productEntity.middleCategoryEntity.productMainCategory.imain
                         ,productEntity.middleCategoryEntity.imiddle
-                        ,productEntity.repPic
+                        ,productEntity.recommandAge
+                        ,productEntity.productDetails
+                       // ,productEntity.repPic
                         ,productEntity.adminMemo )
                 )
                 .where(productNm(dto.getKeyword())
@@ -166,7 +208,8 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                 )
                 .from(productEntity)
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .limit(pageable.getPageSize())
+                .orderBy(productEntity.createdAt.desc());
         return query.fetch();
     }
 

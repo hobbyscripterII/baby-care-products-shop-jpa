@@ -12,11 +12,10 @@ public class AdminProductUptDate {
     private Long imain;
     private Long imiddle;
     private String productNm;
-    private String productDetails;
     private int recommandAge;
     private String adminMemo;
     private int price;
-    private String repPic;
+    //private String repPic;
     private int remainedCnt;
 
 }

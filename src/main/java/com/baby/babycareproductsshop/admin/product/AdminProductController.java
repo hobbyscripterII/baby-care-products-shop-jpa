@@ -61,11 +61,11 @@ public class AdminProductController {
         return service.getSearchProductSelVo(dto,pageable(dto.getPage()));
     }
 
-    @GetMapping("/productUptPicDate")
-    @Operation(summary = "상품 수정 시 필요한데이터  불러옴 ")
-    public List<AdminProductUptDate> getProductDate(Long iproduct) {
-        return service.getProductDate(iproduct);
-    }
+//    @GetMapping("/productUptDate")
+//    @Operation(summary = "상품 수정 시 기존 데이터 호출 ")
+//    public List<AdminProductUptDate> getProductDate(Long iproduct) {
+//        return service.getProductDate(iproduct);
+//    }
 
 
 
@@ -178,9 +178,9 @@ public class AdminProductController {
         return service.updateBanner(ibanner, pic, dto);
     }
     //-----------------------------------------------------------------배너삭제------------------------------------------------------
-    @DeleteMapping("/banner")
+    @DeleteMapping("/banner/{ibanner}")
     @Operation(summary = "배너삭제")
-    public ResVo delBanner(@RequestBody Long ibanner) {
+    public ResVo delBanner(@PathVariable Long ibanner) {
         return service.delBanner(ibanner);
     }
     @GetMapping("/cancel")

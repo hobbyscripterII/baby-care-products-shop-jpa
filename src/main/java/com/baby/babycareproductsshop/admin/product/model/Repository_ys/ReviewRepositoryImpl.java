@@ -3,9 +3,6 @@ package com.baby.babycareproductsshop.admin.product.model.Repository_ys;
 import com.baby.babycareproductsshop.admin.product.model.ReviewHideClickSelVo;
 import com.baby.babycareproductsshop.admin.product.model.ReviewSearchDto;
 import com.baby.babycareproductsshop.admin.product.model.SearchReviewSelVo;
-import com.baby.babycareproductsshop.entity.product.*;
-import com.baby.babycareproductsshop.entity.review.QReviewEntity;
-import com.baby.babycareproductsshop.entity.review.ReviewEntity;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -22,7 +19,6 @@ import java.util.List;
 import static com.baby.babycareproductsshop.entity.product.QProductEntity.productEntity;
 import static com.baby.babycareproductsshop.entity.product.QProductMiddleCategoryEntity.productMiddleCategoryEntity;
 import static com.baby.babycareproductsshop.entity.review.QReviewEntity.reviewEntity;
-import static com.baby.babycareproductsshop.entity.user.QUserEntity.userEntity;
 
 
 @Slf4j
@@ -55,7 +51,7 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
 //                .orderBy(sortBy(dto.getSortBy()));
 //        List<SearchReviewSelVo> fetch2 = query.fetch();
 
-        List<SearchReviewSelVo> result = jpaQueryFactory.select(Projections.constructor(SearchReviewSelVo.class,
+        List<SearchReviewSelVo> result = jpaQueryFactory.select(Projections.fields(SearchReviewSelVo.class,
                                  reviewEntity.ireview,
                                 reviewEntity.userEntity.nm,
                                 reviewEntity.reqReviewPic,
@@ -91,17 +87,54 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
         return result;
     }
 
+
+
+    @Override
+    public long countReview(ReviewSearchDto dto) {
+        JPAQuery<Long> countQuery = jpaQueryFactory.select(reviewEntity.ireview.count())
+                .from(reviewEntity)
+                .join(reviewEntity.userEntity)
+                .join(reviewEntity.productEntity)
+                .join(productMiddleCategoryEntity).on(productMiddleCategoryEntity.eq(productEntity.middleCategoryEntity))
+                .join(productMiddleCategoryEntity.productMainCategory)
+                .where(ProductNm(dto.getKeyword()),
+                        iproduct(dto.getIproduct()),
+                        Category(dto.getImain(),dto.getImiddle()),
+                        reviewEntity.delFl.eq(1)
+                );
+        return countQuery.fetchOne();
+    }
+
+    @Override
+    public long totalCountReview(ReviewSearchDto dto) {
+        JPAQuery<Long> countQuery = jpaQueryFactory.select(reviewEntity.ireview.count())
+                .from(reviewEntity)
+                .join(reviewEntity.userEntity)
+                .join(reviewEntity.productEntity)
+                .join(productMiddleCategoryEntity).on(productMiddleCategoryEntity.eq(productEntity.middleCategoryEntity))
+                .join(productMiddleCategoryEntity.productMainCategory)
+                .where(ProductNm(dto.getKeyword()),
+                        iproduct(dto.getIproduct()),
+                        Category(dto.getImain(),dto.getImiddle()),
+                        reviewEntity.delFl.eq(0)
+                );
+        return countQuery.fetchOne();
+
+    }
+
     @Override
     public List<SearchReviewSelVo> selReviewDel(ReviewSearchDto dto,Pageable pageable) { //숨김리뷰
-        JPAQuery<SearchReviewSelVo> query = jpaQueryFactory.select(Projections.constructor(SearchReviewSelVo.class,
+        JPAQuery<SearchReviewSelVo> query = jpaQueryFactory.select(Projections.fields(SearchReviewSelVo.class,
                         reviewEntity.ireview,
                         reviewEntity.userEntity.nm,
-                        reviewEntity.productEntity.repPic,
+                        reviewEntity.reqReviewPic,
                         reviewEntity.productEntity.iproduct,
                         reviewEntity.productEntity.productNm,
                         reviewEntity.contents,
                         reviewEntity.productScore,
-                        reviewEntity.delFl)
+                        reviewEntity.delFl
+
+                        )
                 )
                 .from(reviewEntity)
                 .join(reviewEntity.userEntity)
@@ -114,18 +147,17 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
                         reviewEntity.delFl.eq(1)
                 )
                 .offset(pageable.getOffset())
-                //.size(pageable.getPageSize())
                 .limit(pageable.getPageSize())
                 .orderBy(sortBy(dto.getSortBy()));
         return query.fetch();
-
     }
 
+
     @Override
-    public List<ReviewHideClickSelVo> findReview(Long ireview) { //
+    public List<ReviewHideClickSelVo> findReview(Long ireview) { // 숨김리뷰 클릭시
         JPAQuery<ReviewHideClickSelVo> query = jpaQueryFactory.select(Projections.constructor(ReviewHideClickSelVo.class,
                                 reviewEntity.userEntity.nm,
-                                reviewEntity.productEntity.repPic,
+                                reviewEntity.reqReviewPic,
                                 reviewEntity.productEntity.productNm,
                                 reviewEntity.contents,
                                 reviewEntity.productScore
@@ -135,6 +167,8 @@ public class ReviewRepositoryImpl implements ReviewQdslRepository{
                 .rightJoin(reviewEntity.userEntity)
                 .leftJoin(reviewEntity.productEntity)
                 .where(reviewEntity.ireview.eq(ireview));
+
+
         return query.fetch();
 
     }
