@@ -84,7 +84,7 @@ public class AdminUserService {
     public ApiResponse<List<AdminSelAllUserVo>> getUserList(AdminSelAllUserDto dto, Pageable pageable) {
         List<UserEntity> entityList = adminUserRepository.selUserAll(dto, pageable);
         log.info("userEntity : {}", entityList);
-        long totalCnt = adminUserRepository.selUserAllCount(dto).get(0).getTotalCnt();
+        long totalCnt = adminUserRepository.selUserAllCount(dto).getTotalCnt();
         List<AdminSelAllUserVo> result = entityList.stream().filter(item -> item.getIuser() != 1)
                 .map(item -> AdminSelAllUserVo.builder()
                         .nm(item.getNm())

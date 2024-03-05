@@ -32,7 +32,7 @@ public class AdminUserQdslRepositoryImpl extends AdminUserSearchCondition implem
                 ))
                 .from(userEntity)
                 .where(whereUnregisteredFl(dto.getUnregisteredFl()))
-                .orderBy(userEntity.iuser.desc())
+                .orderBy(userEntity.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -68,7 +68,7 @@ public class AdminUserQdslRepositoryImpl extends AdminUserSearchCondition implem
     }
 
     @Override
-    public List<AdminSelAllUserVo> selUserAllCount(AdminSelAllUserDto dto) {
+    public AdminSelAllUserVo selUserAllCount(AdminSelAllUserDto dto) {
         JPAQuery<AdminSelAllUserVo> query = jpaQueryFactory.select(Projections.fields(AdminSelAllUserVo.class,
                         userEntity.iuser.count().as("totalCnt")
                 ))
@@ -86,6 +86,6 @@ public class AdminUserQdslRepositoryImpl extends AdminUserSearchCondition implem
         if (StringUtils.hasText(dto.getPhoneNumber())) {
             query.where(likePhoneNumber(dto.getPhoneNumber()));
         }
-        return query.fetch();
+        return query.fetchOne();
     }
 }

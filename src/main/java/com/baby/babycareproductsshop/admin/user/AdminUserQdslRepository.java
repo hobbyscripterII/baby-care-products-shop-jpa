@@ -11,5 +11,5 @@ import java.util.List;
 public interface AdminUserQdslRepository {
     List<UserEntity> selUserAll(AdminSelAllUserDto dto, Pageable pageable);
     List<UserEntity> selUserSignupStatistics(AdminSelUserSignupDto dto);
-    List<AdminSelAllUserVo> selUserAllCount(AdminSelAllUserDto dto);
+    AdminSelAllUserVo selUserAllCount(AdminSelAllUserDto dto);
 }
