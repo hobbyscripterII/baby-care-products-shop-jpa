@@ -84,6 +84,7 @@ public class AdminUserService {
     public ApiResponse<List<AdminSelAllUserVo>> getUserList(AdminSelAllUserDto dto, Pageable pageable) {
         List<UserEntity> entityList = adminUserRepository.selUserAll(dto, pageable);
         log.info("userEntity : {}", entityList);
+        long totalCnt = adminUserRepository.selUserAllCount(dto).get(0).getTotalCnt();
         List<AdminSelAllUserVo> result = entityList.stream().filter(item -> item.getIuser() != 1)
                 .map(item -> AdminSelAllUserVo.builder()
                         .nm(item.getNm())
@@ -92,6 +93,7 @@ public class AdminUserService {
                         .phoneNumber(item.getPhoneNumber())
                         .registeredAt(dto.getUnregisteredFl() == 0 ? item.getCreatedAt() : null)
                         .unregisteredAt(dto.getUnregisteredFl() == 1 ? item.getUpdatedAt() : null)
+                        .totalCnt(totalCnt)
                         .build()
                 ).toList();
         return new ApiResponse<>(result);
