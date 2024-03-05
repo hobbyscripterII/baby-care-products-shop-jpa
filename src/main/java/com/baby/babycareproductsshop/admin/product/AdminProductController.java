@@ -60,15 +60,11 @@ public class AdminProductController {
     public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto) {
         return service.getSearchProductSelVo(dto,pageable(dto.getPage()));
     }
-    @GetMapping("/productUptDate")
-    @Operation(summary = "상품 수정 시 필요한 데이터 ")
-    public List<AdminProductUptSelVo> getProduct(Long iproduct) {
-        return service.getProduct(iproduct);
-    }
+
     @GetMapping("/productUptPicDate")
-    @Operation(summary = "상품 수정 시 사진 불러옴 ")
-    public List<AdminProductPicUptSelVo> getProductPic(Long iproduct) {
-        return service.getProductPic(iproduct);
+    @Operation(summary = "상품 수정 시 필요한데이터  불러옴 ")
+    public List<AdminProductUptDate> getProductDate(Long iproduct) {
+        return service.getProductDate(iproduct);
     }
 
 
