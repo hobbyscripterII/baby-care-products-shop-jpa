@@ -50,15 +50,16 @@ public class AdminOrderService {
 
     @Transactional
     public ResVo updOrderStateProcess(OrderBatchProcessDto dto) {
-        int beforeProcessState = dto.getProcessState();
-        int afterProcessState = changeProcessState(dto.getProcessState());
+        int afterProcessState = dto.getProcessState();
         LocalDateTime now = LocalDateTime.now();
 
         // 정상적인 주문 처리 상태 코드가 맞는지 확인
         List<Integer> list = dto.getIorders()
                 .stream()
                 .peek(iorder -> {
-                    if (processStateCheck(iorder, beforeProcessState)) { // 수정 요청 상태가 이전 주문 요청 상태와 맞는지
+                    OrderEntity orderEntity = adminOrderRepository.getReferenceById(iorder.longValue());
+                    int beforeProcessState = orderEntity.getProcessState();
+                    if (processStateCheck(beforeProcessState, afterProcessState)) { // 수정 요청 상태가 이전 주문 요청 상태와 맞는지
                         OrderEntity entity = adminOrderRepository.getReferenceById(iorder.longValue());
                         entity.setIorder(iorder.longValue());
                         entity.setProcessState(afterProcessState); // 1. 값 변환
@@ -67,7 +68,6 @@ public class AdminOrderService {
                             case 3 -> entity.setDepositedAt(now);
                             case 4 -> entity.setDeliveredAt(now);
                         }
-
                         adminOrderRepository.save(entity); // 2. 주문 처리 상태 및 완료일자 수정
                     } else {
                         throw new RestApiException(AuthErrorCode.PROCESS_STATE_CODE_ERROR);
@@ -252,6 +252,7 @@ public class AdminOrderService {
                     List<OrderProductVo> orderProductVoList = adminOrderDetailsRepository.findAll(orderItem.getIorder()).stream()
                             .map(productItem -> OrderProductVo
                                     .builder()
+                                    .iproduct(productItem.getProductEntity().getIproduct())
                                     .repPic(productItem.getProductEntity().getRepPic())
                                     .productNm(productItem.getProductEntity().getProductNm())
                                     .cnt(productItem.getProductCnt())
@@ -397,24 +398,15 @@ public class AdminOrderService {
         return refundAmount;
     }
 
-    private boolean processStateCheck(int iorder, int processState) {
+    private boolean processStateCheck(int beforeProcessState, int afterProcessState) {
         boolean result = false;
-        switch (iorder) {
-            case 1 -> result = processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
-            case 2 -> result = processState == ProcessState.ON_DELIVERY.getProcessStateNum();
-            case 3 -> result = processState == ProcessState.DELIVER_SUCCESS.getProcessStateNum();
-            case 5 -> result = processState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || processState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
+        switch (beforeProcessState) {
+            case 1 -> result = afterProcessState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
+            case 2 -> result = afterProcessState == ProcessState.ON_DELIVERY.getProcessStateNum();
+            case 3 -> result = afterProcessState == ProcessState.DELIVER_SUCCESS.getProcessStateNum();
+            case 5 -> result = afterProcessState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || afterProcessState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
         }
         return result;
-    }
-
-    private int changeProcessState(int processState) {
-        switch (processState) {
-            case 1 -> processState = ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
-            case 2 -> processState = ProcessState.ON_DELIVERY.getProcessStateNum();
-            case 3 -> processState = ProcessState.DELIVER_SUCCESS.getProcessStateNum();
-        }
-        return processState;
     }
 
     //------------------------------------------th
