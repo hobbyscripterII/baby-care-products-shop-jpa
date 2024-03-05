@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface BoardCommentRepository extends JpaRepository<BoardCommentEntity, Long> {
     List<BoardCommentEntity> findAllByBoardEntity(BoardEntity entity);
-    void deleteByBoardEntityAndIcomment(BoardEntity entity, long icomment);
+    List<BoardCommentEntity> findAllByBoardEntityIn(List<BoardEntity> entityList);
 }

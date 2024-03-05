@@ -35,12 +35,16 @@ public class AdminBoardService {
         List<BoardEntity> entityList = StringUtils.hasText(keyword) ?
                 boardRepository.findAllByBoardCodeAndTitleContainsOrContentsContains(3, keyword, keyword)
                 : boardRepository.findAllByBoardCode(3);
+        List<BoardCommentEntity> commentEntityList = boardCommentRepository.findAllByBoardEntityIn(entityList);
         List<AdminSelBoardVo> result = entityList.stream()
                 .map(item -> AdminSelBoardVo.builder()
                         .iboard(item.getIboard())
                         .title(item.getTitle())
                         .contents(item.getContents())
-                        .responseFl(item.getBoardCommentEntityList().isEmpty() ? 0 : 1)
+                        .responseFl(commentEntityList.stream()
+                                .filter(comment -> comment.getBoardEntity().getIboard().equals(item.getIboard()))
+                                .toList()
+                                .isEmpty() ? 0 : 1)
                         .build())
                 .toList();
         return new ApiResponse<>(result);

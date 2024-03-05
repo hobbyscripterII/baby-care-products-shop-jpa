@@ -37,6 +37,6 @@ public class BoardEntity extends BaseEntity {
     private String contents;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.PERSIST)
     private List<BoardCommentEntity> boardCommentEntityList = new ArrayList<>();
 }
