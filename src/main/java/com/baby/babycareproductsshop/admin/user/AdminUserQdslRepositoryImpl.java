@@ -10,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -40,9 +41,11 @@ public class AdminUserQdslRepositoryImpl extends AdminUserSearchCondition implem
                 dto.getKeywordType() == 1 ?
                         likeEmail(dto.getKeyword()) : likeNm(dto.getKeyword()));
 
-        if (dto.getBefore() != null) {
-            query.where(dto.getAfter() == null ? betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN))
-                    : betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN), LocalDateTime.of(dto.getAfter(), LocalTime.MAX).withNano(0)));
+        if (!ObjectUtils.isEmpty(dto.getBefore())) {
+            query.where(ObjectUtils.isEmpty(dto.getAfter())
+                    ? betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN))
+                    : betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN),
+                    LocalDateTime.of(dto.getAfter(), LocalTime.MAX).withNano(0)));
         }
         if (StringUtils.hasText(dto.getPhoneNumber())) {
             query.where(likePhoneNumber(dto.getPhoneNumber()));
