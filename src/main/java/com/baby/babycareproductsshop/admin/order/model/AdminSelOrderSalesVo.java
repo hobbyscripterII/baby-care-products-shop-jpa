@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 
 @Data
+@Slf4j
 @NoArgsConstructor
 @Schema(title = "매출 통계 response",description = "매출 통계 조회 응답 데이터")
 public class AdminSelOrderSalesVo implements StatisticsVo, Comparable<AdminSelOrderSalesVo>{
@@ -33,7 +35,7 @@ public class AdminSelOrderSalesVo implements StatisticsVo, Comparable<AdminSelOr
 
     @Override
     public int compareTo(AdminSelOrderSalesVo o) {
-        return Integer.compare(getValue(this.date), getValue(o.date)) * -1;
+        return Integer.compare(getLastValue(o.date), getLastValue(this.date));
     }
 
 }

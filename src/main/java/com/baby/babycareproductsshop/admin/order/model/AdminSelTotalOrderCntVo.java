@@ -28,7 +28,7 @@ public class AdminSelTotalOrderCntVo implements StatisticsVo, Comparable<AdminSe
 
     @Override
     public int compareTo(AdminSelTotalOrderCntVo o) {
-        return Integer.compare(getValue(this.date), getValue(o.date)) * -1;
+        return Integer.compare(getLastValue(this.date), getLastValue(o.date)) * -1;
     }
 
 

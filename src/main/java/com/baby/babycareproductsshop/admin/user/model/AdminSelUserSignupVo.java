@@ -33,6 +33,6 @@ public class AdminSelUserSignupVo implements StatisticsVo, Comparable<AdminSelUs
 
     @Override
     public int compareTo(AdminSelUserSignupVo o) {
-        return Integer.compare(getValue(this.date), getValue(o.date)) * -1;
+        return Integer.compare(getLastValue(this.date), getLastValue(o.date)) * -1;
     }
 }

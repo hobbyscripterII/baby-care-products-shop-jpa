@@ -420,7 +420,7 @@ public class AdminOrderService {
             vo.setDate(key);
             map.put(key, vo);
         }
-        if (dto.getYear() == 0 && dto.getMonth() == 0) {
+        if (dto.getYear() == 0) {
             return new ApiResponse<>(result);
         }
         int date = Utils.getDaysOrMonths(dto.getYear(), dto.getMonth());
@@ -439,7 +439,7 @@ public class AdminOrderService {
     public ApiResponse<?> getOrderCntStatistics(AdminSelOrderStatisticsDto dto) {
         List<AdminSelTotalOrderCntVo> result = adminOrderRepository.selTotalOrderCnt(dto);
         Map<String, AdminSelTotalOrderCntVo> resultMap = new HashMap<>();
-        if (dto.getYear() == 0 && dto.getMonth() == 0) {
+        if (dto.getYear() == 0) {
             return new ApiResponse<>(result);
         }
         for (AdminSelTotalOrderCntVo vo : result) {
