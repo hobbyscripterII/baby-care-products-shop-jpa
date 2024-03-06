@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -57,18 +58,23 @@ public class AdminOrderService {
         List<Integer> list = dto.getIorders()
                 .stream()
                 .peek(iorder -> {
-                    OrderEntity orderEntity = adminOrderRepository.getReferenceById(iorder.longValue());
-                    int beforeProcessState = orderEntity.getProcessState();
-                    if (processStateCheck(beforeProcessState, afterProcessState)) { // 수정 요청 상태가 이전 주문 요청 상태와 맞는지
-                        OrderEntity entity = adminOrderRepository.getReferenceById(iorder.longValue());
-                        entity.setIorder(iorder.longValue());
-                        entity.setProcessState(afterProcessState); // 1. 값 변환
+                    Optional<OrderEntity> orderEntityOptional = adminOrderRepository.findById(iorder.longValue());
+                    if (orderEntityOptional.isPresent()) {
+                        OrderEntity orderEntity = orderEntityOptional.get();
+                        int beforeProcessState = orderEntity.getProcessState();
+                        if (processStateCheck(beforeProcessState, afterProcessState)) { // 수정 요청 상태가 이전 주문 요청 상태와 맞는지
+                            OrderEntity entity = adminOrderRepository.getReferenceById(iorder.longValue());
+                            entity.setIorder(iorder.longValue());
+                            entity.setProcessState(afterProcessState); // 1. 값 변환
 
-                        switch (afterProcessState) {
-                            case 3 -> entity.setDepositedAt(now);
-                            case 4 -> entity.setDeliveredAt(now);
+                            switch (afterProcessState) {
+                                case 3 -> entity.setDepositedAt(now);
+                                case 4 -> entity.setDeliveredAt(now);
+                            }
+                            adminOrderRepository.save(entity); // 2. 주문 처리 상태 및 완료일자 수정
+                        } else {
+                            throw new RestApiException(AuthErrorCode.PROCESS_STATE_CODE_ERROR);
                         }
-                        adminOrderRepository.save(entity); // 2. 주문 처리 상태 및 완료일자 수정
                     } else {
                         throw new RestApiException(AuthErrorCode.PROCESS_STATE_CODE_ERROR);
                     }
@@ -402,9 +408,11 @@ public class AdminOrderService {
         boolean result = false;
         switch (beforeProcessState) {
             case 1 -> result = afterProcessState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
-            case 2 -> result = afterProcessState == ProcessState.ON_DELIVERY.getProcessStateNum();
+            case 2 ->
+                    result = afterProcessState == ProcessState.ON_DELIVERY.getProcessStateNum() || afterProcessState == ProcessState.ORDER_CANCEL.getProcessStateNum();
             case 3 -> result = afterProcessState == ProcessState.DELIVER_SUCCESS.getProcessStateNum();
-            case 5 -> result = afterProcessState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || afterProcessState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
+            case 5 ->
+                    result = afterProcessState == ProcessState.BEFORE_DEPOSIT.getProcessStateNum() || afterProcessState == ProcessState.DELIVER_IN_PROGRESS.getProcessStateNum();
         }
         return result;
     }
