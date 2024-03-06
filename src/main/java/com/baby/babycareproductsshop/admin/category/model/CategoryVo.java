@@ -18,6 +18,7 @@ public class CategoryVo {
     @Builder
     @AllArgsConstructor
     public static class MiddleCategoryVo {
+        private long candidateKey;
         private long imiddle;
         private String middleCategory;
     }

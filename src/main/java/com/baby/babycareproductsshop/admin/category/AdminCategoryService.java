@@ -33,6 +33,7 @@ public class AdminCategoryService {
                             .stream()
                             .map(middle -> CategoryVo.MiddleCategoryVo
                                     .builder()
+                                    .candidateKey(middle.getCandidateKey())
                                     .imiddle(middle.getImiddle())
                                     .middleCategory(middle.getMiddleCategory())
                                     .build())
