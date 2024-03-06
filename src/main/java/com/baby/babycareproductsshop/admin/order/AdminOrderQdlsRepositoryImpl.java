@@ -154,18 +154,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .where(orderDetailsEntity.orderEntity.processState.ne(0))
                 .from(orderDetailsEntity)
                 .orderBy(orderDetailsEntity.createdAt.asc());
-        if (dto.getMonth() == 0 && dto.getYear() == 0) {
-            query1.groupBy(orderDetailsEntity.createdAt.year());
-        }
-        if (dto.getMonth() == 0 && dto.getYear() != 0) {
-            query1.groupBy(orderDetailsEntity.createdAt.year(), orderDetailsEntity.createdAt.month());
-            query1.having(yearEqFromOrderDetail(dto.getYear()));
-        }
-        if (dto.getMonth() != 0 && dto.getYear() != 0) {
-            query1.groupBy(transformDate(orderDetailsEntity.createdAt));
-            query1.having(yearEqFromOrderDetail(dto.getYear()),
-                    monthEqFromOrderDetail(dto.getMonth()));
-        }
+        getQueryCondition(query1, dto);
         List<AdminSelTotalOrderCntVo> result1 = query1.fetch();
         if (result1.isEmpty()) {
             return result1;
@@ -186,17 +175,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .where(orderDetailsEntity.orderEntity.deleteFl.eq(1).or(orderDetailsEntity.refundFl.eq(1)))
                 .from(orderDetailsEntity)
                 .orderBy(orderDetailsEntity.createdAt.asc());
-        if (dto.getMonth() == 0 && dto.getYear() == 0) {
-            query2.groupBy(orderDetailsEntity.createdAt.year());
-        }
-        if (dto.getMonth() == 0 && dto.getYear() != 0) {
-            query2.groupBy(orderDetailsEntity.createdAt.year(), orderDetailsEntity.createdAt.month());
-            query2.having(yearEqFromOrderDetail(dto.getYear()));
-        }
-        if (dto.getMonth() != 0 && dto.getYear() != 0) {
-            query2.where(yearEqFromOrderDetail(dto.getYear()),
-                    monthEqFromOrderDetail(dto.getMonth()));
-        }
+        getQueryCondition(query2, dto);
         List<AdminSelTotalOrderCntVo> result2 = query2.fetch();
         for (AdminSelTotalOrderCntVo vo : result2) {
             String key = Utils.getDate(dto.getYear(), dto.getMonth(), vo);
@@ -207,5 +186,19 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
             vo.setNetOrderCnt(vo.getTotalOrderCnt() - vo.getRecallCnt());
         }
         return result1;
+    }
+
+    private void getQueryCondition(JPAQuery<AdminSelTotalOrderCntVo> query, AdminSelOrderStatisticsDto dto) {
+        if (dto.getMonth() == 0 && dto.getYear() == 0) {
+            query.groupBy(orderDetailsEntity.createdAt.year());
+        }
+        if (dto.getMonth() == 0 && dto.getYear() != 0) {
+            query.groupBy(orderDetailsEntity.createdAt.year(), orderDetailsEntity.createdAt.month());
+            query.having(yearEqFromOrderDetail(dto.getYear()));
+        }
+        if (dto.getMonth() != 0 && dto.getYear() != 0) {
+            query.where(yearEqFromOrderDetail(dto.getYear()),
+                    monthEqFromOrderDetail(dto.getMonth()));
+        }
     }
 }
