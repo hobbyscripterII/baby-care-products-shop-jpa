@@ -32,9 +32,10 @@ public class AdminBoardService {
 
     @Transactional
     public ApiResponse<List<AdminSelBoardVo>> getInquiryList(String keyword){
+        long INQUIRY_BOARD_CODE = 3;
         List<BoardEntity> entityList = StringUtils.hasText(keyword) ?
-                boardRepository.findAllByBoardCodeAndTitleContainsOrContentsContains(3, keyword, keyword)
-                : boardRepository.findAllByBoardCode(3);
+                boardRepository.findAllByBoardCodeAndTitleContainsOrContentsContains(INQUIRY_BOARD_CODE, keyword, keyword)
+                : boardRepository.findAllByBoardCode(INQUIRY_BOARD_CODE);
         List<BoardCommentEntity> commentEntityList = boardCommentRepository.findAllByBoardEntityIn(entityList);
         List<AdminSelBoardVo> result = entityList.stream()
                 .map(item -> AdminSelBoardVo.builder()

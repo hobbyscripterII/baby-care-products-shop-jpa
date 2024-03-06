@@ -125,18 +125,18 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .from(orderEntity)
                 .where(processStateNq(1), deleteFlEq(0))
                 .orderBy(orderEntity.createdAt.asc());
-
+        //연별 매출
         if (dto.getMonth() == 0 && dto.getYear() == 0) {
             query.groupBy(orderEntity.createdAt.year());
             return query.fetch();
         }
-
+        //월별 매출
         if (dto.getMonth() == 0) {
             query.groupBy(orderEntity.createdAt.year(), orderEntity.createdAt.month());
             query.having(yearEq(dto.getYear()));
             return query.fetch();
         }
-
+        //일별 매출
         query.groupBy(transformDate(orderEntity.createdAt));
         query.having(yearEq(dto.getYear()),
                 monthEq(dto.getMonth()));
@@ -145,7 +145,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
 
     @Override
     public List<AdminSelTotalOrderCntVo> selTotalOrderCnt(AdminSelOrderStatisticsDto dto) {
-        log.info("query1");
+        //주문 수
         JPAQuery<AdminSelTotalOrderCntVo> query1 = jpaQueryFactory.select(Projections.fields(AdminSelTotalOrderCntVo.class,
                         orderDetailsEntity.productCnt.sum().as("totalOrderCnt"),
                         orderDetailsEntity.createdAt,
@@ -154,7 +154,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                 .where(orderDetailsEntity.orderEntity.processState.ne(0))
                 .from(orderDetailsEntity)
                 .orderBy(orderDetailsEntity.createdAt.asc());
-        getQueryCondition(query1, dto);
+        getQueryCondition(query1, dto); //연별, 월별, 일별 조건
         List<AdminSelTotalOrderCntVo> result1 = query1.fetch();
         if (result1.isEmpty()) {
             return result1;
@@ -165,7 +165,7 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
             vo.setDate(key);
             map.put(key, vo);
         }
-        log.info("query2");
+        //취소&반품 수
         JPAQuery<AdminSelTotalOrderCntVo> query2 = jpaQueryFactory.select(Projections.fields(AdminSelTotalOrderCntVo.class,
                         orderDetailsEntity.productCnt.as("recallCnt"),
                         orderDetailsEntity.createdAt,
@@ -181,7 +181,6 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
             String key = Utils.getDate(dto.getYear(), dto.getMonth(), vo);
             map.get(key).setRecallCnt(vo.getRecallCnt() + map.get(key).getRecallCnt());
         }
-
         for (AdminSelTotalOrderCntVo vo : result1) {
             vo.setNetOrderCnt(vo.getTotalOrderCnt() - vo.getRecallCnt());
         }
