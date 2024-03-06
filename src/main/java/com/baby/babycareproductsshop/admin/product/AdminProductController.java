@@ -40,10 +40,11 @@ public class AdminProductController {
         return service.postProduct(pics, productDetails, dto);
     }
     //-----------------------------------------------------------------상품 수정------------------------------------------------------
+
     @PatchMapping("/product")
     @Operation(summary = "상품 수정 ")
-    public ResVo uptProduct (@RequestPart(name = "pics") List<MultipartFile> pics,
-                             @RequestPart(name = "productDetails") MultipartFile productDetails,
+    public ResVo uptProduct (@RequestPart(required = false) List<MultipartFile> pics,
+                             @RequestPart(required = false) MultipartFile productDetails,
                              @RequestPart @Valid AdminProductUptDto dto,@RequestParam Long iproduct) {
         return service.putProduct(pics,productDetails,dto,iproduct);
     }
@@ -137,7 +138,7 @@ public class AdminProductController {
     }
     //-------------------------------------------------------------리뷰 관리자 메모 ------------------------------------------------------
     @PatchMapping("/reviewMemo")
-    @Operation(summary = "관리자 메모 작성 & 수정 둘다댐")
+    @Operation(summary = "관리자 메모 작성 ")
     public ResVo patchReviewAdminMemo(@RequestBody ReviewMemoInsDto dto) {
         return service.postReviewAdminMemo(dto);
     }

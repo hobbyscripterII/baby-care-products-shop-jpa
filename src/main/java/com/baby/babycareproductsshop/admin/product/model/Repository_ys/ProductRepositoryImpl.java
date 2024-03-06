@@ -29,7 +29,7 @@ import static com.baby.babycareproductsshop.entity.review.QReviewEntity.reviewEn
 public class ProductRepositoryImpl implements ProductQdslRepository{
     private final JPAQueryFactory jpaQueryFactory;
 
-    @Override// 진열관리 추천상품
+    @Override// 진열관리 추천상품검색
     public List<AdminProductSearchSelVo> selProductAll(AdminProductSearchDto dto, Pageable pageable) {
         JPAQuery<AdminProductSearchSelVo> query = jpaQueryFactory.select(Projections.fields(AdminProductSearchSelVo.class,
                         productEntity.productNm
@@ -42,7 +42,8 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                 .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
-                        ,productEntity.status.eq(0)
+                        ,productEntity.status.ne(1)
+
                 )
                 .from(productEntity)
                 .offset(pageable.getOffset())
@@ -63,8 +64,8 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                 .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
-                        ,productEntity.status.eq(0)
-                        ,productEntity.popFl.eq(1)
+                        ,productEntity.rcFl.eq(0) // 추천상품 아닌거
+                        ,productEntity.popFl.eq(1) // 인기상품만
                 )
                 .from(productEntity)
                 .offset(pageable.getOffset())
@@ -85,8 +86,8 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
                 .where(productNm(dto.getKeyword())
                         ,iproduct(dto.getIproduct())
                         ,category(dto.getImain(),dto.getImiddle())
-                        ,productEntity.status.eq(0)
-                        ,productEntity.newFl.eq(1)
+                        ,productEntity.rcFl.eq(0) //추천상품아닌거
+                        ,productEntity.newFl.eq(1) //인기상품만
 
                 )
                 .from(productEntity)
@@ -263,38 +264,6 @@ public class ProductRepositoryImpl implements ProductQdslRepository{
         }
     }
 
-    //    private BooleanExpression tage(int newFl, int popFl, int rcFl) {
-//        if (newFl != 0 && popFl != 0 && rcFl != 0) {
-//            // 모두 선택한 경우
-//            return productEntity.newFl.eq(newFl)
-//                    .and(productEntity.popFl.eq(popFl))
-//                    .and(productEntity.rcFl.eq(rcFl));
-//        } else if (newFl != 0 && popFl != 0) {
-//            // newFl과 popFl만 선택한 경우
-//            return productEntity.newFl.eq(newFl)
-//                    .and(productEntity.popFl.eq(popFl));
-//        } else if (newFl != 0 && rcFl != 0) {
-//            // newFl과 rcFl만 선택한 경우
-//            return productEntity.newFl.eq(newFl)
-//                    .and(productEntity.rcFl.eq(rcFl));
-//        } else if (popFl != 0 && rcFl != 0) {
-//            // popFl과 rcFl만 선택한 경우
-//            return productEntity.popFl.eq(popFl)
-//                    .and(productEntity.rcFl.eq(rcFl));
-//        } else if (newFl != 0) {
-//            // newFl만 선택한 경우
-//            return productEntity.newFl.eq(newFl);
-//        } else if (popFl != 0) {
-//            // popFl만 선택한 경우
-//            return productEntity.popFl.eq(popFl);
-//        } else if (rcFl != 0) {
-//            // rcFl만 선택한 경우
-//            return productEntity.rcFl.eq(rcFl);
-//        } else {
-//            // 모두 선택하지 않은 경우
-//            return null;
-//        }
-//    }
     private BooleanExpression dateSelectSearch(int dateFl) {
         BooleanExpression booleanExpression = null;
 

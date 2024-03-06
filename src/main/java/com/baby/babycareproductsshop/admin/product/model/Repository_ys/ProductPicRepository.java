@@ -10,5 +10,5 @@ public interface ProductPicRepository extends JpaRepository<ProductPicEntity,Lon
 
 
 
-    List<ProductPicEntity> findByIproduct(Long iproduct);
+    List<ProductPicEntity> findByProductEntity_Iproduct(Long iproduct);
 }

@@ -14,7 +14,7 @@ public interface ReviewQdslRepository {
 
     long totalCountReview(ReviewSearchDto dto);
     List<SearchReviewSelVo> selReviewDel(ReviewSearchDto dto, Pageable pageable);
-    //List<SearchReviewSelVo> findAllByNotDelFl();
+
 
     List<ReviewHideClickSelVo> findReview(Long ireview);
 

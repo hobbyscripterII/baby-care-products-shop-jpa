@@ -28,12 +28,13 @@ public class AdminProductUptDto {
     @JsonIgnore
     private String repPic; // 상품대표사진
 
-    @JsonIgnore
-    private List<Integer> pics;
 
     private int remainedCnt; //재고
     private int newFl;
     private int popFl;
+
+    private List<String> delPics;
+
 
 
 
