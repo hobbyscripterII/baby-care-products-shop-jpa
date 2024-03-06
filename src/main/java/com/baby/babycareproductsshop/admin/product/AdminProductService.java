@@ -14,6 +14,9 @@ import com.baby.babycareproductsshop.entity.product.*;
 
 import com.baby.babycareproductsshop.entity.review.ReviewEntity;
 import com.baby.babycareproductsshop.entity.user.UserEntity;
+import com.baby.babycareproductsshop.exception.AuthErrorCode;
+import com.baby.babycareproductsshop.exception.CommonErrorCode;
+import com.baby.babycareproductsshop.exception.RestApiException;
 import com.baby.babycareproductsshop.response.ApiResponse;
 import com.baby.babycareproductsshop.security.AuthenticationFacade;
 ;
@@ -148,7 +151,14 @@ public class AdminProductService {
     // -------------- 상품등록
     @Transactional
     public ResVo postProduct(List<MultipartFile> pics, MultipartFile productDetails, AdminProductInsDto dto) {
+
         try {
+//            if (dto.getProductNm().isBlank() ) {
+//                throw new RestApiException(AuthErrorCode.PRODUCT_NM_IS_BLANK);
+//            }
+//            if (dto.getPrice() == 0 ) {
+//                throw new RestApiException(AuthErrorCode.PRODUCT_PRICE_IS_ZERO);
+//            }
             ProductEntity entity = new ProductEntity();
             ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findByImiddleAndProductMainCategory_Imain(dto.getImiddle(), dto.getImain());
             entity.setMiddleCategoryEntity(middleCategoryEntity);
@@ -184,12 +194,20 @@ public class AdminProductService {
     // 상품 수정
     public ResVo putProduct(List<MultipartFile> pics, MultipartFile productDetails, AdminProductUptDto dto, Long iproduct) {
         try {
+//            if (dto.getProductNm().isBlank() ) {
+//                throw new RestApiException(AuthErrorCode.PRODUCT_NM_IS_BLANK);
+//            }
+//            if (dto.getPrice() == 0 ) {
+//                throw new RestApiException(AuthErrorCode.PRODUCT_PRICE_IS_ZERO);
+//            }
             ProductEntity entity = productRepository.findById(iproduct).get();
-            ProductMainCategoryEntity MainCategoryEntity = mainCategoryRepository.findById(dto.getImain()).get();
-            ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findById(dto.getImiddle()).get();
-
-            middleCategoryEntity.setProductMainCategory(MainCategoryEntity);
-            middleCategoryEntity.setImiddle(dto.getImiddle());
+//            ProductMainCategoryEntity MainCategoryEntity = mainCategoryRepository.findById(dto.getImain()).get();
+//            ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findById(dto.getImiddle()).get();
+            ProductMiddleCategoryEntity middleCategoryEntity = middleCategoryRepository.findByImiddleAndProductMainCategory_Imain(dto.getImiddle(), dto.getImain());
+            entity.setMiddleCategoryEntity(middleCategoryEntity);
+//
+//            middleCategoryEntity.setProductMainCategory(MainCategoryEntity);
+//            middleCategoryEntity.setImiddle(dto.getImiddle());
 
             entity.setProductNm(dto.getProductNm());
             entity.setRecommandAge(dto.getRecommendedAge());
@@ -200,33 +218,44 @@ public class AdminProductService {
             entity.setPopFl(dto.getPopFl());
             productRepository.save(entity);
 
-//            List<ProductPicEntity> productPics = productPicRepository.findByIproduct(iproduct);
-//            String target = "/product/" + entity.getIproduct();
-//            myFileUtils.delDirTrigger(target); // 기존 이미지 삭제
-//
-//            String detailsFileNm = myFileUtils.transferTo(productDetails, target);
-//            entity.setProductDetails(detailsFileNm);
-//            entity.setRepPic(pics.toString());
-            List<ProductPicEntity> productPics = productPicRepository.findByIproduct(iproduct);
-            String target = "/product/" + entity.getIproduct();
-            for (ProductPicEntity pic : productPics) {
-                File oldFile = new File(target + "/" + pic.getProductPic());
-                if (oldFile.exists() && oldFile.delete()) {
-                    System.out.println(pic.getProductPic() + " 파일삭제 성공");
-                } else {
-                    System.out.println(pic.getProductPic() + " 파일삭제 실패 혹은 파일이 존재하지 않습니다.");
+            if (dto.getDelPics() != null && !dto.getDelPics().isEmpty()) {
+                List<ProductPicEntity> productPics = productPicRepository.findByProductEntity_Iproduct(entity.getIproduct());
+                List<ProductPicEntity> delProdPics = productPics.stream()
+                        .filter(pic -> dto.getDelPics().contains(pic.getProductPic()))
+                        .collect(Collectors.toList());
+
+                // 실제 파일 삭제
+                for (ProductPicEntity pic : delProdPics) {
+                    String target = "/product/" + entity.getIproduct() + "/" + pic.getProductPic();
+                    myFileUtils.delFile(target); // 지정한 이미지 삭제
+                    productPicRepository.delete(pic);
+                    //productPics.remove(pic);
                 }
             }
+
+            String target = "/product/" + entity.getIproduct();
+            if (productDetails != null && !productDetails.isEmpty()) {
+                String detailsFileNm = myFileUtils.transferTo(productDetails, target);
+                entity.setProductDetails(detailsFileNm);
+            }
             ProductEntity savedEntity = productRepository.save(entity);
-            for (MultipartFile file : pics) {
-                String fileNm = myFileUtils.transferTo(file, target);
-                ProductPicEntity productPicEntity = new ProductPicEntity();
-                productPicEntity.setProductPic(fileNm);
-                productPicEntity.setProductEntity(savedEntity);
-                productPicRepository.save(productPicEntity);
+
+            if (pics != null && !pics.isEmpty()) {
+                for (MultipartFile file : pics) {
+                    if (file != null && !file.isEmpty()) {
+                        String fileNm = myFileUtils.transferTo(file, target);
+                        ProductPicEntity productPicEntity = new ProductPicEntity();
+                        productPicEntity.setProductPic(fileNm);
+                        productPicEntity.setProductEntity(savedEntity);
+                        if (entity.getRepPic() == null) {
+                            entity.setRepPic(fileNm);
+                        }
+                        productPicRepository.save(productPicEntity);
+                    }
+                }
             }
             return new ResVo(Const.SUCCESS);
-        } catch (Exception e) {
+        } catch(Exception e) {
             return new ResVo(Const.FAIL);
         }
     }
@@ -246,8 +275,6 @@ public class AdminProductService {
 
     //상품검색
     public List<ProductGetSearchSelVo> getSearchProductSelVo(ProductGetSearchDto dto, Pageable pageable) {
-        //List<ProductEntity> list = productRepository.selPicsAll(dto,pageable);
-        //List<ProductGetSearchSelVo> list = new ArrayList<>();
         long totalCount = productRepository.countSearchProduct(dto);
 
         List<AdminProductPicUptSelVo> picsList = productRepository.selProductPicUptSelVo();
@@ -255,7 +282,7 @@ public class AdminProductService {
         return products.stream().map(item -> {
             List<String> pics = picsList.stream()
                     .filter(pic -> pic.getIproduct().equals(item.getIproduct()))
-                    .map(AdminProductPicUptSelVo::getProductPic) // getProductPic() 메서드가 사진의 URL 혹은 경로를 반환한다고 가정합니다.
+                    .map(AdminProductPicUptSelVo::getProductPic)
                     .collect(Collectors.toList());
 
                     return ProductGetSearchSelVo.builder()
@@ -287,6 +314,8 @@ public class AdminProductService {
             BannerEntity banner = bannerRepository.findById(ibanner).get();
             banner.setBannerUrl(dto.getBannerUrl());
             banner.setTarget(dto.getTarget());
+            banner.setStatus(dto.getStatus());
+            bannerRepository.save(banner);
             if (pic != null) {
                 String target = "/banner/" + banner.getIbanner();
                 myFileUtils.delDirTrigger(target);
@@ -307,6 +336,7 @@ public class AdminProductService {
             BannerEntity banner = new BannerEntity();
             banner.setBannerUrl(dto.getBannerUrl());
             banner.setTarget(dto.getTarget());
+            banner.setStatus(dto.getStatus());
             bannerRepository.save(banner);
             String savedPic = myFileUtils.transferTo(pic, "/banner/" + banner.getIbanner());
             banner.setBannerPic(savedPic);

@@ -1,5 +1,6 @@
 package com.baby.babycareproductsshop.exception;
 
+import com.baby.babycareproductsshop.common.Const;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,8 @@ public enum AuthErrorCode implements ErrorCode {
     // 상품
     NOT_FOUND_ORDER_LIST(HttpStatus.NOT_FOUND, "해당하는 상품 내역이 없습니다."),
     NOT_FOUND_PRODUCT_PICS(HttpStatus.BAD_REQUEST, "상품 사진을 선택해주세요."),
+    PRODUCT_NM_IS_BLANK(HttpStatus.NOT_FOUND, "상품 이름을 입력해주세요"),
+    PRODUCT_PRICE_IS_ZERO(HttpStatus.NOT_FOUND, "상품 가격을 입력해주세요"),
 
     // 관리자 페이지 - 주문
     SEARCH_FAILED_ERROR(HttpStatus.NOT_FOUND, "검색어 타입이 올바르지 않습니다."),
