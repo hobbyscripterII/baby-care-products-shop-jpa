@@ -123,25 +123,23 @@ public class AdminOrderQdlsRepositoryImpl extends AdminOrderQdlsSupportRepositor
                         orderEntity.processState, orderEntity.deleteFl
                 ))
                 .from(orderEntity)
+                .where(processStateNq(1), deleteFlEq(0))
                 .orderBy(orderEntity.createdAt.asc());
 
         if (dto.getMonth() == 0 && dto.getYear() == 0) {
             query.groupBy(orderEntity.createdAt.year());
-            query.having(processStateNq(1), deleteFlEq(0));
             return query.fetch();
         }
 
         if (dto.getMonth() == 0) {
             query.groupBy(orderEntity.createdAt.year(), orderEntity.createdAt.month());
-            query.having(yearEq(dto.getYear()),
-                    processStateNq(1), deleteFlEq(0));
+            query.having(yearEq(dto.getYear()));
             return query.fetch();
         }
 
         query.groupBy(transformDate(orderEntity.createdAt));
         query.having(yearEq(dto.getYear()),
-                monthEq(dto.getMonth()),
-                processStateNq(1), deleteFlEq(0));
+                monthEq(dto.getMonth()));
         return query.fetch();
     }
 

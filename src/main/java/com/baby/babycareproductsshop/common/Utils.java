@@ -42,18 +42,18 @@ public class Utils {
     }
 
     public static int getDaysOrMonths(int year, int month) {
-        if (year != 0 && month != 0) {
+        if (month != 0) {
             LocalDate date = LocalDate.of(year, month, 1);
             return date.lengthOfMonth();
         }
         return 12;
     }
 
-    public static String getKey(int year, int month, int dateOrMonth) {
+    public static String getKey(int year, int month, int dayOrMonth) {
         StringBuilder sb = new StringBuilder();
         if (month == 0) {
-            return sb.append(year).append("-").append(dateOrMonth).toString();
+            return sb.append(year).append("-").append(dayOrMonth).toString();
         }
-        return sb.append(year).append("-").append(month).append("-").append(dateOrMonth).toString();
+        return sb.append(year).append("-").append(month).append("-").append(dayOrMonth).toString();
     }
 }
