@@ -112,12 +112,12 @@ public class AdminProductService {
 
     //------------상품진열관리 신상품 조회
     public List<ProductManagementSelVo> getProductNew() {
-        return productRepository.findAllByStatusAndNewFl(1,1);
+        return productRepository.findAllByStatusAndNewFlAndRcFlAndPopFl(1,1,0,0);
     }
 
     //------------상품진열관리 인기상품 조회
     public List<ProductManagementSelVo> getProductPop() {
-        return productRepository.findAllByStatusAndPopFl(1,1);
+        return productRepository.findAllByStatusAndPopFlAndRcFlAndNewFl(1,1,0,0);
     }
 
     //------------상품진열관리 신상품 토글
@@ -247,13 +247,16 @@ public class AdminProductService {
                         ProductPicEntity productPicEntity = new ProductPicEntity();
                         productPicEntity.setProductPic(fileNm);
                         productPicEntity.setProductEntity(savedEntity);
-                        if (entity.getRepPic() == null) {
-                            entity.setRepPic(fileNm);
-                        }
+                        //entity.setRepPic(fileNm);
+
                         productPicRepository.save(productPicEntity);
                     }
                 }
             }
+            List<ProductPicEntity> findProductPic = productPicRepository.findByProductEntity(entity);
+            entity.setRepPic(findProductPic.get(0).getProductPic());
+            productRepository.save(entity);
+
             return new ResVo(Const.SUCCESS);
         } catch(Exception e) {
             return new ResVo(Const.FAIL);
@@ -378,7 +381,6 @@ public class AdminProductService {
                         .build())
                 .collect(Collectors.toList());
     }
-
     // 숨겼던 리뷰 검색
     public List<SearchReviewSelVo> getHiddenReview(ReviewSearchDto dto, Pageable pageable) {
         List<SearchReviewSelVo> reviews = reviewRepository.selReviewDel(dto, pageable);
