@@ -19,9 +19,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity,Long>, Pr
 
     List<ProductManagementSelVo> findAllByStatusAndRcFl(int rcFl,int status);
 
-    List<ProductManagementSelVo> findAllByStatusAndNewFl(int newFl,int status);
+    List<ProductManagementSelVo> findAllByStatusAndNewFlAndRcFlAndPopFl(int newFl,int status,int rcFl, int popFl);
 
-    List<ProductManagementSelVo> findAllByStatusAndPopFl(int popFl,int status);
+    List<ProductManagementSelVo> findAllByStatusAndPopFlAndRcFlAndNewFl(int popFl,int status,int rcfl, int newFl);
 
 //    @Query("SELECT r FROM ReviewEntity r WHERE r.ireview = ?1")
 //    String findAdminMemoByIreview(Long ireview);
