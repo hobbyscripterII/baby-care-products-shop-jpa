@@ -25,7 +25,7 @@ public class SchedulerConfiguration {
     @Transactional
     @Scheduled(cron = "${schedule.cron}")
     public void delUnregisteredUser() {
-        List<UserEntity> userEntityList = userRepository.findAllByUnregisterFlAndUpdatedAtLessThan(1L, LocalDateTime.now().minusDays(30));
+        List<UserEntity> userEntityList = userRepository.findAllByUnregisterFlAndUpdatedAtLessThan(1L, LocalDateTime.now().minusDays(29).minusSeconds(1));
         List<OrderEntity> orderEntityList = orderRepository.findAllByUserEntityIn(userEntityList);
         for (OrderEntity orderEntity : orderEntityList) {
             orderEntity.setUserEntity(null);

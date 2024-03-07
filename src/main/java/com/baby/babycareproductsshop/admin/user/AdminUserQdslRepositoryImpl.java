@@ -26,7 +26,6 @@ public class AdminUserQdslRepositoryImpl extends AdminUserSearchCondition implem
 
     @Override
     public List<UserEntity> selUserAll(AdminSelAllUserDto dto, Pageable pageable) {
-        log.info("dto : {}", dto);
         JPAQuery<UserEntity> query = jpaQueryFactory.select(Projections.fields(UserEntity.class,
                         userEntity.iuser, userEntity.nm, userEntity.email,
                         userEntity.phoneNumber, userEntity.createdAt, userEntity.updatedAt
