@@ -57,11 +57,10 @@ public class AdminOrderQdlsSupportRepositoryImpl extends AdminOrderSearchConditi
         BooleanExpression booleanExpression = null;
 
         if (Utils.isNotNull(searchCategory) && !keyword.isBlank()) {
-            long pk = Long.parseLong(keyword);
             switch (searchCategory) {
-                case 1 -> booleanExpression = iorderEq(pk);
-                case 2 -> booleanExpression = iproductEq(pk);
-                case 3 -> booleanExpression = iuserEq(pk);
+                case 1 -> booleanExpression = iorderEq(Long.parseLong(keyword));
+                case 2 -> booleanExpression = iproductEq(Long.parseLong(keyword));
+                case 3 -> booleanExpression = iuserEq(Long.parseLong(keyword));
                 case 4, 5, 6 -> booleanExpression = userNmEq(keyword);
                 case 7 -> booleanExpression = phoneNumberEq(keyword);
                 default -> {
