@@ -35,17 +35,18 @@ public class AdminUserQdslRepositoryImpl extends AdminUserSearchCondition implem
                 .orderBy(userEntity.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
-
+        //검색어로 검색 - keywordType = 0 : 검색 x, 1 : 이메일 검색, 2 : 이름 검색
         query.where(dto.getKeywordType() == 0 ? null :
                 dto.getKeywordType() == 1 ?
                         likeEmail(dto.getKeyword()) : likeNm(dto.getKeyword()));
-
+        //기간으로 검색
         if (!ObjectUtils.isEmpty(dto.getBefore())) {
             query.where(ObjectUtils.isEmpty(dto.getAfter())
                     ? betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN))
                     : betweenCreatedAt(LocalDateTime.of(dto.getBefore(), LocalTime.MIN),
                     LocalDateTime.of(dto.getAfter(), LocalTime.MAX).withNano(0)));
         }
+        //전화번호 검색
         if (StringUtils.hasText(dto.getPhoneNumber())) {
             query.where(likePhoneNumber(dto.getPhoneNumber()));
         }

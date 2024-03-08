@@ -11,7 +11,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +27,8 @@ public class SchedulerConfiguration {
     @Transactional
     @Scheduled(cron = "${schedule.cron}")
     public void delUnregisteredUser() {
-        List<UserEntity> userEntityList = userRepository.findAllByUnregisterFlAndUpdatedAtLessThan(1L, LocalDateTime.now().minusDays(29).minusSeconds(1));
+        List<UserEntity> userEntityList = userRepository.findAllByUnregisterFlAndUpdatedAtLessThan(1L,
+                LocalDateTime.of(LocalDate.now().minusDays(30), LocalTime.MIN));
         List<OrderEntity> orderEntityList = orderRepository.findAllByUserEntityIn(userEntityList);
         for (OrderEntity orderEntity : orderEntityList) {
             orderEntity.setUserEntity(null);
