@@ -11,7 +11,7 @@
         JOIN t_review AS B ON A.iuser = B.iuser
         JOIN t_review AS C ON B.ireview = C.ireview
         JOIN t_product P ON P.iproduct = B.iproduct
-        WHERE B.iproduct = #{iproduct}
+        WHERE B.iproduct = #{iproduct} AND B.del_fl = 0
         ORDER BY B.created_at DESC
         LIMIT #{startIdx}, #{rowCount}
     </select>
