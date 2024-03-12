@@ -12,6 +12,8 @@
         LEFT JOIN t_review R ON A.iproduct = R.iproduct
         LEFT JOIN t_wish_list L ON A.iproduct = L.iproduct
         <where>
+            A.del_fl  = 0
+            and
             <if test='cat != null and cat.size() > 0'>
                 <foreach collection="cat" item="cat" separator="OR" open="(" close=")">
                     (M.imiddle = #{cat.imiddle} and M.imain = #{cat.imain})
@@ -41,7 +43,7 @@
         FROM t_product A
         LEFT JOIN t_review R ON A.iproduct = R.iproduct
         LEFT JOIN t_wish_list L ON A.iproduct = L.iproduct
-        WHERE A.rc_fl = 1
+        WHERE A.rc_fl = 1 AND A.del_fl  = 0
         GROUP BY A.iproduct
     </select>
 
@@ -52,7 +54,7 @@
         FROM t_product A
         LEFT JOIN t_review R ON A.iproduct = R.iproduct
         LEFT JOIN t_wish_list L ON A.iproduct = L.iproduct
-        WHERE A.new_fl = 1
+        WHERE A.new_fl = 1 AND A.del_fl  = 0
         GROUP BY A.iproduct
     </select>
 
@@ -63,7 +65,7 @@
         FROM t_product A
         LEFT JOIN t_review R ON A.iproduct = R.iproduct
         LEFT JOIN t_wish_list L ON A.iproduct = L.iproduct
-        WHERE A.pop_fl = 1
+        WHERE A.pop_fl = 1 AND A.del_fl  = 0
         GROUP BY A.iproduct
     </select>
 
@@ -76,6 +78,7 @@
         LEFT JOIN t_wish_list L ON A.iproduct = L.iproduct
         LEFT JOIN t_user_child UC ON A.recommand_age = UC.ichild_age
         <where>
+            A.del_fl  = 0
             <foreach collection="recommandAge" item="recommandAge" separator="or">
                 A.recommand_age = #{recommandAge}
             </foreach>
@@ -114,6 +117,8 @@
         LEFT JOIN t_review R ON A.iproduct = R.iproduct
         LEFT JOIN t_wish_list L ON A.iproduct = L.iproduct
         <where>
+            A.del_fl  = 0
+            and
             <if test="imiddle !=0 and imain !=0">M.imiddle = #{imiddle} AND M.imain = #{imain}</if>
             <if test="imiddle ==0 and imain !=0">M.imain = #{imain}</if>
             <if test="imiddle !=0 and imain ==0">M.imiddle = #{imiddle}</if>
@@ -227,7 +232,7 @@
     <update id="updProductRepPic">
         UPDATE t_product
         SET rep_pic = #{repPic},
-            product_details = #{productDetails}
+        product_details = #{productDetails}
         WHERE iproduct = #{iproduct}
     </update>
 
